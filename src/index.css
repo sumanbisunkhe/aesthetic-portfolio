@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Fascinate&family=Josefin+Sans:wght@300;400;500;600;700&family=Oldenburg&family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+html, body, #root {
+  height: 100%;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth scroll-pt-20;
+  }
+  
+  body {
+    @apply bg-primary-900 text-primary-50 font-poppins;
+}
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-playfair;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+  
+  .section {
+    @apply py-20;
+}
+
+  .btn {
+    @apply inline-flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200;
+}
+
+  .btn-primary {
+    @apply bg-accent-900 text-primary-900 hover:bg-accent-800 hover:shadow-gold;
+}
+
+  .btn-secondary {
+    @apply bg-royal-700 text-primary-50 hover:bg-royal-600 hover:shadow-glow;
+  }
+
+  .logo-text {
+    @apply font-fascinate text-3xl tracking-wider;
+  }
+
+  .hero-heading {
+    @apply font-playfair font-bold tracking-tight;
+  }
+
+  .hero-subheading {
+    @apply font-poppins font-light tracking-wide;
+}
+
+  .hero-description {
+    @apply font-poppins font-light leading-relaxed;
+  }
+
+  .stat-value {
+    @apply font-playfair font-bold;
+}
+
+  .stat-label {
+    @apply font-poppins font-light uppercase tracking-widest text-sm;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+}
