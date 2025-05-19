@@ -94,7 +94,7 @@ const Thoughts = () => {
   };
 
   return (
-    <section id="thoughts" className="min-h-screen py-24 bg-gradient-to-b from-primary-900 to-primary-800">
+    <section id="thoughts" className="min-h-screen py-24 bg-gradient-to-b from-black to-black">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div

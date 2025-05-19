@@ -2,6 +2,8 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Work from './components/Work';
 import About from './components/About';
+import Resources from './components/Resources';
+import Now from './components/Now';
 import Thoughts from './components/Thoughts';
 import AuthModal from './components/AuthModal';
 import { useState } from 'react';
@@ -15,6 +17,8 @@ function App() {
         <Hero />
         <Work />
         <About />
+        <Resources />
+        <Now />
         <Thoughts />
       </main>
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />

@@ -204,7 +204,7 @@ const Work = () => {
     : projects.filter(project => project.category === selectedCategory);
 
   return (
-    <section id="work" className="min-h-screen py-24 bg-gradient-to-b from-primary-900 via-primary-900 to-primary-800">
+    <section id="work" className="min-h-screen py-24 bg-gradient-to-b from-black via-black to-black">
       <div className="container mx-auto px-4">
         {/* Header Section */}
         <motion.div
@@ -253,70 +253,70 @@ const Work = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           <AnimatePresence mode="wait">
             {filteredProjects.map((project, index) => (
-              <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 20 }}
+            <motion.div
+              key={project.title}
+              initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group relative bg-primary-800/50 rounded-2xl overflow-hidden backdrop-blur-sm border border-primary-700/50 hover:border-accent-900/50 transition-all duration-300 cursor-pointer"
                 onClick={() => setSelectedProject(project)}
-              >
-                {/* Card Header with Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-b from-accent-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                <div className="p-6 relative z-10">
-                  {/* Project Title */}
-                  <h3 className="text-xl font-josefin font-semibold text-white mb-3 group-hover:text-accent-900 transition-colors duration-300">
-                    {project.title}
-                  </h3>
+            >
+              {/* Card Header with Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-b from-accent-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <div className="p-6 relative z-10">
+                {/* Project Title */}
+                <h3 className="text-xl font-josefin font-semibold text-white mb-3 group-hover:text-accent-900 transition-colors duration-300">
+                  {project.title}
+                </h3>
 
-                  {/* Project Description */}
-                  <p className="text-primary-300 mb-6 font-josefin text-sm line-clamp-3 group-hover:text-primary-200 transition-colors duration-300">
-                    {project.description}
-                  </p>
+                {/* Project Description */}
+                <p className="text-primary-300 mb-6 font-josefin text-sm line-clamp-3 group-hover:text-primary-200 transition-colors duration-300">
+                  {project.description}
+                </p>
 
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-2 mb-6 min-h-[80px]">
+                {/* Technologies */}
+                <div className="flex flex-wrap gap-2 mb-6 min-h-[80px]">
                     {project.technologies.slice(0, 4).map((tech) => (
-                      <motion.div
-                        key={tech.name}
-                        whileHover={{ scale: 1.05 }}
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary-700/50 text-primary-200 hover:bg-primary-600/50 hover:text-accent-900 transition-all duration-200"
-                      >
-                        {tech.icon}
-                        <span className="text-xs font-josefin">{tech.name}</span>
-                      </motion.div>
-                    ))}
+                    <motion.div
+                      key={tech.name}
+                      whileHover={{ scale: 1.05 }}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary-700/50 text-primary-200 hover:bg-primary-600/50 hover:text-accent-900 transition-all duration-200"
+                    >
+                      {tech.icon}
+                      <span className="text-xs font-josefin">{tech.name}</span>
+                    </motion.div>
+                  ))}
                     {project.technologies.length > 4 && (
                       <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary-700/50 text-primary-200">
                         <span className="text-xs font-josefin">+{project.technologies.length - 4} more</span>
                       </div>
                     )}
-                  </div>
+                </div>
 
                   {/* View Project Button */}
                   <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-900/20 text-accent-900 hover:bg-accent-900/30 transition-all duration-200 w-full justify-center group"
-                  >
-                    <FaGithub className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
-                    <span className="font-josefin">View Project</span>
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-900/20 text-accent-900 hover:bg-accent-900/30 transition-all duration-200 w-full justify-center group"
+                >
+                  <FaGithub className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
+                  <span className="font-josefin">View Project</span>
                   </motion.div>
-                </div>
+              </div>
 
-                {/* Hover Effect Corner Decorations */}
-                <div className="absolute top-0 left-0 w-16 h-16 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute top-0 left-0 w-1 h-8 bg-accent-900/50 transform -rotate-45"></div>
-                  <div className="absolute top-0 left-0 h-1 w-8 bg-accent-900/50 transform -rotate-45"></div>
-                </div>
-                <div className="absolute bottom-0 right-0 w-16 h-16 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 right-0 w-1 h-8 bg-accent-900/50 transform -rotate-45"></div>
-                  <div className="absolute bottom-0 right-0 h-1 w-8 bg-accent-900/50 transform -rotate-45"></div>
-                </div>
-              </motion.div>
-            ))}
+              {/* Hover Effect Corner Decorations */}
+              <div className="absolute top-0 left-0 w-16 h-16 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute top-0 left-0 w-1 h-8 bg-accent-900/50 transform -rotate-45"></div>
+                <div className="absolute top-0 left-0 h-1 w-8 bg-accent-900/50 transform -rotate-45"></div>
+              </div>
+              <div className="absolute bottom-0 right-0 w-16 h-16 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 right-0 w-1 h-8 bg-accent-900/50 transform -rotate-45"></div>
+                <div className="absolute bottom-0 right-0 h-1 w-8 bg-accent-900/50 transform -rotate-45"></div>
+              </div>
+            </motion.div>
+          ))}
           </AnimatePresence>
         </div>
 

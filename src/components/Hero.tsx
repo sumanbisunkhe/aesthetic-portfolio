@@ -43,12 +43,12 @@ const Hero = () => {
   return (
     <section 
       id="home"
-      className="relative min-h-screen bg-primary-900 overflow-hidden"
+      className="relative min-h-screen bg-black overflow-hidden"
       aria-label="Introduction"
     >
       {/* Background gradient */}
       <div 
-        className="absolute inset-0 bg-gradient-to-b from-primary-900 via-primary-900/95 to-primary-900" 
+        className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-black" 
         aria-hidden="true"
       />
 
@@ -164,7 +164,7 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="w-full py-12 sm:py-16 bg-primary-800/20 backdrop-blur-sm border-t border-primary-700/20"
+          className="w-full py-12 sm:py-16 bg-black/20 backdrop-blur-sm border-t border-primary-700/20"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">

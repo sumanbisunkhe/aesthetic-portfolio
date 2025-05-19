@@ -13,12 +13,14 @@ import {
   XMarkIcon,
   Bars3Icon,
   LightBulbIcon,
+  DocumentTextIcon,
 } from '@heroicons/react/24/outline';
 
 interface NavItem {
   name: string;
-  href: string;
+  href?: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  dropdown?: { name: string; href: string; icon?: React.ComponentType<React.SVGProps<SVGSVGElement>> }[];
 }
 
 interface NavbarProps {
@@ -29,7 +31,14 @@ const navigation: NavItem[] = [
   { name: 'Home', href: '#home', icon: HomeIcon },
   { name: 'Work', href: '#work', icon: BriefcaseIcon },
   { name: 'About', href: '#about', icon: UserCircleIcon },
-  { name: 'Resources', href: '#resources', icon: BookOpenIcon },
+  {
+    name: 'Resources',
+    icon: BookOpenIcon,
+    dropdown: [
+      { name: 'Experience', href: '#resources-experience', icon: BriefcaseIcon },
+      { name: 'Resume', href: '#resources-resume', icon: DocumentTextIcon },
+    ],
+  },
   { name: 'Now', href: '#now', icon: ClockIcon },
   { name: 'Thoughts', href: '#thoughts', icon: LightBulbIcon },
 ];
@@ -40,13 +49,16 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
   const [activeSection, setActiveSection] = useState('home');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
       // Scroll spy functionality
-      const sections = navigation.map(item => item.href.substring(1));
+      const sections = navigation.flatMap(item => 
+        item.dropdown ? item.dropdown.map(subItem => subItem.href.substring(1)) : (item.href ? [item.href.substring(1)] : [])
+      );
       const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
@@ -120,6 +132,72 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
               <nav className="flex items-center space-x-1" role="menubar">
                 {navigation.map((item) => {
                   const Icon = item.icon;
+                  
+                  if (item.dropdown) {
+                    return (
+                      <div
+                        key={item.name}
+                        className="relative group"
+                        onMouseEnter={() => setResourcesDropdownOpen(true)}
+                        onMouseLeave={() => setResourcesDropdownOpen(false)}
+                      >
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg group"
+                          aria-expanded={resourcesDropdownOpen}
+                          aria-haspopup="true"
+                        >
+                          <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 ${resourcesDropdownOpen || item.dropdown.some(subItem => activeSection === subItem.href.substring(1)) ? 'text-accent-900' : 'text-primary-50 hover:text-accent-200'}`}>
+                            <Icon className="w-4 h-4" aria-hidden="true" />
+                            <span>{item.name}</span>
+                            {/* Dropdown Arrow */}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`w-4 h-4 transform transition-transform duration-200 ${resourcesDropdownOpen ? 'rotate-180' : 'rotate-0'}`} aria-hidden="true">
+                              <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                            </svg>
+                          </span>
+                           {(resourcesDropdownOpen || item.dropdown.some(subItem => activeSection === subItem.href.substring(1))) && (
+                            <motion.div
+                              layoutId="nav-pill"
+                              className="absolute inset-0 bg-royal-900/20 rounded-lg -z-10"
+                              transition={{ type: "spring", duration: 0.5 }}
+                            />
+                          )}
+                        </motion.button>
+                        <AnimatePresence>
+                          {resourcesDropdownOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 10 }}
+                              transition={{ duration: 0.2 }}
+                              className="absolute left-0 mt-2 w-48 rounded-lg shadow-xl bg-black backdrop-blur-md ring-1 ring-primary-700/50 z-50 origin-top"
+                            >
+                              <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="resources-menu-button">
+                                {item.dropdown.map((subItem) => {
+                                  const SubIcon = subItem.icon;
+                                  return (
+                                    <a
+                                      key={subItem.name}
+                                      href={subItem.href}
+                                      className="flex items-center px-4 py-2 text-sm text-primary-50 hover:bg-primary-700/50 hover:text-accent-900 transition-colors duration-200"
+                                      role="menuitem"
+                                      onClick={() => setResourcesDropdownOpen(false)}
+                                    >
+                                      {SubIcon && <SubIcon className="w-4 h-4 mr-2" aria-hidden="true" />}
+                                      {subItem.name}
+                                    </a>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  }
+
+                  // Default navigation item rendering
                   return (
                     <motion.a
                       key={item.name}
@@ -176,100 +254,108 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
               {/* Authentication */}
               <div className="flex items-center pl-4 border-l border-primary-700/50">
                 {auth.currentUser ? (
-                  <div className="relative">
+                  <div className="relative group">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
-                      className="relative group"
-                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      className="relative"
                     >
-                      <img
-                        src={auth.currentUser.photoURL || ''}
-                        alt={auth.currentUser.displayName || ''}
-                        className="w-8 h-8 rounded-full ring-2 ring-accent-900/20 group-hover:ring-accent-900/40 transition-all duration-300"
-                      />
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="relative">
+                        {/* Avatar Container with Gradient Border */}
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
+                        
+                        {/* Avatar Image */}
+                        <img
+                          src={auth.currentUser.photoURL || ''}
+                          alt={auth.currentUser.displayName || ''}
+                          className="relative w-10 h-10 rounded-full ring-2 ring-accent-900/20 group-hover:ring-accent-900/40 transition-all duration-300 object-cover"
+                        />
+                        
+                        {/* Hover Effects */}
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/10 to-accent-700/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
+                        
+                        {/* Active Indicator */}
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-primary-900 group-hover:ring-accent-900/40 transition-all duration-300">
+                          <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75" />
+                        </div>
+                      </div>
                     </motion.button>
 
                     {/* User Menu Dropdown */}
-                    <AnimatePresence>
-                      {userMenuOpen && (
-                        <>
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-40"
-                            onClick={() => setUserMenuOpen(false)}
-                          />
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                            className="absolute right-0 mt-3 w-64 bg-gradient-to-b from-primary-800 to-primary-900 rounded-2xl shadow-2xl border border-primary-700/50 overflow-hidden z-50"
-                          >
-                            {/* Decorative Elements */}
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700" />
-                            <div className="absolute -top-3 -left-3 w-16 h-16 border-t-2 border-l-2 border-accent-900/50 rounded-tl-2xl" />
-                            <div className="absolute -bottom-3 -right-3 w-16 h-16 border-b-2 border-r-2 border-accent-900/50 rounded-br-2xl" />
+                    <div className="absolute right-0 mt-3 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                      <div className="bg-gradient-to-b from-primary-800 to-primary-900 rounded-2xl shadow-2xl border border-primary-700/50 overflow-hidden">
+                        {/* Decorative Elements */}
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700" />
+                        <div className="absolute -top-3 -left-3 w-16 h-16 border-t-2 border-l-2 border-accent-900/50 rounded-tl-2xl" />
+                        <div className="absolute -bottom-3 -right-3 w-16 h-16 border-b-2 border-r-2 border-accent-900/50 rounded-br-2xl" />
 
-                            {/* User Info Section */}
-                            <div className="p-4 border-b border-primary-700/50">
-                              <div className="flex items-center gap-3">
-                                <img
-                                  src={auth.currentUser.photoURL || ''}
-                                  alt={auth.currentUser.displayName || ''}
-                                  className="w-12 h-12 rounded-xl ring-2 ring-accent-900/20"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-primary-200 truncate">
-                                    {auth.currentUser.displayName}
-                                  </p>
-                                  <p className="text-xs text-primary-400 truncate">
-                                    {auth.currentUser.email}
-                                  </p>
-                                </div>
+                        {/* User Info Section */}
+                        <div className="p-4 border-b border-primary-700/50">
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              {/* Avatar Container with Gradient Border */}
+                              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
+                              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
+                              
+                              <img
+                                src={auth.currentUser.photoURL || ''}
+                                alt={auth.currentUser.displayName || ''}
+                                className="relative w-12 h-12 rounded-xl ring-2 ring-accent-900/20 object-cover"
+                              />
+                              
+                              {/* Active Indicator */}
+                              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-primary-900">
+                                <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75" />
                               </div>
                             </div>
-
-                            {/* Menu Items */}
-                            <div className="p-2">
-                              <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={handleSignOut}
-                                disabled={isSigningOut}
-                                className="w-full px-4 py-3 text-left text-sm text-primary-200 hover:bg-primary-700/50 hover:text-accent-900 rounded-xl transition-colors duration-200 flex items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                {isSigningOut ? (
-                                  <>
-                                    <div className="w-5 h-5 border-2 border-primary-200 border-t-transparent rounded-full animate-spin" />
-                                    <span>Signing out...</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <svg 
-                                      className="w-5 h-5 text-primary-400 group-hover:text-accent-900 transition-colors duration-200" 
-                                      fill="none" 
-                                      viewBox="0 0 24 24" 
-                                      stroke="currentColor"
-                                    >
-                                      <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={2} 
-                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
-                                      />
-                                    </svg>
-                                    <span>Sign Out</span>
-                                  </>
-                                )}
-                              </motion.button>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-primary-200 truncate">
+                                {auth.currentUser.displayName}
+                              </p>
+                              <p className="text-xs text-primary-400 truncate">
+                                {auth.currentUser.email}
+                              </p>
                             </div>
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
+                          </div>
+                        </div>
+
+                        {/* Menu Items */}
+                        <div className="p-2">
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={handleSignOut}
+                            disabled={isSigningOut}
+                            className="w-full px-4 py-3 text-left text-sm text-primary-200 hover:bg-primary-700/50 hover:text-accent-900 rounded-xl transition-colors duration-200 flex items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {isSigningOut ? (
+                              <>
+                                <div className="w-5 h-5 border-2 border-primary-200 border-t-transparent rounded-full animate-spin" />
+                                <span>Signing out...</span>
+                              </>
+                            ) : (
+                              <>
+                                <svg 
+                                  className="w-5 h-5 text-primary-400 group-hover:text-accent-900 transition-colors duration-200" 
+                                  fill="none" 
+                                  viewBox="0 0 24 24" 
+                                  stroke="currentColor"
+                                >
+                                  <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth={2} 
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
+                                  />
+                                </svg>
+                                <span>Sign Out</span>
+                              </>
+                            )}
+                          </motion.button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <motion.button
@@ -357,14 +443,45 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                   <div className="grid gap-3">
                     {navigation.map((item) => {
                       const Icon = item.icon;
+                      
+                      if (item.dropdown) {
+                         return (
+                           <div key={item.name} className="space-y-3">
+                             <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-accent-900">
+                               <Icon className="w-5 h-5" />
+                               <span className="font-medium text-lg">{item.name}</span>
+                             </div>
+                             <div className="pl-8 space-y-3 border-l border-primary-700/50">
+                                {item.dropdown.map((subItem) => {
+                                   const SubIcon = subItem.icon;
+                                   return (
+                                     <motion.a
+                                        key={subItem.name}
+                                        href={subItem.href}
+                                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${activeSection === subItem.href.substring(1) ? 'bg-primary-800/70 text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'}`}
+                                        onClick={() => {
+                                           setMobileMenuOpen(false);
+                                           setResourcesDropdownOpen(false); // Close desktop dropdown too if open
+                                        }}
+                                        whileHover={{ x: 4 }}
+                                        transition={{ type: "spring", stiffness: 300 }}
+                                     >
+                                       {SubIcon && <SubIcon className="w-5 h-5" />}
+                                       <span className="font-medium text-lg">{subItem.name}</span>
+                                     </motion.a>
+                                   );
+                                })}
+                             </div>
+                           </div>
+                         );
+                      }
+
                       return (
                         <motion.a
                           key={item.name}
                           href={item.href}
                           className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                            activeSection === item.name.toLowerCase()
-                              ? 'bg-primary-800/70 text-accent-900'
-                              : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
+                            activeSection === item.name.toLowerCase() ? 'bg-primary-800/70 text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
                           }`}
                           onClick={() => setMobileMenuOpen(false)}
                           whileHover={{ x: 4 }}

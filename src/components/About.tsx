@@ -3,7 +3,7 @@ import { BookOpenIcon, AcademicCapIcon, BriefcaseIcon, CodeBracketIcon } from '@
 
 const About = () => {
   return (
-    <section id="about" className="min-h-screen py-24 bg-gradient-to-b from-primary-800 to-primary-900 relative overflow-hidden">
+    <section id="about" className="min-h-screen py-24 bg-gradient-to-b from-black to-black relative overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -left-12 w-24 h-24 bg-accent-900/5 rounded-full blur-xl"></div>
