@@ -56,10 +56,43 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
       setScrolled(window.scrollY > 20);
 
       // Scroll spy functionality
+      const scrollPosition = window.scrollY + 100;
+
+      // Check if we're in resources section (either experience or resume)
+      const resourcesSection = document.getElementById('resources');
+      const experienceSection = document.getElementById('resources-experience');
+      const resumeSection = document.getElementById('resources-resume');
+
+      if (resourcesSection) {
+        const { offsetTop, offsetHeight } = resourcesSection;
+        if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+          // Check if we're specifically in experience or resume sections
+          if (experienceSection) {
+            const expTop = experienceSection.offsetTop;
+            const expHeight = experienceSection.offsetHeight;
+            if (scrollPosition >= expTop && scrollPosition < expTop + expHeight) {
+              setActiveSection('resources-experience');
+              return;
+            }
+          }
+          if (resumeSection) {
+            const resumeTop = resumeSection.offsetTop;
+            const resumeHeight = resumeSection.offsetHeight;
+            if (scrollPosition >= resumeTop && scrollPosition < resumeTop + resumeHeight) {
+              setActiveSection('resources-resume');
+              return;
+            }
+          }
+          // If we're in the resources section but not specifically in experience or resume
+          setActiveSection('resources');
+          return;
+        }
+      }
+
+      // Check other sections
       const sections = navigation.flatMap(item => 
         item.dropdown ? item.dropdown.map(subItem => subItem.href.substring(1)) : (item.href ? [item.href.substring(1)] : [])
       );
-      const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
         const element = document.getElementById(section);
