@@ -155,8 +155,8 @@ const Resources = () => {
                 Explore my qualifications, skills, and professional background. You can view the interactive preview below or download the PDF for a complete record.
               </p>
               <motion.a
-                href="/src/assets/sumanbisunkhe-resume.pdf"
-                download
+                href="/docs/sumanbisunkhe-resume.pdf"
+                download="Suman_Bisunkhe_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)" }}
