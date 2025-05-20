@@ -14,6 +14,7 @@ import {
   XMarkIcon,
   LightBulbIcon,
   DocumentTextIcon,
+  Bars3Icon,
 } from '@heroicons/react/24/outline';
 
 interface NavItem {
@@ -470,33 +471,152 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
               </div>
             </div>
 
-            {/* Mobile menu button */}
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              className="lg:hidden p-2 rounded-lg bg-primary-800/50 text-accent-900 hover:bg-primary-700/50"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={mobileMenuOpen ? 'close' : 'menu'}
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
+            {/* Mobile menu button and auth */}
+            <div className="lg:hidden flex items-center gap-2">
+              {/* Authentication for mobile */}
+              {auth.currentUser ? (
+                <div className="relative group">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    className="relative"
+                  >
+                    <div className="relative">
+                      {/* Avatar Container with Gradient Border */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
+                      
+                      {/* Avatar Image */}
+                      <img
+                        src={auth.currentUser.photoURL || ''}
+                        alt={auth.currentUser.displayName || ''}
+                        className="relative w-6 h-6 rounded-full ring-2 ring-accent-900/20 group-hover:ring-accent-900/40 transition-all duration-300 object-cover"
+                      />
+                      
+                      {/* Hover Effects */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/10 to-accent-700/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
+                      
+                      {/* Active Indicator */}
+                      <div className="absolute bottom-0 right-0 w-1.5 h-1.5 bg-green-500 rounded-full ring-2 ring-primary-900 group-hover:ring-accent-900/40 transition-all duration-300">
+                        <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75" />
+                      </div>
+                    </div>
+                  </motion.button>
+
+                  {/* User Menu Dropdown */}
+                  <div className="absolute right-0 mt-3 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                    <div className="bg-gradient-to-b from-primary-800 to-primary-900 rounded-2xl shadow-2xl border border-primary-700/50 overflow-hidden">
+                      {/* Decorative Elements */}
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700" />
+                      <div className="absolute -top-3 -left-3 w-16 h-16 border-t-2 border-l-2 border-accent-900/50 rounded-tl-2xl" />
+                      <div className="absolute -bottom-3 -right-3 w-16 h-16 border-b-2 border-r-2 border-accent-900/50 rounded-br-2xl" />
+
+                      {/* User Info Section */}
+                      <div className="p-4 border-b border-primary-700/50">
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            {/* Avatar Container with Gradient Border */}
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
+                            
+                            <img
+                              src={auth.currentUser.photoURL || ''}
+                              alt={auth.currentUser.displayName || ''}
+                              className="relative w-12 h-12 rounded-xl ring-2 ring-accent-900/20 object-cover"
+                            />
+                            
+                            {/* Active Indicator */}
+                            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-primary-900">
+                              <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75" />
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-primary-200 truncate">
+                              {auth.currentUser.displayName}
+                            </p>
+                            <p className="text-xs text-primary-400 truncate">
+                              {auth.currentUser.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="p-2">
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleSignOut}
+                          disabled={isSigningOut}
+                          className="w-full px-4 py-3 text-left text-sm text-primary-200 hover:bg-primary-700/50 hover:text-accent-900 rounded-xl transition-colors duration-200 flex items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSigningOut ? (
+                            <>
+                              <div className="w-5 h-5 border-2 border-primary-200 border-t-transparent rounded-full animate-spin" />
+                              <span>Signing out...</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg 
+                                className="w-5 h-5 text-primary-400 group-hover:text-accent-900 transition-colors duration-200" 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor"
+                              >
+                                <path 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round" 
+                                  strokeWidth={2} 
+                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
+                                />
+                              </svg>
+                              <span>Sign Out</span>
+                            </>
+                          )}
+                        </motion.button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={onOpenAuthModal}
+                  className="relative p-1.5 rounded-lg bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 hover:shadow-lg hover:shadow-accent/20 transition-all duration-200 group"
+                  aria-label="Sign in"
                 >
-                  {mobileMenuOpen ? (
-                    <XMarkIcon className="w-6 h-6" aria-hidden="true" />
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                      <path d="M3 12h18M3 6h18M3 18h18" />
-                    </svg>
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </motion.button>
+                  <HiOutlineUser className="w-4 h-4" />
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </motion.button>
+              )}
+
+              {/* Mobile menu button */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                className="p-2 rounded-lg bg-primary-800/50 text-accent-900 hover:bg-primary-700/50"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={mobileMenuOpen ? 'close' : 'menu'}
+                    initial={{ opacity: 0, rotate: -90 }}
+                    animate={{ opacity: 1, rotate: 0 }}
+                    exit={{ opacity: 0, rotate: 90 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {mobileMenuOpen ? (
+                      <XMarkIcon className="w-6 h-6" aria-hidden="true" />
+                    ) : (
+                      <Bars3Icon className="w-6 h-6" aria-hidden="true" />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </motion.button>
+            </div>
           </div>
         </div>
       </motion.nav>
