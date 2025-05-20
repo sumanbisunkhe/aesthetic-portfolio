@@ -7,7 +7,6 @@ import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp } from
 import { fetchBlogPosts, type BlogPost } from '../lib/contentful';
 import { BookOpenIcon, ChatBubbleLeftIcon, TagIcon } from '@heroicons/react/24/outline';
 import AuthModal from './AuthModal';
-import { client } from '../lib/contentful';
 
 interface Comment {
   id: string;
@@ -17,13 +16,6 @@ interface Comment {
   userAvatar: string;
   createdAt: Timestamp;
   postId: string;
-}
-
-interface Thought {
-  id: string;
-  title: string;
-  content: any;
-  createdAt: string;
 }
 
 const Thoughts = () => {
