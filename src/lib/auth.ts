@@ -5,7 +5,7 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   PhoneAuthProvider,
-  signOut,
+  signOut as firebaseSignOut,
   RecaptchaVerifier,
   signInWithPhoneNumber,
   type Auth,
@@ -28,8 +28,14 @@ export const signInWithEmail = async (email: string, password: string): Promise<
 };
 
 // Google Authentication
-export const signInWithGoogle = async (): Promise<UserCredential> => {
-  return signInWithPopup(auth, googleProvider);
+export const signInWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    return result.user;
+  } catch (error) {
+    console.error('Error signing in with Google:', error);
+    throw error;
+  }
 };
 
 // Facebook Authentication
@@ -50,8 +56,13 @@ export const signInWithPhone = async (phoneNumber: string, appVerifier: Recaptch
 };
 
 // Sign Out
-export const signOutUser = async (): Promise<void> => {
-  return signOut(auth);
+export const signOutUser = async () => {
+  try {
+    await firebaseSignOut(auth);
+  } catch (error) {
+    console.error('Error signing out:', error);
+    throw error;
+  }
 };
 
 // Error handling helper

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { BookOpenIcon, AcademicCapIcon, BriefcaseIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, AcademicCapIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
 
 const About = () => {
   return (

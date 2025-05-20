@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../lib/firebase';
 import { signOutUser } from '../lib/auth';
+import { Link } from 'react-router-dom';
 import {
   CodeBracketIcon,
   CommandLineIcon,
@@ -40,14 +41,13 @@ const navigation: NavItem[] = [
     ],
   },
   { name: 'Now', href: '#now', icon: ClockIcon },
-  { name: 'Thoughts', href: '#thoughts', icon: LightBulbIcon },
+  { name: 'Thoughts', href: '/thoughts', icon: LightBulbIcon },
 ];
 
 const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
 
@@ -57,6 +57,12 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
 
       // Scroll spy functionality
       const scrollPosition = window.scrollY + 100;
+
+      // Check if we're at the top of the page (home section)
+      if (scrollPosition < 100) {
+        setActiveSection('home');
+        return;
+      }
 
       // Check if we're in resources section (either experience or resume)
       const resourcesSection = document.getElementById('resources');
@@ -114,7 +120,6 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
     try {
       setIsSigningOut(true);
       await signOutUser();
-      setUserMenuOpen(false);
     } catch (error) {
       console.error('Error signing out:', error);
       // You might want to show a toast notification here
@@ -231,7 +236,35 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                   }
 
                   // Default navigation item rendering
-                  return (
+                  return item.href?.startsWith('/') ? (
+                    <motion.div
+                      key={item.name}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg group"
+                    >
+                      <Link
+                        to={item.href}
+                        className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 ${
+                          activeSection === item.name.toLowerCase()
+                            ? 'text-accent-900'
+                            : 'text-primary-50 hover:text-accent-200'
+                        }`}
+                        role="menuitem"
+                        aria-current={activeSection === item.name.toLowerCase() ? 'page' : undefined}
+                      >
+                        <Icon className="w-4 h-4" aria-hidden="true" />
+                        <span>{item.name}</span>
+                      </Link>
+                      {activeSection === item.name.toLowerCase() && (
+                        <motion.div
+                          layoutId="nav-pill"
+                          className="absolute inset-0 bg-royal-900/20 rounded-lg -z-10"
+                          transition={{ type: "spring", duration: 0.5 }}
+                        />
+                      )}
+                    </motion.div>
+                  ) : (
                     <motion.a
                       key={item.name}
                       href={item.href}

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { auth, db } from '../lib/firebase';
-import { signOutUser } from '../lib/auth';
+import { signOutUser, signInWithGoogle } from '../lib/auth';
 import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { fetchBlogPosts, type BlogPost } from '../lib/contentful';
 import { BookOpenIcon, ChatBubbleLeftIcon, TagIcon } from '@heroicons/react/24/outline';
@@ -71,6 +71,14 @@ const Thoughts = () => {
       await signOutUser();
     } catch (error) {
       console.error('Error signing out:', error);
+    }
+  };
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error('Error signing in:', error);
     }
   };
 
