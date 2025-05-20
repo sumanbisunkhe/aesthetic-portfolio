@@ -1,8 +1,15 @@
 import { createClient } from 'contentful';
 
-export const contentfulClient = createClient({
-  space: import.meta.env.VITE_CONTENTFUL_SPACE_ID as string,
-  accessToken: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN as string,
+const space = import.meta.env.VITE_CONTENTFUL_SPACE_ID;
+const accessToken = import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN;
+
+if (!space || !accessToken) {
+  throw new Error('Contentful space ID and access token are required');
+}
+
+export const client = createClient({
+  space,
+  accessToken,
 });
 
 export interface BlogPost {
@@ -47,7 +54,7 @@ export async function fetchBlogPosts(): Promise<BlogPost[]> {
     console.log('Space ID:', import.meta.env.VITE_CONTENTFUL_SPACE_ID);
     console.log('Access Token:', import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN ? 'Present' : 'Missing');
     
-    const response = await contentfulClient.getEntries({
+    const response = await client.getEntries({
       content_type: 'blogPost',
       order: ['-sys.createdAt'],
       include: 2, // This will include linked assets up to 2 levels deep

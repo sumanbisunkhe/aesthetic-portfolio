@@ -8,6 +8,7 @@ import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp } from
 import { fetchBlogPosts, type BlogPost } from '../lib/contentful';
 import { BookOpenIcon, ChatBubbleLeftIcon, TagIcon } from '@heroicons/react/24/outline';
 import AuthModal from './AuthModal';
+import { client } from '../lib/contentful';
 
 interface Comment {
   id: string;
@@ -19,6 +20,13 @@ interface Comment {
   postId: string;
 }
 
+interface Thought {
+  id: string;
+  title: string;
+  content: any;
+  createdAt: string;
+}
+
 const Thoughts = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [comments, setComments] = useState<{ [key: string]: Comment[] }>({});
@@ -26,6 +34,10 @@ const Thoughts = () => {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [thoughts, setThoughts] = useState<Thought[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -66,21 +78,33 @@ const Thoughts = () => {
     return () => unsubscribe();
   }, [selectedPost]);
 
-  const handleSignOut = async () => {
-    try {
-      await signOutUser();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+  useEffect(() => {
+    const fetchThoughts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await client.getEntries({
+          content_type: 'thought',
+          order: '-sys.createdAt',
+        });
 
-  const handleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-    } catch (error) {
-      console.error('Error signing in:', error);
-    }
-  };
+        const formattedThoughts = response.items.map((item: any) => ({
+          id: item.sys.id,
+          title: item.fields.title,
+          content: item.fields.content,
+          createdAt: item.sys.createdAt,
+        }));
+
+        setThoughts(formattedThoughts);
+      } catch (err) {
+        setError('Failed to fetch thoughts. Please try again later.');
+        console.error('Error fetching thoughts:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchThoughts();
+  }, []);
 
   const handleAddComment = async (postId: string) => {
     if (!auth.currentUser || !newComment.trim()) return;

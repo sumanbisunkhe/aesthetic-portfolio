@@ -16,17 +16,17 @@ function App() {
       <Routes>
         <Route path="/thoughts" element={<ThoughtsPage />} />
         <Route path="/" element={
-          <div className="relative">
-            <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />
-            <main>
-              <Hero />
-              <Work />
-              <About />
+    <div className="relative">
+      <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />
+      <main>
+        <Hero />
+        <Work />
+        <About />
               <Resources />
               <Now />
-            </main>
-            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
-          </div>
+      </main>
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+    </div>
         } />
       </Routes>
     </Router>

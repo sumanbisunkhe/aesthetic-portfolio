@@ -20,7 +20,8 @@ import {
   SiFontawesome,
   SiReact,
   SiFirebase,
-  SiContentful
+  SiContentful,
+  SiVercel
 } from 'react-icons/si';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { BriefcaseIcon } from '@heroicons/react/24/outline';

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BookOpenIcon, BriefcaseIcon, AcademicCapIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { BriefcaseIcon, AcademicCapIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 const experiences = [
   {

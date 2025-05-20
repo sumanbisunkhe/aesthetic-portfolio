@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../lib/firebase';
 import { signOutUser } from '../lib/auth';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   CodeBracketIcon,
   CommandLineIcon,
@@ -28,32 +28,54 @@ interface NavbarProps {
   onOpenAuthModal: () => void;
 }
 
-const navigation: NavItem[] = [
-  { name: 'Home', href: '#home', icon: HomeIcon },
-  { name: 'Work', href: '#work', icon: BriefcaseIcon },
-  { name: 'About', href: '#about', icon: UserCircleIcon },
-  {
-    name: 'Resources',
-    icon: BookOpenIcon,
-    dropdown: [
-      { name: 'Experience', href: '#resources-experience', icon: BriefcaseIcon },
-      { name: 'Resume', href: '#resources-resume', icon: DocumentTextIcon },
-    ],
-  },
-  { name: 'Now', href: '#now', icon: ClockIcon },
-  { name: 'Thoughts', href: '/thoughts', icon: LightBulbIcon },
-];
-
 const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
+  const location = useLocation();
+
+  // Function to get the correct href based on current location
+  const getCorrectHref = (href: string) => {
+    if (href.startsWith('/')) return href; // Keep route links as is
+    if (location.pathname === '/thoughts') {
+      return `/#${href.substring(1)}`; // Add /# for hash links when on thoughts page
+    }
+    return href; // Keep hash links as is for main page
+  };
+
+  // Function to handle navigation clicks
+  const handleNavigationClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (location.pathname === '/thoughts' && href.startsWith('#')) {
+      e.preventDefault();
+      // Navigate to home page with hash
+      window.location.href = `/#${href.substring(1)}`;
+    }
+  };
+
+  const navigation: NavItem[] = [
+    { name: 'Home', href: '#home', icon: HomeIcon },
+    { name: 'Work', href: '#work', icon: BriefcaseIcon },
+    { name: 'About', href: '#about', icon: UserCircleIcon },
+    {
+      name: 'Resources',
+      icon: BookOpenIcon,
+      dropdown: [
+        { name: 'Experience', href: '#resources-experience', icon: BriefcaseIcon },
+        { name: 'Resume', href: '#resources-resume', icon: DocumentTextIcon },
+      ],
+    },
+    { name: 'Now', href: '#now', icon: ClockIcon },
+    { name: 'Thoughts', href: '/thoughts', icon: LightBulbIcon },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+
+      // Only run scroll spy on main page
+      if (location.pathname === '/thoughts') return;
 
       // Scroll spy functionality
       const scrollPosition = window.scrollY + 100;
@@ -114,7 +136,14 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
+
+  // Update active section based on current location
+  useEffect(() => {
+    if (location.pathname === '/thoughts') {
+      setActiveSection('thoughts');
+    }
+  }, [location.pathname]);
 
   const handleSignOut = async () => {
     try {
@@ -267,7 +296,8 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                   ) : (
                     <motion.a
                       key={item.name}
-                      href={item.href}
+                      href={getCorrectHref(item.href || '')}
+                      onClick={(e) => handleNavigationClick(e, item.href || '')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg group"
@@ -545,7 +575,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       return (
                         <motion.a
                           key={item.name}
-                          href={item.href}
+                          href={getCorrectHref(item.href || '')}
                           className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                             activeSection === item.name.toLowerCase() ? 'bg-primary-800/70 text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
                           }`}

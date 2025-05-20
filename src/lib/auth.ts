@@ -30,7 +30,8 @@ export const signInWithEmail = async (email: string, password: string): Promise<
 // Google Authentication
 export const signInWithGoogle = async () => {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
     return result.user;
   } catch (error) {
     console.error('Error signing in with Google:', error);
