@@ -4,7 +4,6 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   FacebookAuthProvider,
-  PhoneAuthProvider,
   signOut as firebaseSignOut,
   RecaptchaVerifier,
   signInWithPhoneNumber,
@@ -13,7 +12,6 @@ import {
 import { auth } from './firebase';
 
 // Initialize providers
-const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 
 // Email/Password Authentication

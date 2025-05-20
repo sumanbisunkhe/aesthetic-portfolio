@@ -10,11 +10,8 @@ import {
   BookOpenIcon,
   ClockIcon,
   XMarkIcon,
-  Bars3Icon,
   LightBulbIcon,
   DocumentTextIcon,
-  CodeBracketIcon,
-  CommandLineIcon,
 } from '@heroicons/react/24/outline';
 
 interface NavItem {

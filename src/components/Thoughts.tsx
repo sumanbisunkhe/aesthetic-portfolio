@@ -33,10 +33,6 @@ const Thoughts = () => {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [thoughts, setThoughts] = useState<Thought[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isSigningIn, setIsSigningIn] = useState(false);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -76,34 +72,6 @@ const Thoughts = () => {
 
     return () => unsubscribe();
   }, [selectedPost]);
-
-  useEffect(() => {
-    const fetchThoughts = async () => {
-      try {
-        setIsLoading(true);
-        const response = await client.getEntries({
-          content_type: 'thought',
-          order: ['-sys.createdAt'],
-        });
-
-        const formattedThoughts = response.items.map((item: any) => ({
-          id: item.sys.id,
-          title: item.fields.title,
-          content: item.fields.content,
-          createdAt: item.sys.createdAt,
-        }));
-
-        setThoughts(formattedThoughts);
-      } catch (err) {
-        setError('Failed to fetch thoughts. Please try again later.');
-        console.error('Error fetching thoughts:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchThoughts();
-  }, []);
 
   const handleAddComment = async (postId: string) => {
     if (!auth.currentUser || !newComment.trim()) return;
