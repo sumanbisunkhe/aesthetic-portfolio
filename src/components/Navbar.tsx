@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../lib/firebase';
 import { signOutUser } from '../lib/auth';
 import { Link, useLocation } from 'react-router-dom';
+import { FaGithub } from 'react-icons/fa';
+import { HiOutlineUser } from 'react-icons/hi';
 import {
   HomeIcon,
   UserCircleIcon,
@@ -330,9 +332,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                   className="p-2 rounded-lg bg-primary-800/50 text-primary-50 hover:bg-primary-700/50 hover:text-accent-900 transition-colors duration-200"
                   aria-label="Visit my GitHub profile"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-8c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4 4zm2 5.2C18.37 17.47 15.09 19 12 19s-6.37-1.53-9-4.2C5.37 10.43 7.53 7 12 7s6.63 3.43 9 9.2z" />
-                  </svg>
+                  <FaGithub className="w-5 h-5" />
                 </a>
                 <motion.a
                   href="#contact"
@@ -463,9 +463,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                     className="relative p-2 rounded-lg bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 hover:shadow-lg hover:shadow-accent/20 transition-all duration-200 group"
                     aria-label="Sign in"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-8c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4 4zm2 5.2C18.37 17.47 15.09 19 12 19s-6.37-1.53-9-4.2C5.37 10.43 7.53 7 12 7s6.63 3.43 9 9.2z" />
-                    </svg>
+                    <HiOutlineUser className="w-5 h-5" />
                     <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </motion.button>
                 )}
@@ -606,9 +604,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       rel="noopener noreferrer"
                       className="p-3 rounded-xl bg-primary-800/50 text-primary-50 hover:bg-primary-700/50 hover:text-accent-900 transition-all duration-200"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-8c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4 4zm2 5.2C18.37 17.47 15.09 19 12 19s-6.37-1.53-9-4.2C5.37 10.43 7.53 7 12 7s6.63 3.43 9 9.2z" />
-                      </svg>
+                      <FaGithub className="w-6 h-6" />
                     </a>
                     <motion.a
                       href="#contact"

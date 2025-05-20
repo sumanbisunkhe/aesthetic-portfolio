@@ -44,7 +44,7 @@ const About = () => {
               {/* Image container */}
               <div className="relative overflow-hidden rounded-xl aspect-[3.6/5] bg-gradient-to-b from-accent-900/10 to-transparent p-1">
                 <img
-                  src="/src/assets/images/pp.webp"
+                  src="/images/pp.webp"
                   alt="Suman Bisunkhe"
                   className="w-full h-full object-cover object-center rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
                 />
