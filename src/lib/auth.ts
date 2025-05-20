@@ -8,7 +8,6 @@ import {
   signOut as firebaseSignOut,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  type Auth,
   type UserCredential
 } from 'firebase/auth';
 import { auth } from './firebase';
@@ -16,7 +15,6 @@ import { auth } from './firebase';
 // Initialize providers
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
-const phoneProvider = new PhoneAuthProvider(auth);
 
 // Email/Password Authentication
 export const signUpWithEmail = async (email: string, password: string): Promise<UserCredential> => {

@@ -4,8 +4,6 @@ import { auth } from '../lib/firebase';
 import { signOutUser } from '../lib/auth';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  CodeBracketIcon,
-  CommandLineIcon,
   HomeIcon,
   UserCircleIcon,
   BriefcaseIcon,
@@ -15,6 +13,8 @@ import {
   Bars3Icon,
   LightBulbIcon,
   DocumentTextIcon,
+  CodeBracketIcon,
+  CommandLineIcon,
 } from '@heroicons/react/24/outline';
 
 interface NavItem {
@@ -333,7 +333,9 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                   className="p-2 rounded-lg bg-primary-800/50 text-primary-50 hover:bg-primary-700/50 hover:text-accent-900 transition-colors duration-200"
                   aria-label="Visit my GitHub profile"
                 >
-                  <CodeBracketIcon className="w-5 h-5" aria-hidden="true" />
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-8c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4 4zm2 5.2C18.37 17.47 15.09 19 12 19s-6.37-1.53-9-4.2C5.37 10.43 7.53 7 12 7s6.63 3.43 9 9.2z" />
+                  </svg>
                 </a>
                 <motion.a
                   href="#contact"
@@ -342,7 +344,10 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                   className="px-4 py-2 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-accent/20 transition-shadow duration-200 flex items-center gap-1.5"
                   aria-label="Open contact section"
                 >
-                  <CommandLineIcon className="w-4 h-4" aria-hidden="true" />
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z" />
+                    <path d="M12 10c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 2c-2.61 0-5.09.95-7.05 2.45C4.94 15.55 4 17.93 4 20h16c0-2.07-.94-4.45-2.45-6.35C17.05 12.95 14.57 12 12 12z" />
+                  </svg>
                   Let's Talk
                 </motion.a>
               </div>
@@ -461,7 +466,9 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                     className="relative p-2 rounded-lg bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 hover:shadow-lg hover:shadow-accent/20 transition-all duration-200 group"
                     aria-label="Sign in"
                   >
-                    <UserCircleIcon className="w-5 h-5" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-8c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4 4zm2 5.2C18.37 17.47 15.09 19 12 19s-6.37-1.53-9-4.2C5.37 10.43 7.53 7 12 7s6.63 3.43 9 9.2z" />
+                    </svg>
                     <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </motion.button>
                 )}
@@ -488,7 +495,9 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                   {mobileMenuOpen ? (
                     <XMarkIcon className="w-6 h-6" aria-hidden="true" />
                   ) : (
-                    <Bars3Icon className="w-6 h-6" aria-hidden="true" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                      <path d="M3 12h18M3 6h18M3 18h18" />
+                    </svg>
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -600,7 +609,9 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       rel="noopener noreferrer"
                       className="p-3 rounded-xl bg-primary-800/50 text-primary-50 hover:bg-primary-700/50 hover:text-accent-900 transition-all duration-200"
                     >
-                      <CodeBracketIcon className="w-6 h-6" />
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-8c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4 4zm2 5.2C18.37 17.47 15.09 19 12 19s-6.37-1.53-9-4.2C5.37 10.43 7.53 7 12 7s6.63 3.43 9 9.2z" />
+                      </svg>
                     </a>
                     <motion.a
                       href="#contact"
@@ -609,7 +620,10 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       className="px-6 py-3 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 font-medium rounded-xl shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 flex items-center gap-2 w-2/3 justify-center"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <CommandLineIcon className="w-5 h-5" />
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z" />
+                        <path d="M12 10c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 2c-2.61 0-5.09.95-7.05 2.45C4.94 15.55 4 17.93 4 20h16c0-2.07-.94-4.45-2.45-6.35C17.05 12.95 14.57 12 12 12z" />
+                      </svg>
                       Let's Talk
                     </motion.a>
                   </div>

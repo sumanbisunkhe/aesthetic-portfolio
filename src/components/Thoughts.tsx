@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { auth, db } from '../lib/firebase';
-import { signOutUser, signInWithGoogle } from '../lib/auth';
 import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { fetchBlogPosts, type BlogPost } from '../lib/contentful';
 import { BookOpenIcon, ChatBubbleLeftIcon, TagIcon } from '@heroicons/react/24/outline';
@@ -84,7 +83,7 @@ const Thoughts = () => {
         setIsLoading(true);
         const response = await client.getEntries({
           content_type: 'thought',
-          order: '-sys.createdAt',
+          order: ['-sys.createdAt'],
         });
 
         const formattedThoughts = response.items.map((item: any) => ({
