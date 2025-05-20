@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   XMarkIcon, 
@@ -6,7 +6,8 @@ import {
   KeyIcon, 
   PhoneIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
 import { 
   signInWithGoogle, 
@@ -36,6 +37,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [verificationId, setVerificationId] = useState<string | null>(null);
   const recaptchaContainerRef = useRef<HTMLDivElement>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Clear error after 2 seconds with smooth fade out
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError('');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,16 +156,60 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </motion.div>
 
               {/* Error Message */}
-              <AnimatePresence>
+              <AnimatePresence mode="wait">
                 {error && (
                   <motion.div
                     initial={{ opacity: 0, y: -10, height: 0 }}
-                    animate={{ opacity: 1, y: 0, height: 'auto' }}
-                    exit={{ opacity: 0, y: -10, height: 0 }}
-                    className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center gap-2"
+                    animate={{ 
+                      opacity: 1, 
+                      y: 0, 
+                      height: 'auto',
+                      transition: {
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 25
+                      }
+                    }}
+                    exit={{ 
+                      opacity: 0, 
+                      y: -10, 
+                      height: 0,
+                      transition: {
+                        duration: 0.2,
+                        ease: "easeInOut"
+                      }
+                    }}
+                    className="mb-6 overflow-hidden"
                   >
-                    <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                    {error}
+                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center gap-2 backdrop-blur-sm">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        className="w-2 h-2 rounded-full bg-red-400"
+                      >
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.2, 1],
+                            opacity: [1, 0.5, 1]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                          className="w-full h-full rounded-full bg-red-400"
+                        />
+                      </motion.div>
+                      <motion.span
+                        initial={{ x: -10, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="flex-1"
+                      >
+                        {error}
+                      </motion.span>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>

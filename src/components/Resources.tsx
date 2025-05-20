@@ -135,7 +135,7 @@ const Resources = () => {
               className="w-full max-w-[280px] md:max-w-[320px] lg:max-w-[360px] shrink-0 aspect-[8.5/11] rounded-xl overflow-hidden border-2 border-primary-700/40 shadow-lg bg-black/80 flex items-center justify-center relative group"
             >
               <iframe
-                src="/src/assets/sumanbisunkhe-resume.pdf#toolbar=0&navpanes=0&scrollbar=0"
+                src="/docs/sumanbisunkhe-resume.pdf#toolbar=0&navpanes=0&scrollbar=0"
                 title="Suman Bisunkhe Resume Preview"
                 className="w-full h-full min-h-[400px] bg-black/90 rounded-xl border-none transition-all duration-300 group-hover:scale-[1.01]"
                 loading="lazy"
