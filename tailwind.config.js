@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -84,6 +84,7 @@ module.exports = {
         poppins: ['Poppins', 'sans-serif'],
         josefin: ['Josefin Sans', 'sans-serif'],
         oldenburg: ['Oldenburg', 'cursive'],
+        'merriweather': ['Merriweather', 'serif'],
       },
       boxShadow: {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.1), 0 10px 20px -2px rgba(0, 0, 0, 0.05)',

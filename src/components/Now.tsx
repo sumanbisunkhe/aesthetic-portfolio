@@ -127,7 +127,7 @@ const Now: React.FC = () => {
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 text-primary-300 font-josefin text-sm">
                     <ClockIcon className="w-4 h-4 text-accent-900" />
-                    <span>Duration: 2023 - Present</span>
+                    <span>Duration: 2025 - Present</span>
                   </div>
 
                   <div className="space-y-4">

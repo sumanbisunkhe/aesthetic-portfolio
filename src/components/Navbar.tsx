@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../lib/firebase';
 import { signOutUser } from '../lib/auth';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
 import { HiOutlineUser } from 'react-icons/hi';
 import {
@@ -15,6 +15,7 @@ import {
   LightBulbIcon,
   DocumentTextIcon,
   Bars3Icon,
+  ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
 
 interface NavItem {
@@ -35,22 +36,32 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Function to get the correct href based on current location
   const getCorrectHref = (href: string) => {
     if (href.startsWith('/')) return href; // Keep route links as is
-    if (location.pathname === '/thoughts') {
-      return `/#${href.substring(1)}`; // Add /# for hash links when on thoughts page
+    if (location.pathname !== '/') {
+      return `/#${href.substring(1)}`; // Add /# for hash links when not on main page
     }
     return href; // Keep hash links as is for main page
   };
 
   // Function to handle navigation clicks
   const handleNavigationClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (location.pathname === '/thoughts' && href.startsWith('#')) {
+    if (href.startsWith('#')) {
       e.preventDefault();
-      // Navigate to home page with hash
-      window.location.href = `/#${href.substring(1)}`;
+      const targetId = href.substring(1);
+      if (location.pathname !== '/') {
+        // If not on main page, navigate to main page with hash
+        navigate('/', { state: { scrollTo: targetId } });
+      } else {
+        // If on main page, just scroll to the section
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
     }
   };
 
@@ -75,7 +86,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
       setScrolled(window.scrollY > 20);
 
       // Only run scroll spy on main page
-      if (location.pathname === '/thoughts') return;
+      if (location.pathname !== '/') return;
 
       // Scroll spy functionality
       const scrollPosition = window.scrollY + 100;
@@ -90,6 +101,12 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
       const resourcesSection = document.getElementById('resources');
       const experienceSection = document.getElementById('resources-experience');
       const resumeSection = document.getElementById('resources-resume');
+      const contactSection = document.getElementById('contact');
+
+      if (contactSection && scrollPosition >= contactSection.offsetTop - 100) {
+        setActiveSection('contact');
+        return;
+      }
 
       if (resourcesSection) {
         const { offsetTop, offsetHeight } = resourcesSection;
@@ -145,6 +162,17 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
     }
   }, [location.pathname]);
 
+  // Add effect to handle scroll after navigation
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const targetId = location.state.scrollTo;
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location]);
+
   const handleSignOut = async () => {
     try {
       setIsSigningOut(true);
@@ -176,6 +204,17 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
             {/* Logo */}
             <motion.a
               href="#home"
+              onClick={(e) => {
+                e.preventDefault();
+                if (location.pathname !== '/') {
+                  navigate('/', { state: { scrollTo: 'home' } });
+                } else {
+                  const homeElement = document.getElementById('home');
+                  if (homeElement) {
+                    homeElement.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }
+              }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
@@ -215,7 +254,14 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                           aria-expanded={resourcesDropdownOpen}
                           aria-haspopup="true"
                         >
-                          <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 ${resourcesDropdownOpen || item.dropdown.some(subItem => activeSection === subItem.href.substring(1)) ? 'text-accent-900' : 'text-primary-50 hover:text-accent-200'}`}>
+                          <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 ${
+                            resourcesDropdownOpen || 
+                            activeSection === 'resources' || 
+                            activeSection === 'resources-experience' || 
+                            activeSection === 'resources-resume' 
+                              ? 'text-accent-900' 
+                              : 'text-primary-50 hover:text-accent-200'
+                          }`}>
                             <Icon className="w-4 h-4" aria-hidden="true" />
                             <span>{item.name}</span>
                             {/* Dropdown Arrow */}
@@ -223,7 +269,10 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                               <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                             </svg>
                           </span>
-                           {(resourcesDropdownOpen || item.dropdown.some(subItem => activeSection === subItem.href.substring(1))) && (
+                          {(resourcesDropdownOpen || 
+                            activeSection === 'resources' || 
+                            activeSection === 'resources-experience' || 
+                            activeSection === 'resources-resume') && (
                             <motion.div
                               layoutId="nav-pill"
                               className="absolute inset-0 bg-royal-900/20 rounded-lg -z-10"
@@ -243,13 +292,22 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                               <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="resources-menu-button">
                                 {item.dropdown.map((subItem) => {
                                   const SubIcon = subItem.icon;
-                                  return (
+                                  const isActive = activeSection === subItem.href.substring(1);
+                  return (
                                     <a
                                       key={subItem.name}
                                       href={subItem.href}
-                                      className="flex items-center px-4 py-2 text-sm text-primary-50 hover:bg-primary-700/50 hover:text-accent-900 transition-colors duration-200"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        handleNavigationClick(e, subItem.href);
+                                        setResourcesDropdownOpen(false);
+                                      }}
+                                      className={`flex items-center px-4 py-2 text-sm ${
+                                        isActive 
+                                          ? 'bg-primary-700/50 text-accent-900' 
+                                          : 'text-primary-50 hover:bg-primary-700/50 hover:text-accent-900'
+                                      } transition-colors duration-200`}
                                       role="menuitem"
-                                      onClick={() => setResourcesDropdownOpen(false)}
                                     >
                                       {SubIcon && <SubIcon className="w-4 h-4 mr-2" aria-hidden="true" />}
                                       {subItem.name}
@@ -337,15 +395,20 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                 </a>
                 <motion.a
                   href="#contact"
+                  onClick={(e) => {
+                    handleNavigationClick(e, '#contact');
+                    setMobileMenuOpen(false);
+                  }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-4 py-2 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-accent/20 transition-shadow duration-200 flex items-center gap-1.5"
+                  className={`px-4 py-2 ${
+                    activeSection === 'contact'
+                      ? 'bg-yellow-400 text-black'
+                      : 'bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900'
+                  } text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-accent/20 transition-all duration-200 flex items-center gap-1.5`}
                   aria-label="Open contact section"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z" />
-                    <path d="M12 10c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 2c-2.61 0-5.09.95-7.05 2.45C4.94 15.55 4 17.93 4 20h16c0-2.07-.94-4.45-2.45-6.35C17.05 12.95 14.57 12 12 12z" />
-                  </svg>
+                  <ChatBubbleLeftRightIcon className="w-4 h-4" />
                   Let's Talk
                 </motion.a>
               </div>
@@ -364,14 +427,14 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                         
                         {/* Avatar Image */}
-                        <img
-                          src={auth.currentUser.photoURL || ''}
-                          alt={auth.currentUser.displayName || ''}
+                      <img
+                        src={auth.currentUser.photoURL || ''}
+                        alt={auth.currentUser.displayName || ''}
                           className="relative w-10 h-10 rounded-full ring-2 ring-accent-900/20 group-hover:ring-accent-900/40 transition-all duration-300 object-cover"
-                        />
+                      />
                         
                         {/* Hover Effects */}
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/10 to-accent-700/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
                         
                         {/* Active Indicator */}
@@ -421,10 +484,10 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
 
                         {/* Menu Items */}
                         <div className="p-2">
-                          <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={handleSignOut}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleSignOut}
                             disabled={isSigningOut}
                             className="w-full px-4 py-3 text-left text-sm text-primary-200 hover:bg-primary-700/50 hover:text-accent-900 rounded-xl transition-colors duration-200 flex items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
                           >
@@ -451,7 +514,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                 <span>Sign Out</span>
                               </>
                             )}
-                          </motion.button>
+                      </motion.button>
                         </div>
                       </div>
                     </div>
@@ -591,31 +654,31 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                 </motion.button>
               )}
 
-              {/* Mobile menu button */}
-              <motion.button
-                whileTap={{ scale: 0.95 }}
+            {/* Mobile menu button */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
                 className="p-2 rounded-lg bg-primary-800/50 text-accent-900 hover:bg-primary-700/50"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-expanded={mobileMenuOpen}
-                aria-controls="mobile-menu"
-                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-              >
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={mobileMenuOpen ? 'close' : 'menu'}
-                    initial={{ opacity: 0, rotate: -90 }}
-                    animate={{ opacity: 1, rotate: 0 }}
-                    exit={{ opacity: 0, rotate: 90 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {mobileMenuOpen ? (
-                      <XMarkIcon className="w-6 h-6" aria-hidden="true" />
-                    ) : (
-                      <Bars3Icon className="w-6 h-6" aria-hidden="true" />
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-              </motion.button>
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={mobileMenuOpen ? 'close' : 'menu'}
+                  initial={{ opacity: 0, rotate: -90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: 90 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {mobileMenuOpen ? (
+                    <XMarkIcon className="w-6 h-6" aria-hidden="true" />
+                  ) : (
+                    <Bars3Icon className="w-6 h-6" aria-hidden="true" />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
             </div>
           </div>
         </div>
@@ -728,15 +791,15 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                     </a>
                     <motion.a
                       href="#contact"
+                      onClick={(e) => {
+                        handleNavigationClick(e, '#contact');
+                        setMobileMenuOpen(false);
+                      }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-3 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 font-medium rounded-xl shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 flex items-center gap-2 w-2/3 justify-center"
-                      onClick={() => setMobileMenuOpen(false)}
+                      className={`px-6 py-3 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 font-medium rounded-xl shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 flex items-center gap-2 w-2/3 justify-center`}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z" />
-                        <path d="M12 10c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 2c-2.61 0-5.09.95-7.05 2.45C4.94 15.55 4 17.93 4 20h16c0-2.07-.94-4.45-2.45-6.35C17.05 12.95 14.57 12 12 12z" />
-                      </svg>
+                      <ChatBubbleLeftRightIcon className="w-5 h-5" />
                       Let's Talk
                     </motion.a>
                   </div>
