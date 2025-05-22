@@ -20,7 +20,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import AuthModal from './AuthModal';
-import BlogPostView from './BlogPost';
 
 interface Comment {
   id: string;
@@ -51,9 +50,8 @@ const Thoughts = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<'date' | 'comments'>('date');
+  const [sortBy, setSortBy] = useState<'date' | 'comments' | 'views' | 'favorites'>('date');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedPostForReading, setSelectedPostForReading] = useState<BlogPost | null>(null);
   const [postViews, setPostViews] = useState<{ [key: string]: number }>({});
   const [showFavorites, setShowFavorites] = useState(false);
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
@@ -126,16 +124,23 @@ const Thoughts = () => {
 
     // Apply sorting
     result.sort((a, b) => {
-      if (sortBy === 'date') {
-        return new Date(b.fields.publishedDate || b.sys.createdAt).getTime() - 
-               new Date(a.fields.publishedDate || a.sys.createdAt).getTime();
-      } else {
-        return (comments[b.sys.id]?.length || 0) - (comments[a.sys.id]?.length || 0);
+      switch (sortBy) {
+        case 'date':
+          return new Date(b.fields.publishedDate || b.sys.createdAt).getTime() - 
+                 new Date(a.fields.publishedDate || a.sys.createdAt).getTime();
+        case 'comments':
+          return (comments[b.sys.id]?.length || 0) - (comments[a.sys.id]?.length || 0);
+        case 'views':
+          return (postViews[b.sys.id] || 0) - (postViews[a.sys.id] || 0);
+        case 'favorites':
+          return (likedPosts[b.sys.id] ? 1 : 0) - (likedPosts[a.sys.id] ? 1 : 0);
+        default:
+          return 0;
       }
     });
 
     setFilteredPosts(result);
-  }, [posts, searchQuery, selectedTags, sortBy, comments, showFavorites, likedPosts]);
+  }, [posts, searchQuery, selectedTags, sortBy, comments, showFavorites, likedPosts, postViews]);
 
   // Load comments for all posts
   useEffect(() => {
@@ -208,198 +213,242 @@ const Thoughts = () => {
   };
 
   const handlePostClick = (post: BlogPost) => {
-    navigate(`/thoughts/${post.sys.id}`);
+    navigate(`/thoughts/${post.fields.slug}`);
   };
 
   return (
     <section id="thoughts" className="min-h-screen py-24 bg-gradient-to-b from-black to-black">
       <div className="container mx-auto px-4">
-        {selectedPostForReading ? (
-          <BlogPostView 
-            post={selectedPostForReading} 
-            onBack={() => setSelectedPostForReading(null)} 
-          />
-        ) : (
-          <>
-            {/* Header Section */}
-            <div className="text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-josefin text-white mb-4">
-                My <span className="bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 bg-clip-text text-transparent">Thoughts</span>
-              </h1>
-              <p className="text-primary-300 max-w-2xl mx-auto">
-                Exploring ideas, sharing insights, and documenting my journey through technology and beyond.
-              </p>
+        {/* Stats Section */}
+        <div className="flex items-center justify-center mb-12">
+          <div className="inline-flex items-center gap-1 px-4 py-2 bg-primary-800/30 rounded-full border border-primary-700/20">
+            <div className="group relative flex items-center gap-2 px-3 border-r border-primary-700/20">
+              <BookOpenIcon className="w-4 h-4 text-accent-900" />
+              <span className="font-merriweather text-sm text-primary-300">{posts.length}</span>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-primary-900 text-primary-200 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                Articles
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2 h-2 bg-primary-900"></div>
+              </div>
             </div>
+            <div className="group relative flex items-center gap-2 px-3 border-r border-primary-700/20">
+              <ChatBubbleLeftIcon className="w-4 h-4 text-accent-900" />
+              <span className="font-merriweather text-sm text-primary-300">
+                {Object.values(comments).reduce((acc, curr) => acc + curr.length, 0)}
+              </span>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-primary-900 text-primary-200 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                Comments
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2 h-2 bg-primary-900"></div>
+              </div>
+            </div>
+            <div className="group relative flex items-center gap-2 px-3 border-r border-primary-700/20">
+              <EyeIcon className="w-4 h-4 text-accent-900" />
+              <span className="font-merriweather text-sm text-primary-300">
+                {Object.values(postViews).reduce((acc, curr) => acc + curr, 0).toLocaleString()}
+              </span>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-primary-900 text-primary-200 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                Total Views
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2 h-2 bg-primary-900"></div>
+              </div>
+            </div>
+            <div className="group relative flex items-center gap-2 px-3">
+              <HeartIcon className="w-4 h-4 text-accent-900" />
+              <span className="font-merriweather text-sm text-primary-300">
+                {Object.values(likedPosts).filter(Boolean).length}
+              </span>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-primary-900 text-primary-200 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                Favorites
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2 h-2 bg-primary-900"></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            {/* Search and Filter Section */}
-            <div className="mb-12">
-              <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                {/* Search Bar */}
-                <div className="relative w-full md:w-96">
+        {/* Search and Filter Section */}
+        <div className="relative mb-12">
+          {/* Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/50 to-black/30 rounded-2xl" />
+          <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent-200/5 via-transparent to-transparent" />
+          
+          {/* Content */}
+          <div className="relative p-6">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Search Bar */}
+              <div className="flex-1">
+                <div className="relative">
                   <input
                     type="text"
                     placeholder="Search articles..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-4 py-3 pl-12 bg-primary-800/50 border border-primary-700/50 rounded-xl text-primary-200 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-josefin"
+                    className="w-full px-6 py-4 pl-14 bg-black/50 border border-primary-700/50 rounded-xl text-primary-200 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-merriweather"
                   />
-                  <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary-400" />
+                  <MagnifyingGlassIcon className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary-400" />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-primary-400 hover:text-accent-900"
+                      className="absolute right-5 top-1/2 transform -translate-y-1/2 text-primary-400 hover:text-accent-900"
                     >
                       <XMarkIcon className="w-5 h-5" />
                     </button>
                   )}
                 </div>
-
-                {/* Filter and Sort Controls */}
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setShowFavorites(!showFavorites)}
-                    className={`flex items-center gap-2 px-4 py-3 bg-primary-800/50 border border-primary-700/50 rounded-xl transition-colors duration-200 ${
-                      showFavorites 
-                        ? 'text-accent-200 border-accent-200/50 hover:bg-accent-900/20' 
-                        : 'text-primary-200 hover:bg-primary-700/50 hover:text-accent-900'
-                    }`}
-                  >
-                    {showFavorites ? (
-                      <HeartIconSolid className="w-5 h-5" />
-                    ) : (
-                      <HeartIcon className="w-5 h-5" />
-                    )}
-                    Favorites
-                  </button>
-                  <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="flex items-center gap-2 px-4 py-3 bg-primary-800/50 border border-primary-700/50 rounded-xl text-primary-200 hover:bg-primary-700/50 hover:text-accent-900 transition-colors duration-200"
-                  >
-                    <FunnelIcon className="w-5 h-5" />
-                    Filters
-                  </button>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'date' | 'comments')}
-                    className="px-4 py-3 bg-primary-800/50 border border-primary-700/50 rounded-xl text-primary-200 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-josefin"
-                  >
-                    <option value="date">Latest First</option>
-                    <option value="comments">Most Commented</option>
-                  </select>
-                </div>
               </div>
 
-              {/* Tags Filter */}
-              <AnimatePresence>
-                {showFilters && (
-        <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mt-4 p-4 bg-primary-800/30 rounded-xl border border-primary-700/50"
-        >
-                    <div className="flex flex-wrap gap-2">
-                      {allTags.map(tag => (
-                        <button
-                          key={tag}
-                          onClick={() => {
-                            setSelectedTags(prev =>
-                              prev.includes(tag)
-                                ? prev.filter(t => t !== tag)
-                                : [...prev, tag]
-                            );
-                          }}
-                          className={`px-3 py-1.5 rounded-full text-sm font-josefin transition-all duration-200 flex items-center gap-1.5 ${
-                            selectedTags.includes(tag)
-                              ? 'bg-accent-900 text-primary-900'
-                              : 'bg-primary-700/30 text-primary-200 hover:bg-primary-700/50'
-                          }`}
-                        >
-                          <TagIcon className="w-3.5 h-3.5" />
-                          {tag}
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* Filter Controls */}
+              <div className="flex flex-wrap items-center gap-4">
+                <button
+                  onClick={() => setShowFavorites(!showFavorites)}
+                  className={`flex items-center gap-2 px-6 py-4 bg-black/50 border border-primary-700/50 rounded-xl transition-all duration-200 ${
+                    showFavorites 
+                      ? 'text-accent-200 border-accent-200/50 hover:bg-black/70' 
+                      : 'text-primary-200 hover:bg-black/70 hover:text-accent-900'
+                  }`}
+                >
+                  {showFavorites ? (
+                    <HeartIconSolid className="w-5 h-5" />
+                  ) : (
+                    <HeartIcon className="w-5 h-5" />
+                  )}
+                  <span className="font-merriweather">Favorites</span>
+                </button>
+
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`flex items-center gap-2 px-6 py-4 bg-black/50 border border-primary-700/50 rounded-xl transition-all duration-200 ${
+                    showFilters 
+                      ? 'text-accent-200 border-accent-200/50 hover:bg-black/70' 
+                      : 'text-primary-200 hover:bg-black/70 hover:text-accent-900'
+                  }`}
+                >
+                  <FunnelIcon className="w-5 h-5" />
+                  <span className="font-merriweather">Filters</span>
+                </button>
+
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as 'date' | 'comments' | 'views' | 'favorites')}
+                  className="px-6 py-4 bg-black/50 border border-primary-700/50 rounded-xl text-primary-200 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-merriweather appearance-none cursor-pointer hover:bg-black/70 transition-colors duration-200"
+                >
+                  <option value="date" className="bg-black text-primary-200">Latest First</option>
+                  <option value="comments" className="bg-black text-primary-200">Most Commented</option>
+                  <option value="views" className="bg-black text-primary-200">Most Popular</option>
+                  <option value="favorites" className="bg-black text-primary-200">Most Favorited</option>
+                </select>
+              </div>
             </div>
 
-            {/* Results Count */}
-            <div className="mb-8">
-              <p className="text-primary-400 font-josefin">
-                {filteredPosts.length} {filteredPosts.length === 1 ? 'article' : 'articles'} found
+            {/* Tags Filter */}
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-6 p-6 bg-black/30 rounded-xl border border-primary-700/50"
+                >
+                  <div className="flex flex-wrap gap-3">
+                    {allTags.map(tag => (
+                      <button
+                        key={tag}
+                        onClick={() => {
+                          setSelectedTags(prev =>
+                            prev.includes(tag)
+                              ? prev.filter(t => t !== tag)
+                              : [...prev, tag]
+                          );
+                        }}
+                        className={`px-4 py-2 rounded-full text-sm font-merriweather transition-all duration-200 flex items-center gap-2 ${
+                          selectedTags.includes(tag)
+                            ? 'bg-accent-900 text-primary-900'
+                            : 'bg-black/50 text-primary-200 hover:bg-black/70'
+                        }`}
+                      >
+                        <TagIcon className="w-4 h-4" />
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="mb-8">
+          <p className="text-primary-400 font-merriweather">
+            {filteredPosts.length} {filteredPosts.length === 1 ? 'article' : 'articles'} found
           </p>
-            </div>
+        </div>
 
-            {/* Blog Posts Grid */}
+        {/* Blog Posts Grid */}
         {loading ? (
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent-900"></div>
           </div>
-            ) : filteredPosts.length === 0 ? (
-              <div className="text-center py-16">
-                <p className="text-primary-400 text-lg font-josefin">No articles found matching your criteria.</p>
+        ) : filteredPosts.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-primary-400 text-lg font-merriweather">No articles found matching your criteria.</p>
           </div>
         ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPosts.map((post) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPosts.map((post) => (
               <motion.article
                 key={post.sys.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                    className="group relative bg-primary-800/30 rounded-xl overflow-hidden border border-primary-700/30 hover:border-accent-900/30 transition-all duration-300 cursor-pointer"
-                    onClick={() => handlePostClick(post)}
+                className="group relative bg-primary-800/30 rounded-xl overflow-hidden border border-primary-700/30 hover:border-accent-900/30 transition-all duration-300 cursor-pointer"
+                onClick={() => handlePostClick(post)}
               >
-                    {/* Cover Image with Overlay */}
-                    <div className="relative aspect-[16/9] overflow-hidden">
+                {/* Cover Image with Overlay */}
+                <div className="relative aspect-[16/9] overflow-hidden">
                   <img
                     src={post.fields.coverImage?.fields?.file?.url || '/fallback-image.jpg'}
                     alt={post.fields.coverImage?.fields?.title || post.fields.title}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {
                       console.error('Error loading image:', e);
                       e.currentTarget.src = '/fallback-image.jpg';
                     }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary-900 via-primary-900/50 to-transparent opacity-80" />
-                      
-                      {/* Tags Overlay */}
-                      <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                        {post.fields.tags?.slice(0, 2).map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 bg-accent-900/90 backdrop-blur-sm rounded-full text-xs text-primary-900 font-josefin"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {post.fields.tags && post.fields.tags.length > 2 && (
-                          <span className="px-2 py-1 bg-primary-900/90 backdrop-blur-sm rounded-full text-xs text-primary-200 font-josefin">
-                            +{post.fields.tags.length - 2}
-                          </span>
-                        )}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-900 via-primary-900/50 to-transparent opacity-80" />
+                  
+                  {/* Tags Overlay */}
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                    {post.fields.tags?.slice(0, 2).map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-1 bg-accent-900/90 backdrop-blur-sm rounded-full text-xs text-primary-900 font-merriweather"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {post.fields.tags && post.fields.tags.length > 2 && (
+                      <span className="px-2 py-1 bg-primary-900/90 backdrop-blur-sm rounded-full text-xs text-primary-200 font-merriweather">
+                        +{post.fields.tags.length - 2}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                    </div>
 
-                    {/* Content */}
-                    <div className="p-4 space-y-3">
-                      {/* Title and Date */}
+                {/* Content */}
+                <div className="p-4 space-y-3">
+                  {/* Title and Date */}
                     <div>
-                        <h3 className="text-lg font-josefin text-white group-hover:text-accent-900 transition-colors duration-300 line-clamp-2">
-                          {post.fields.title}
-                        </h3>
-                        <div className="flex items-center gap-2 mt-1.5 text-primary-400 text-xs">
-                          <CalendarIcon className="w-3.5 h-3.5" />
-                          <time>
+                    <h3 className="text-lg font-merriweather text-white group-hover:text-accent-900 transition-colors duration-300 line-clamp-2">
+                      {post.fields.title}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1.5 text-primary-400 text-xs">
+                      <CalendarIcon className="w-3.5 h-3.5" />
+                      <time>
                         {format(new Date(post.fields.publishedDate || post.sys.createdAt), 'MMM d, yyyy')}
                       </time>
                     </div>
                   </div>
 
-                      {/* Content Preview */}
-                      <div className="text-primary-300 text-sm line-clamp-2 font-josefin">
+                  {/* Content Preview */}
+                  <div className="text-primary-300 text-sm line-clamp-2 font-merriweather">
                     {post.fields.content ? (
                       <div className="prose prose-invert max-w-none">
                         {documentToReactComponents(post.fields.content)}
@@ -407,104 +456,102 @@ const Thoughts = () => {
                     ) : null}
                   </div>
 
-                      {/* Author and Stats */}
-                      <div className="flex items-center justify-between pt-3 border-t border-primary-700/30">
-                        <div className="flex items-center gap-2">
-                          <div className="relative">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
-                            <img
-                              src="/images/pp.webp"
-                              alt="Suman Bisunkhe"
-                              className="relative w-6 h-6 rounded-full ring-2 ring-accent-900/20 object-cover"
-                            />
-                          </div>
-                          <span className="text-primary-200 text-xs font-josefin">Suman Bisunkhe</span>
-                  </div>
-                        <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1 text-primary-400 text-xs">
-                      <EyeIcon className="w-3.5 h-3.5" />
-                      {postViews[post.sys.id]?.toLocaleString() || 0}
-                    </div>
-                    <div className="flex items-center gap-1 text-primary-400 text-xs">
-                      <ChatBubbleLeftIcon className="w-3.5 h-3.5" />
-                      {comments[post.sys.id]?.length || 0}
-                    </div>
-                        </div>
+                  {/* Author and Stats */}
+                  <div className="flex items-center justify-between pt-3 border-t border-primary-700/30">
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
+                        <img
+                          src="/images/pp.webp"
+                          alt="Suman Bisunkhe"
+                          className="relative w-6 h-6 rounded-full ring-2 ring-accent-900/20 object-cover"
+                        />
                       </div>
+                      <span className="text-primary-200 text-xs font-merriweather">Suman Bisunkhe</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1 text-primary-400 text-xs">
+                        <EyeIcon className="w-3.5 h-3.5" />
+                        {postViews[post.sys.id]?.toLocaleString() || 0}
+                      </div>
+                      <div className="flex items-center gap-1 text-primary-400 text-xs">
+                        <ChatBubbleLeftIcon className="w-3.5 h-3.5" />
+                        {comments[post.sys.id]?.length || 0}
+                      </div>
+                    </div>
+                  </div>
                   </div>
 
                   {/* Comments Section */}
-                    <AnimatePresence>
+                <AnimatePresence>
                   {selectedPost === post.sys.id && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                          className="px-4 pb-4"
+                      className="px-4 pb-4"
                     >
                       {/* Comment Form */}
-                          {auth.currentUser ? (
-                            <div className="flex gap-3 mt-3">
+                      {auth.currentUser ? (
+                        <div className="flex gap-3 mt-3">
                           <img
                             src={auth.currentUser.photoURL || ''}
                             alt={auth.currentUser.displayName || ''}
-                                className="w-6 h-6 rounded-full"
+                            className="w-6 h-6 rounded-full"
                           />
                           <div className="flex-1">
                             <textarea
                               value={newComment}
                               onChange={(e) => setNewComment(e.target.value)}
                               placeholder="Add a comment..."
-                                  className="w-full px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-josefin text-xs"
-                                  rows={2}
+                              className="w-full px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-merriweather text-xs"
+                              rows={2}
                             />
                             <button
                               onClick={() => handleAddComment(post.sys.id)}
-                                  className="mt-1.5 px-3 py-1.5 bg-accent-900 text-primary-900 rounded-lg hover:bg-accent-800 transition-colors duration-200 text-xs font-josefin"
+                              className="mt-1.5 px-3 py-1.5 bg-accent-900 text-primary-900 rounded-lg hover:bg-accent-800 transition-colors duration-200 text-xs font-merriweather"
                             >
                               Post Comment
                             </button>
                           </div>
                         </div>
-                          ) : (
-                            <button
-                              onClick={() => setIsAuthModalOpen(true)}
-                              className="w-full mt-3 px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 hover:bg-primary-700/50 transition-colors duration-200 text-xs font-josefin"
-                            >
-                              Sign in to comment
-                            </button>
+                      ) : (
+                        <button
+                          onClick={() => setIsAuthModalOpen(true)}
+                          className="w-full mt-3 px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 hover:bg-primary-700/50 transition-colors duration-200 text-xs font-merriweather"
+                        >
+                          Sign in to comment
+                        </button>
                       )}
 
                       {/* Comments List */}
-                          <div className="space-y-3 mt-3">
+                      <div className="space-y-3 mt-3">
                         {comments[post.sys.id]?.map((comment) => (
-                              <div key={comment.id} className="flex gap-2">
+                          <div key={comment.id} className="flex gap-2">
                             <img
                               src={comment.userAvatar}
                               alt={comment.userName}
-                                  className="w-6 h-6 rounded-full"
+                              className="w-6 h-6 rounded-full"
                             />
                             <div className="flex-1">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-primary-200 text-xs font-josefin">{comment.userName}</span>
-                                    <time className="text-primary-400 text-[10px]">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-primary-200 text-xs font-merriweather">{comment.userName}</span>
+                                <time className="text-primary-400 text-[10px]">
                                   {format(comment.createdAt.toDate(), 'MMM d, yyyy')}
                                 </time>
                               </div>
-                                  <p className="text-primary-300 text-xs mt-0.5 font-josefin">{comment.text}</p>
+                              <p className="text-primary-300 text-xs mt-0.5 font-merriweather">{comment.text}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                     </motion.div>
                   )}
-                    </AnimatePresence>
+                </AnimatePresence>
               </motion.article>
             ))}
           </div>
-            )}
-          </>
         )}
 
         {/* Auth Modal */}

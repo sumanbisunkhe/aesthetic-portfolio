@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -33,6 +33,17 @@ const ScrollToTop = () => {
   return null;
 };
 
+// BlogPostWrapper component to handle navigation
+const BlogPostWrapper = () => {
+  const navigate = useNavigate();
+  return (
+    <div className="bg-primary-900 min-h-screen">
+      <Navbar onOpenAuthModal={() => {}} />
+      <BlogPostView onBack={() => navigate('/thoughts')} />
+    </div>
+  );
+};
+
 function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
@@ -51,12 +62,7 @@ function App() {
         }}
       />
       <Routes>
-        <Route path="/thoughts/:postId" element={
-          <div className="bg-primary-900 min-h-screen">
-            <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />
-            <BlogPostView />
-          </div>
-        } />
+        <Route path="/thoughts/:slug" element={<BlogPostWrapper />} />
         <Route path="/thoughts" element={
           <div className="bg-primary-900 min-h-screen">
             <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />

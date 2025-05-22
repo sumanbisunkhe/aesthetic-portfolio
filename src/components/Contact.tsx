@@ -120,7 +120,7 @@ const Contact = () => {
                     <textarea
                       id="message"
                       name="message"
-                      rows={6}
+                      rows={4}
                       className="w-full px-4 py-3 bg-primary-800 border border-primary-700 rounded-xl text-primary-100 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900 focus:border-transparent transition-all duration-200 resize-none"
                       placeholder="Hello! I'd like to talk about..."
                       required

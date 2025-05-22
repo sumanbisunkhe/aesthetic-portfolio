@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer';
-import { Document, Block, Inline, BLOCKS, INLINES } from '@contentful/rich-text-types';
+import { Block, Inline, BLOCKS, INLINES } from '@contentful/rich-text-types';
 import { auth, db } from '../lib/firebase';
 import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp, increment, doc, updateDoc, getDoc, setDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
-  BookOpenIcon, 
   ChatBubbleLeftIcon, 
   TagIcon, 
   CalendarIcon, 
@@ -54,9 +53,13 @@ interface Comment {
   editedAt?: Timestamp;
 }
 
-const BlogPostView = () => {
-  const { postId } = useParams();
+interface BlogPostViewProps {
+  onBack: () => void;
+}
+
+const BlogPostView = ({ onBack }: BlogPostViewProps) => {
   const navigate = useNavigate();
+  const { slug } = useParams();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
@@ -72,41 +75,40 @@ const BlogPostView = () => {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState('');
 
+  // Load post data based on slug
   useEffect(() => {
     const loadPost = async () => {
-      if (!postId) {
-        navigate('/thoughts');
-        return;
-      }
-
       try {
         const posts = await fetchBlogPosts();
-        const foundPost = posts.find(p => p.sys.id === postId);
-        if (foundPost) {
-          setPost(foundPost);
-          
-          // Get or create the post document in Firestore
-          const postRef = doc(db, 'posts', postId);
-          const postDoc = await getDoc(postRef);
-          
-          if (!postDoc.exists()) {
-            // Create the document if it doesn't exist
-            await setDoc(postRef, {
-              views: 1,
-              likedBy: [],
-              bookmarkedBy: [],
-              createdAt: Timestamp.now()
-            });
-            setViews(1);
-          } else {
-            // Update views if document exists
-            await updateDoc(postRef, {
-              views: increment(1)
-            });
-            setViews(postDoc.data()?.views || 0);
-          }
-        } else {
+        const foundPost = posts.find(p => p.fields.slug === slug);
+        
+        if (!foundPost) {
           navigate('/thoughts');
+          return;
+        }
+
+        setPost(foundPost);
+        setIsLoading(false);
+
+        // Get or create the post document in Firestore
+        const postRef = doc(db, 'posts', foundPost.sys.id);
+        const postDoc = await getDoc(postRef);
+        
+        if (!postDoc.exists()) {
+          // Create the document if it doesn't exist
+          await setDoc(postRef, {
+            views: 1,
+            likedBy: [],
+            bookmarkedBy: [],
+            createdAt: Timestamp.now()
+          });
+          setViews(1);
+        } else {
+          // Update views if document exists
+          await updateDoc(postRef, {
+            views: increment(1)
+          });
+          setViews(postDoc.data()?.views || 0);
         }
       } catch (error) {
         console.error('Error loading post:', error);
@@ -115,39 +117,38 @@ const BlogPostView = () => {
     };
 
     loadPost();
-  }, [postId, navigate]);
+  }, [slug, navigate]);
 
   // Check if post is liked/bookmarked
   useEffect(() => {
-    if (auth.currentUser && postId) {
-      const checkUserInteractions = async () => {
-        try {
-          const postRef = doc(db, 'posts', postId);
-          const postDoc = await getDoc(postRef);
-          const data = postDoc.data();
-          
-          if (data) {
-            // Use array-contains for better performance
-            setIsLiked(data.likedBy?.includes(auth.currentUser?.uid) || false);
-            setIsBookmarked(data.bookmarkedBy?.includes(auth.currentUser?.uid) || false);
-          }
-        } catch (error) {
-          console.error('Error checking user interactions:', error);
+    if (!post || !auth.currentUser) return;
+
+    const checkUserInteractions = async () => {
+      try {
+        const postRef = doc(db, 'posts', post.sys.id);
+        const postDoc = await getDoc(postRef);
+        const data = postDoc.data();
+        
+        if (data) {
+          setIsLiked(data.likedBy?.includes(auth.currentUser?.uid) || false);
+          setIsBookmarked(data.bookmarkedBy?.includes(auth.currentUser?.uid) || false);
         }
-      };
-      
-      checkUserInteractions();
-    }
-  }, [postId, auth.currentUser]);
+      } catch (error) {
+        console.error('Error checking user interactions:', error);
+      }
+    };
+    
+    checkUserInteractions();
+  }, [post, auth.currentUser]);
 
   // Load comments
   useEffect(() => {
-    if (!postId) return;
+    if (!post) return;
 
     setIsLoading(true);
     const q = query(
       collection(db, 'comments'),
-      where('postId', '==', postId),
+      where('postId', '==', post.sys.id),
       orderBy('createdAt', 'desc')
     );
 
@@ -165,10 +166,10 @@ const BlogPostView = () => {
     });
 
     return () => unsubscribe();
-  }, [postId]);
+  }, [post]);
 
   const handleAddComment = async () => {
-    if (!auth.currentUser || !newComment.trim() || !postId) return;
+    if (!auth.currentUser || !newComment.trim() || !post?.sys.id) return;
 
     try {
       setIsSubmittingComment(true);
@@ -186,7 +187,7 @@ const BlogPostView = () => {
         userName: auth.currentUser.displayName || 'Anonymous',
         userAvatar: auth.currentUser.photoURL || '/images/default-avatar.png',
         createdAt: Timestamp.now(),
-        postId,
+        postId: post.sys.id,
         likes: 0,
         likedBy: [],
         isEdited: false
@@ -240,10 +241,10 @@ const BlogPostView = () => {
 
   const handleLikePost = async () => {
     const currentUser = auth.currentUser;
-    if (!currentUser || !postId) return;
+    if (!currentUser || !post?.sys.id) return;
 
     try {
-      const postRef = doc(db, 'posts', postId);
+      const postRef = doc(db, 'posts', post.sys.id);
       const postDoc = await getDoc(postRef);
       const data = postDoc.data();
       
@@ -269,11 +270,11 @@ const BlogPostView = () => {
 
   const handleBookmarkPost = async () => {
     const currentUser = auth.currentUser;
-    if (!currentUser || !postId || !post) return;
+    if (!currentUser || !post || !post.sys.id) return;
 
     try {
       // Handle Firestore bookmark
-      const postRef = doc(db, 'posts', postId);
+      const postRef = doc(db, 'posts', post.sys.id);
       const postDoc = await getDoc(postRef);
       const data = postDoc.data();
       
@@ -391,107 +392,66 @@ const BlogPostView = () => {
     }
   };
 
-  const renderOptions: Options = {
+  const options: Options = {
     renderNode: {
-      [BLOCKS.PARAGRAPH]: (_node: Block | Inline, children: React.ReactNode) => (
-        <p className="text-primary-100 leading-relaxed text-lg mb-6 font-merriweather whitespace-pre-wrap">{children}</p>
+      [BLOCKS.PARAGRAPH]: (node: Block | Inline, children: React.ReactNode) => (
+        <p className="text-primary-200 leading-relaxed mb-6 font-merriweather">
+          {children}
+        </p>
       ),
-      [BLOCKS.HEADING_1]: (_node: Block | Inline, children: React.ReactNode) => (
-        <h1 className="text-4xl md:text-5xl font-bold text-primary-50 mb-8 mt-12 leading-tight tracking-tight font-playfair">{children}</h1>
+      [BLOCKS.HEADING_1]: (node: Block | Inline, children: React.ReactNode) => (
+        <h1 className="text-4xl font-bold text-white mb-8 font-josefin">
+          {children}
+        </h1>
       ),
-      [BLOCKS.HEADING_2]: (_node: Block | Inline, children: React.ReactNode) => (
-        <h2 className="text-3xl md:text-4xl font-bold text-primary-50 mb-6 mt-10 leading-tight tracking-tight font-playfair">{children}</h2>
+      [BLOCKS.HEADING_2]: (node: Block | Inline, children: React.ReactNode) => (
+        <h2 className="text-3xl font-bold text-white mb-6 font-josefin">
+          {children}
+        </h2>
       ),
-      [BLOCKS.HEADING_3]: (_node: Block | Inline, children: React.ReactNode) => (
-        <h3 className="text-2xl md:text-3xl font-bold text-primary-50 mb-5 mt-8 leading-tight tracking-tight font-playfair">{children}</h3>
+      [BLOCKS.HEADING_3]: (node: Block | Inline, children: React.ReactNode) => (
+        <h3 className="text-2xl font-bold text-white mb-4 font-josefin">
+          {children}
+        </h3>
       ),
-      [BLOCKS.HEADING_4]: (_node: Block | Inline, children: React.ReactNode) => (
-        <h4 className="text-xl md:text-2xl font-bold text-primary-50 mb-4 mt-6 leading-tight tracking-tight font-playfair">{children}</h4>
+      [BLOCKS.HEADING_4]: (node: Block | Inline, children: React.ReactNode) => (
+        <h4 className="text-xl font-bold text-white mb-4 font-josefin">
+          {children}
+        </h4>
       ),
-      [BLOCKS.HEADING_5]: (_node: Block | Inline, children: React.ReactNode) => (
-        <h5 className="text-lg md:text-xl font-bold text-primary-50 mb-3 mt-5 leading-tight tracking-tight font-playfair">{children}</h5>
+      [BLOCKS.HEADING_5]: (node: Block | Inline, children: React.ReactNode) => (
+        <h5 className="text-lg font-bold text-white mb-4 font-josefin">
+          {children}
+        </h5>
       ),
-      [BLOCKS.HEADING_6]: (_node: Block | Inline, children: React.ReactNode) => (
-        <h6 className="text-base md:text-lg font-bold text-primary-50 mb-2 mt-4 leading-tight tracking-tight font-playfair">{children}</h6>
+      [BLOCKS.HEADING_6]: (node: Block | Inline, children: React.ReactNode) => (
+        <h6 className="text-base font-bold text-white mb-4 font-josefin">
+          {children}
+        </h6>
       ),
-      [BLOCKS.UL_LIST]: (_node: Block | Inline, children: React.ReactNode) => (
-        <ul className="list-disc list-outside space-y-3 text-primary-100 my-6 text-lg leading-relaxed pl-6 font-merriweather">{children}</ul>
+      [BLOCKS.UL_LIST]: (node: Block | Inline, children: React.ReactNode) => (
+        <ul className="list-disc list-inside mb-6 space-y-2 text-primary-200 font-merriweather">
+          {children}
+        </ul>
       ),
-      [BLOCKS.OL_LIST]: (_node: Block | Inline, children: React.ReactNode) => (
-        <ol className="list-decimal list-outside space-y-3 text-primary-100 my-6 text-lg leading-relaxed pl-6 font-merriweather">{children}</ol>
+      [BLOCKS.OL_LIST]: (node: Block | Inline, children: React.ReactNode) => (
+        <ol className="list-decimal list-inside mb-6 space-y-2 text-primary-200 font-merriweather">
+          {children}
+        </ol>
       ),
-      [BLOCKS.LIST_ITEM]: (_node: Block | Inline, children: React.ReactNode) => (
-        <li className="mb-2 pl-2 font-merriweather">{children}</li>
+      [BLOCKS.LIST_ITEM]: (node: Block | Inline, children: React.ReactNode) => (
+        <li className="text-primary-200 font-merriweather">
+          {children}
+        </li>
       ),
-      [BLOCKS.QUOTE]: (_node: Block | Inline, children: React.ReactNode) => (
-        <blockquote className="border-l-4 border-accent-200 pl-6 py-4 my-8 italic text-primary-200 text-lg leading-relaxed bg-primary-800/30 rounded-r-xl font-merriweather">{children}</blockquote>
+      [BLOCKS.QUOTE]: (node: Block | Inline, children: React.ReactNode) => (
+        <blockquote className="border-l-4 border-accent-900 pl-4 my-6 italic text-primary-300 font-merriweather">
+          {children}
+        </blockquote>
       ),
       [BLOCKS.HR]: () => (
-        <hr className="my-12 border-primary-700/50" />
+        <hr className="my-8 border-primary-700/50" />
       ),
-      [BLOCKS.CODE]: (node: Block | Inline) => {
-        const code = (node as any).data.content[0].content[0].value;
-        const language = (node as any).data.language || 'text';
-        
-        return (
-          <div className="relative group my-8">
-            <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(code);
-                  toast.success('Code copied to clipboard!');
-                }}
-                className="px-3 py-1.5 bg-primary-800/80 text-primary-200 rounded-lg text-sm hover:bg-primary-700/80 transition-colors duration-200"
-              >
-                Copy
-              </button>
-            </div>
-            <SyntaxHighlighter
-              language={language}
-              style={vscDarkPlus}
-              customStyle={{
-                margin: 0,
-                padding: '1.5rem',
-                borderRadius: '0.75rem',
-                background: 'rgba(17, 24, 39, 0.7)',
-                fontSize: '0.875rem',
-                lineHeight: '1.5',
-              }}
-              wrapLines={true}
-              wrapLongLines={true}
-            >
-              {code}
-            </SyntaxHighlighter>
-          </div>
-        );
-      },
-      [INLINES.HYPERLINK]: (node: Block | Inline, children: React.ReactNode) => (
-        <a 
-          href={(node as any).data.uri} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-accent-200 hover:text-accent-300 transition-colors duration-200 underline decoration-2 underline-offset-4 font-merriweather"
-        >
-          {children}
-        </a>
-      ),
-      [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
-        const { title, file } = (node as any).data.target.fields;
-        return (
-          <figure className="my-10">
-            <img
-              src={file.url}
-              alt={title}
-              className="rounded-xl shadow-xl w-full h-auto"
-            />
-            {title && (
-              <figcaption className="text-center text-primary-300 mt-3 text-sm font-merriweather">
-                {title}
-              </figcaption>
-            )}
-          </figure>
-        );
-      },
       [BLOCKS.EMBEDDED_ENTRY]: (node: Block | Inline) => {
         const { data } = node as any;
         if (data.target.sys.contentType.sys.id === 'codeBlock') {
@@ -532,6 +492,33 @@ const BlogPostView = () => {
         }
         return null;
       },
+      [INLINES.HYPERLINK]: (node: Block | Inline, children: React.ReactNode) => (
+        <a 
+          href={(node as any).data.uri} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-accent-200 hover:text-accent-300 transition-colors duration-200 underline decoration-2 underline-offset-4 font-merriweather"
+        >
+          {children}
+        </a>
+      ),
+      [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
+        const { title, file } = (node as any).data.target.fields;
+        return (
+          <figure className="my-10">
+            <img
+              src={file.url}
+              alt={title}
+              className="rounded-xl shadow-xl w-full h-auto"
+            />
+            {title && (
+              <figcaption className="text-center text-primary-300 mt-3 text-sm font-merriweather">
+                {title}
+              </figcaption>
+            )}
+          </figure>
+        );
+      },
     },
   };
 
@@ -560,7 +547,7 @@ const BlogPostView = () => {
             <div className="relative">
               {/* Back Button */}
               <button
-                onClick={() => navigate('/thoughts')}
+                onClick={onBack}
                 className="group inline-flex items-center gap-2 mb-8 text-primary-100 hover:text-accent-200 transition-colors duration-200"
               >
                 <ArrowLeftIcon className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200" />
@@ -706,8 +693,138 @@ const BlogPostView = () => {
               {/* Content Container */}
               <div className="relative p-8 md:p-12 lg:p-16 rounded-2xl border border-primary-700/20">
                 {post.fields.content && (
-                  <div className="space-y-6">
-                    {documentToReactComponents(post.fields.content, renderOptions)}
+                  <div className="space-y-8">
+                    {documentToReactComponents(post.fields.content, {
+                      ...options,
+                      renderNode: {
+                        ...options.renderNode,
+                        [BLOCKS.PARAGRAPH]: (node: Block | Inline, children: React.ReactNode) => (
+                          <p className="text-primary-200 leading-relaxed text-lg mb-8 font-merriweather">
+                            {children}
+                          </p>
+                        ),
+                        [BLOCKS.HEADING_1]: (node: Block | Inline, children: React.ReactNode) => (
+                          <h1 className="text-4xl md:text-5xl font-bold text-white mb-10 mt-12 leading-tight tracking-tight font-playfair">
+                            {children}
+                          </h1>
+                        ),
+                        [BLOCKS.HEADING_2]: (node: Block | Inline, children: React.ReactNode) => (
+                          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 mt-10 leading-tight tracking-tight font-playfair">
+                            {children}
+                          </h2>
+                        ),
+                        [BLOCKS.HEADING_3]: (node: Block | Inline, children: React.ReactNode) => (
+                          <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 mt-8 leading-tight tracking-tight font-playfair">
+                            {children}
+                          </h3>
+                        ),
+                        [BLOCKS.HEADING_4]: (node: Block | Inline, children: React.ReactNode) => (
+                          <h4 className="text-xl md:text-2xl font-bold text-white mb-5 mt-6 leading-tight tracking-tight font-playfair">
+                            {children}
+                          </h4>
+                        ),
+                        [BLOCKS.HEADING_5]: (node: Block | Inline, children: React.ReactNode) => (
+                          <h5 className="text-lg md:text-xl font-bold text-white mb-4 mt-5 leading-tight tracking-tight font-playfair">
+                            {children}
+                          </h5>
+                        ),
+                        [BLOCKS.HEADING_6]: (node: Block | Inline, children: React.ReactNode) => (
+                          <h6 className="text-base md:text-lg font-bold text-white mb-3 mt-4 leading-tight tracking-tight font-playfair">
+                            {children}
+                          </h6>
+                        ),
+                        [BLOCKS.UL_LIST]: (node: Block | Inline, children: React.ReactNode) => (
+                          <ul className="list-disc list-outside space-y-3 text-primary-100 my-6 text-lg leading-relaxed pl-6 font-merriweather">
+                            {children}
+                          </ul>
+                        ),
+                        [BLOCKS.OL_LIST]: (node: Block | Inline, children: React.ReactNode) => (
+                          <ol className="list-decimal list-outside space-y-3 text-primary-100 my-6 text-lg leading-relaxed pl-6 font-merriweather">
+                            {children}
+                          </ol>
+                        ),
+                        [BLOCKS.LIST_ITEM]: (node: Block | Inline, children: React.ReactNode) => (
+                          <li className="mb-2 pl-2 font-merriweather">
+                            {children}
+                          </li>
+                        ),
+                        [BLOCKS.QUOTE]: (node: Block | Inline, children: React.ReactNode) => (
+                          <blockquote className="border-l-4 border-accent-200 pl-6 py-4 my-8 italic text-primary-200 text-lg leading-relaxed bg-primary-800/30 rounded-r-xl font-merriweather">
+                            {children}
+                          </blockquote>
+                        ),
+                        [BLOCKS.HR]: () => (
+                          <hr className="my-12 border-primary-700/50" />
+                        ),
+                        [BLOCKS.EMBEDDED_ENTRY]: (node: Block | Inline) => {
+                          const { data } = node as any;
+                          if (data.target.sys.contentType.sys.id === 'codeBlock') {
+                            const code = data.target.fields.code;
+                            const language = data.target.fields.language || 'text';
+                            
+                            return (
+                              <div className="relative group my-8">
+                                <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                  <button
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(code);
+                                      toast.success('Code copied to clipboard!');
+                                    }}
+                                    className="px-3 py-1.5 bg-primary-800/80 text-primary-200 rounded-lg text-sm hover:bg-primary-700/80 transition-colors duration-200"
+                                  >
+                                    Copy
+                                  </button>
+                                </div>
+                                <SyntaxHighlighter
+                                  language={language}
+                                  style={vscDarkPlus}
+                                  customStyle={{
+                                    margin: 0,
+                                    padding: '1.5rem',
+                                    borderRadius: '0.75rem',
+                                    background: 'rgba(17, 24, 39, 0.7)',
+                                    fontSize: '0.875rem',
+                                    lineHeight: '1.5',
+                                  }}
+                                  wrapLines={true}
+                                  wrapLongLines={true}
+                                >
+                                  {code}
+                                </SyntaxHighlighter>
+                              </div>
+                            );
+                          }
+                          return null;
+                        },
+                        [INLINES.HYPERLINK]: (node: Block | Inline, children: React.ReactNode) => (
+                          <a 
+                            href={(node as any).data.uri} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-accent-200 hover:text-accent-300 transition-colors duration-200 underline decoration-2 underline-offset-4 font-merriweather"
+                          >
+                            {children}
+                          </a>
+                        ),
+                        [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
+                          const { title, file } = (node as any).data.target.fields;
+                          return (
+                            <figure className="my-10">
+                              <img
+                                src={file.url}
+                                alt={title}
+                                className="rounded-xl shadow-xl w-full h-auto"
+                              />
+                              {title && (
+                                <figcaption className="text-center text-primary-300 mt-3 text-sm font-merriweather">
+                                  {title}
+                                </figcaption>
+                              )}
+                            </figure>
+                          );
+                        },
+                      }
+                    })}
                   </div>
                 )}
               </div>

@@ -19,7 +19,7 @@ html, body, #root {
   
   body {
     @apply bg-primary-900 text-primary-50 font-poppins;
-  }
+}
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-playfair;
