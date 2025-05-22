@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { auth, db } from '../lib/firebase';
-import { collection, addDoc, query, where, onSnapshot, Timestamp, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, Timestamp, doc, getDoc } from 'firebase/firestore';
 import { fetchBlogPosts, type BlogPost } from '../lib/contentful';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -19,7 +19,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import AuthModal from './AuthModal';
-import { toast } from 'react-hot-toast';
 
 interface Comment {
   id: string;
@@ -43,7 +42,6 @@ const Thoughts = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
   const [comments, setComments] = useState<{ [key: string]: Comment[] }>({});
-  const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -200,7 +198,6 @@ const Thoughts = () => {
       fetchPostViews();
     }
   }, [posts]);
-
 
   const handlePostClick = (post: BlogPost) => {
     navigate(`/thoughts/${post.fields.slug}`);
