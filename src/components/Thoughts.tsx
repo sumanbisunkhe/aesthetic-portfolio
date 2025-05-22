@@ -29,6 +29,15 @@ interface Comment {
   createdAt: Timestamp;
 }
 
+// Define interfaces for Contentful rich text structure used in search
+interface ContentItem {
+  value?: string;
+}
+
+interface ContentBlock {
+  content?: ContentItem[];
+}
+
 const Thoughts = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -44,7 +53,6 @@ const Thoughts = () => {
   const [postViews, setPostViews] = useState<{ [key: string]: number }>({});
   const [showFavorites, setShowFavorites] = useState(false);
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-  const [selectedPost, setSelectedPost] = useState<string | null>(null);
 
   // Get all unique tags from posts
   const allTags = Array.from(new Set(posts.flatMap(post => post.fields.tags || [])));
@@ -58,10 +66,7 @@ const Thoughts = () => {
     });
   };
 
-  const handleRemoveTag = (tag: string) => {
-    setSelectedTags(prev => prev.filter(t => t !== tag));
-  };
-
+  // useEffect to load posts
   useEffect(() => {
     const loadPosts = async () => {
       try {
@@ -198,7 +203,7 @@ const Thoughts = () => {
 
   const handleAddComment = async (postId: string) => {
     if (!auth.currentUser || !newComment.trim()) return;
-    
+
     try {
       const commentRef = collection(db, 'comments');
       await addDoc(commentRef, {
@@ -345,12 +350,12 @@ const Thoughts = () => {
             {/* Tags Filter */}
             <AnimatePresence>
               {showFilters && (
-                <motion.div
+        <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   className="mt-6 p-6 bg-black/30 rounded-xl border border-primary-700/50"
-                >
+        >
                   <div className="flex flex-wrap gap-3">
                     {allTags.map(tag => (
                       <button
@@ -483,71 +488,62 @@ const Thoughts = () => {
                   </div>
 
                   {/* Comments Section */}
-                <AnimatePresence>
-                  {selectedPost === post.sys.id && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="px-4 pb-4"
-                    >
+                <div className="px-4 pb-4">
                       {/* Comment Form */}
-                      {auth.currentUser ? (
-                        <div className="flex gap-3 mt-3">
+                  {auth.currentUser ? (
+                    <div className="flex gap-3 mt-3">
                           <img
                             src={auth.currentUser.photoURL || ''}
                             alt={auth.currentUser.displayName || ''}
-                            className="w-6 h-6 rounded-full"
+                        className="w-6 h-6 rounded-full"
                           />
                           <div className="flex-1">
                             <textarea
                               value={newComment}
                               onChange={(e) => setNewComment(e.target.value)}
                               placeholder="Add a comment..."
-                              className="w-full px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-merriweather text-xs"
-                              rows={2}
+                          className="w-full px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-merriweather text-xs"
+                          rows={2}
                             />
                             <button
                               onClick={() => handleAddComment(post.sys.id)}
-                              className="mt-1.5 px-3 py-1.5 bg-accent-900 text-primary-900 rounded-lg hover:bg-accent-800 transition-colors duration-200 text-xs font-merriweather"
+                          className="mt-1.5 px-3 py-1.5 bg-accent-900 text-primary-900 rounded-lg hover:bg-accent-800 transition-colors duration-200 text-xs font-merriweather"
                             >
                               Post Comment
                             </button>
                           </div>
                         </div>
-                      ) : (
-                        <button
-                          onClick={() => setIsAuthModalOpen(true)}
-                          className="w-full mt-3 px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 hover:bg-primary-700/50 transition-colors duration-200 text-xs font-merriweather"
-                        >
-                          Sign in to comment
-                        </button>
+                  ) : (
+                    <button
+                      onClick={() => setIsAuthModalOpen(true)}
+                      className="w-full mt-3 px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 hover:bg-primary-700/50 transition-colors duration-200 text-xs font-merriweather"
+                    >
+                      Sign in to comment
+                    </button>
                       )}
 
                       {/* Comments List */}
-                      <div className="space-y-3 mt-3">
+                  <div className="space-y-3 mt-3">
                         {comments[post.sys.id]?.map((comment) => (
-                          <div key={comment.id} className="flex gap-2">
+                      <div key={comment.id} className="flex gap-2">
                             <img
                               src={comment.userAvatar}
                               alt={comment.userName}
-                              className="w-6 h-6 rounded-full"
+                          className="w-6 h-6 rounded-full"
                             />
                             <div className="flex-1">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-primary-200 text-xs font-merriweather">{comment.userName}</span>
-                                <time className="text-primary-400 text-[10px]">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-primary-200 text-xs font-merriweather">{comment.userName}</span>
+                            <time className="text-primary-400 text-[10px]">
                                   {format(comment.createdAt.toDate(), 'MMM d, yyyy')}
                                 </time>
                               </div>
-                              <p className="text-primary-300 text-xs mt-0.5 font-merriweather">{comment.text}</p>
+                          <p className="text-primary-300 text-xs mt-0.5 font-merriweather">{comment.text}</p>
                             </div>
                           </div>
                         ))}
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                </div>
               </motion.article>
             ))}
           </div>

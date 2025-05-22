@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer';
-import { Block, Inline, BLOCKS, INLINES } from '@contentful/rich-text-types';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 import { auth, db } from '../lib/firebase';
 import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp, increment, doc, updateDoc, getDoc, setDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   ChatBubbleLeftIcon, 
   TagIcon, 
@@ -16,7 +16,6 @@ import {
   BookmarkIcon,
   HeartIcon,
   EllipsisHorizontalIcon,
-  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import AuthModal from './AuthModal';
@@ -24,14 +23,12 @@ import type { BlogPost } from '../lib/contentful';
 import { toast } from 'react-hot-toast';
 import { fetchBlogPosts } from '../lib/contentful';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import jsx from 'react-syntax-highlighter/dist/esm/languages/prism/jsx';
 import typescript from 'react-syntax-highlighter/dist/esm/languages/prism/typescript';
 import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
 import css from 'react-syntax-highlighter/dist/esm/languages/prism/css';
 import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
 import json from 'react-syntax-highlighter/dist/esm/languages/prism/json';
-import { Link } from 'react-router-dom';
 
 // Register languages
 SyntaxHighlighter.registerLanguage('jsx', jsx);
@@ -72,7 +69,7 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [isSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState('');
