@@ -12,6 +12,7 @@
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^16.0.1",
     "@contentful/rich-text-types": "^17.0.0",
+    "@emailjs/browser": "^4.4.1",
     "@heroicons/react": "^2.1.1",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-syntax-highlighter": "^15.5.13",

@@ -1,10 +1,52 @@
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaInstagram, FaFacebookF, FaEnvelope } from 'react-icons/fa6';
+import { useState } from 'react';
+import emailjs from '@emailjs/browser';
+import toast from 'react-hot-toast';
+
+// Initialize EmailJS
+emailjs.init("VXCt9Zz9CXdcj9zIF");
 
 const Contact = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    setIsSubmitting(true);
+
+    try {
+      await emailjs.send(
+        'service_erfg3dm',
+        'template_galc3xd',
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          to_email: 'sumanbisunkhe304@gmail.com'
+        }
+      );
+
+      toast.success('Message sent successfully!');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const socialLinks = [
@@ -94,6 +136,8 @@ const Contact = () => {
                         type="text"
                         id="name"
                         name="name"
+                        value={formData.name}
+                        onChange={handleChange}
                         className="w-full px-4 py-3 bg-primary-800 border border-primary-700 rounded-xl text-primary-100 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900 focus:border-transparent transition-all duration-200"
                         placeholder="John Doe"
                         required
@@ -107,6 +151,8 @@ const Contact = () => {
                         type="email"
                         id="email"
                         name="email"
+                        value={formData.email}
+                        onChange={handleChange}
                         className="w-full px-4 py-3 bg-primary-800 border border-primary-700 rounded-xl text-primary-100 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900 focus:border-transparent transition-all duration-200"
                         placeholder="john@example.com"
                         required
@@ -120,6 +166,8 @@ const Contact = () => {
                     <textarea
                       id="message"
                       name="message"
+                      value={formData.message}
+                      onChange={handleChange}
                       rows={4}
                       className="w-full px-4 py-3 bg-primary-800 border border-primary-700 rounded-xl text-primary-100 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900 focus:border-transparent transition-all duration-200 resize-none"
                       placeholder="Hello! I'd like to talk about..."
@@ -130,9 +178,17 @@ const Contact = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     type="submit"
-                    className="w-full px-6 py-4 bg-yellow-400 text-black font-medium rounded-xl hover:shadow-lg hover:shadow-yellow-400/20 transition-all duration-200"
+                    disabled={isSubmitting}
+                    className="w-full px-6 py-4 bg-yellow-400 text-black font-medium rounded-xl hover:shadow-lg hover:shadow-yellow-400/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {isSubmitting ? (
+                      <div className="flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin mr-2" />
+                        Sending...
+                      </div>
+                    ) : (
+                      'Send Message'
+                    )}
                   </motion.button>
                 </form>
               </div>
