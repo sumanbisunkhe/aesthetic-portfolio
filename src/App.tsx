@@ -66,7 +66,7 @@ function App() {
             width: '100%',
             fontSize: '0.875rem',
             lineHeight: '1.25rem',
-            margin: '0 160px 16px 0',
+            margin: '0 320px 16px 0',
           },
           success: {
             iconTheme: {
