@@ -16,6 +16,7 @@ import {
   BookmarkIcon,
   HeartIcon,
   EllipsisHorizontalIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import AuthModal from './AuthModal';
@@ -30,6 +31,7 @@ import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javasc
 import css from 'react-syntax-highlighter/dist/esm/languages/prism/css';
 import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
 import json from 'react-syntax-highlighter/dist/esm/languages/prism/json';
+import { Link } from 'react-router-dom';
 
 // Register languages
 SyntaxHighlighter.registerLanguage('jsx', jsx);
@@ -169,40 +171,23 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
   }, [post]);
 
   const handleAddComment = async () => {
-    if (!auth.currentUser || !newComment.trim() || !post?.sys.id) return;
-
+    if (!auth.currentUser || !post || !newComment.trim()) return;
+    
     try {
-      setIsSubmittingComment(true);
-      setCommentError(null);
-
-      // Validate comment length
-      if (newComment.length > 1000) {
-        setCommentError('Comment cannot exceed 1000 characters');
-        return;
-      }
-
-      const commentData = {
-        text: newComment.trim(),
+      const commentRef = collection(db, 'comments');
+      await addDoc(commentRef, {
+        postId: post.sys.id,
         userId: auth.currentUser.uid,
         userName: auth.currentUser.displayName || 'Anonymous',
-        userAvatar: auth.currentUser.photoURL || '/images/default-avatar.png',
+        userAvatar: auth.currentUser.photoURL || '',
+        text: newComment.trim(),
         createdAt: Timestamp.now(),
-        postId: post.sys.id,
-        likes: 0,
-        likedBy: [],
-        isEdited: false
-      };
-
-      await addDoc(collection(db, 'comments'), commentData);
-
+      });
       setNewComment('');
       toast.success('Comment added successfully!');
     } catch (error) {
       console.error('Error adding comment:', error);
-      setCommentError('Failed to add comment. Please try again.');
-      toast.error('Failed to add comment');
-    } finally {
-      setIsSubmittingComment(false);
+      toast.error('Failed to add comment. Please try again.');
     }
   };
 
@@ -392,140 +377,100 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
     }
   };
 
-  const options: Options = {
-    renderNode: {
-      [BLOCKS.PARAGRAPH]: (node: Block | Inline, children: React.ReactNode) => (
-        <p className="text-primary-200 leading-relaxed mb-6 font-merriweather">
-          {children}
-        </p>
-      ),
-      [BLOCKS.HEADING_1]: (node: Block | Inline, children: React.ReactNode) => (
-        <h1 className="text-4xl font-bold text-white mb-8 font-josefin">
-          {children}
-        </h1>
-      ),
-      [BLOCKS.HEADING_2]: (node: Block | Inline, children: React.ReactNode) => (
-        <h2 className="text-3xl font-bold text-white mb-6 font-josefin">
-          {children}
-        </h2>
-      ),
-      [BLOCKS.HEADING_3]: (node: Block | Inline, children: React.ReactNode) => (
-        <h3 className="text-2xl font-bold text-white mb-4 font-josefin">
-          {children}
-        </h3>
-      ),
-      [BLOCKS.HEADING_4]: (node: Block | Inline, children: React.ReactNode) => (
-        <h4 className="text-xl font-bold text-white mb-4 font-josefin">
-          {children}
-        </h4>
-      ),
-      [BLOCKS.HEADING_5]: (node: Block | Inline, children: React.ReactNode) => (
-        <h5 className="text-lg font-bold text-white mb-4 font-josefin">
-          {children}
-        </h5>
-      ),
-      [BLOCKS.HEADING_6]: (node: Block | Inline, children: React.ReactNode) => (
-        <h6 className="text-base font-bold text-white mb-4 font-josefin">
-          {children}
-        </h6>
-      ),
-      [BLOCKS.UL_LIST]: (node: Block | Inline, children: React.ReactNode) => (
-        <ul className="list-disc list-inside mb-6 space-y-2 text-primary-200 font-merriweather">
-          {children}
-        </ul>
-      ),
-      [BLOCKS.OL_LIST]: (node: Block | Inline, children: React.ReactNode) => (
-        <ol className="list-decimal list-inside mb-6 space-y-2 text-primary-200 font-merriweather">
-          {children}
-        </ol>
-      ),
-      [BLOCKS.LIST_ITEM]: (node: Block | Inline, children: React.ReactNode) => (
-        <li className="text-primary-200 font-merriweather">
-          {children}
-        </li>
-      ),
-      [BLOCKS.QUOTE]: (node: Block | Inline, children: React.ReactNode) => (
-        <blockquote className="border-l-4 border-accent-900 pl-4 my-6 italic text-primary-300 font-merriweather">
-          {children}
-        </blockquote>
-      ),
-      [BLOCKS.HR]: () => (
-        <hr className="my-8 border-primary-700/50" />
-      ),
-      [BLOCKS.EMBEDDED_ENTRY]: (node: Block | Inline) => {
-        const { data } = node as any;
-        if (data.target.sys.contentType.sys.id === 'codeBlock') {
-          const code = data.target.fields.code;
-          const language = data.target.fields.language || 'text';
-          
-          return (
-            <div className="relative group my-8">
-              <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(code);
-                    toast.success('Code copied to clipboard!');
-                  }}
-                  className="px-3 py-1.5 bg-primary-800/80 text-primary-200 rounded-lg text-sm hover:bg-primary-700/80 transition-colors duration-200"
-                >
-                  Copy
-                </button>
-              </div>
-              <SyntaxHighlighter
-                language={language}
-                style={vscDarkPlus}
-                customStyle={{
-                  margin: 0,
-                  padding: '1.5rem',
-                  borderRadius: '0.75rem',
-                  background: 'rgba(17, 24, 39, 0.7)',
-                  fontSize: '0.875rem',
-                  lineHeight: '1.5',
-                }}
-                wrapLines={true}
-                wrapLongLines={true}
-              >
-                {code}
-              </SyntaxHighlighter>
-            </div>
-          );
-        }
-        return null;
-      },
-      [INLINES.HYPERLINK]: (node: Block | Inline, children: React.ReactNode) => (
-        <a 
-          href={(node as any).data.uri} 
-          target="_blank" 
+  const renderNode = {
+    [BLOCKS.PARAGRAPH]: (_node: any, children: React.ReactNode) => (
+      <p className="mb-4 text-primary-200 leading-relaxed">{children}</p>
+    ),
+    [BLOCKS.HEADING_1]: (_node: any, children: React.ReactNode) => (
+      <h1 className="text-4xl font-bold mb-6 text-white">{children}</h1>
+    ),
+    [BLOCKS.HEADING_2]: (_node: any, children: React.ReactNode) => (
+      <h2 className="text-3xl font-bold mb-5 text-white">{children}</h2>
+    ),
+    [BLOCKS.HEADING_3]: (_node: any, children: React.ReactNode) => (
+      <h3 className="text-2xl font-bold mb-4 text-white">{children}</h3>
+    ),
+    [BLOCKS.HEADING_4]: (_node: any, children: React.ReactNode) => (
+      <h4 className="text-xl font-bold mb-3 text-white">{children}</h4>
+    ),
+    [BLOCKS.HEADING_5]: (_node: any, children: React.ReactNode) => (
+      <h5 className="text-lg font-bold mb-2 text-white">{children}</h5>
+    ),
+    [BLOCKS.HEADING_6]: (_node: any, children: React.ReactNode) => (
+      <h6 className="text-base font-bold mb-2 text-white">{children}</h6>
+    ),
+    [BLOCKS.UL_LIST]: (_node: any, children: React.ReactNode) => (
+      <ul className="list-disc mb-4 ml-6 text-primary-200">{children}</ul>
+    ),
+    [BLOCKS.OL_LIST]: (_node: any, children: React.ReactNode) => (
+      <ol className="list-decimal mb-4 ml-6 text-primary-200">{children}</ol>
+    ),
+    [BLOCKS.LIST_ITEM]: (_node: any, children: React.ReactNode) => (
+      <li>{children}</li>
+    ),
+    [BLOCKS.QUOTE]: (_node: any, children: React.ReactNode) => (
+      <blockquote className="border-l-4 border-accent-900 pl-4 italic my-4 text-primary-300">{children}</blockquote>
+    ),
+    [BLOCKS.HR]: () => <hr className="my-8 border-primary-700" />,
+    [BLOCKS.EMBEDDED_ASSET]: (_node: any) => {
+      const { title, description, file } = _node.data.target.fields;
+      return (
+        <figure className="my-8">
+          <img
+            src={file.url}
+            alt={description || title}
+            className="rounded-lg shadow-lg"
+          />
+          {description && (
+            <figcaption className="text-sm text-primary-400 mt-2 text-center">
+              {description}
+            </figcaption>
+          )}
+        </figure>
+      );
+    },
+    [INLINES.HYPERLINK]: (_node: any, children: React.ReactNode) => {
+      const { uri } = _node.data;
+      return (
+        <a
+          href={uri}
+          target="_blank"
           rel="noopener noreferrer"
-          className="text-accent-200 hover:text-accent-300 transition-colors duration-200 underline decoration-2 underline-offset-4 font-merriweather"
+          className="text-accent-900 hover:text-accent-800 underline"
         >
           {children}
         </a>
-      ),
-      [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
-        const { title, file } = (node as any).data.target.fields;
-        return (
-          <figure className="my-10">
-            <img
-              src={file.url}
-              alt={title}
-              className="rounded-xl shadow-xl w-full h-auto"
-            />
-            {title && (
-              <figcaption className="text-center text-primary-300 mt-3 text-sm font-merriweather">
-                {title}
-              </figcaption>
-            )}
-          </figure>
-        );
-      },
+      );
+    },
+    [INLINES.EMBEDDED_ENTRY]: (_node: any) => {
+      const { title, description, file } = _node.data.target.fields;
+      return (
+        <figure className="my-8">
+          <img
+            src={file.url}
+            alt={description || title}
+            className="rounded-lg shadow-lg"
+          />
+          {description && (
+            <figcaption className="text-sm text-primary-400 mt-2 text-center">
+              {description}
+            </figcaption>
+          )}
+        </figure>
+      );
     },
   };
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent-900"></div>
+      <div className="min-h-screen bg-primary-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-4">Post Not Found</h1>
+          <p className="text-primary-300 mb-8">The post you're looking for doesn't exist or has been removed.</p>
+          <Link to="/thoughts" className="text-accent-200 hover:text-accent-300 transition-colors duration-200">
+            ← Back to Thoughts
+          </Link>
+        </div>
       </div>
     );
   }
@@ -695,135 +640,7 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
                 {post.fields.content && (
                   <div className="space-y-8">
                     {documentToReactComponents(post.fields.content, {
-                      ...options,
-                      renderNode: {
-                        ...options.renderNode,
-                        [BLOCKS.PARAGRAPH]: (node: Block | Inline, children: React.ReactNode) => (
-                          <p className="text-primary-200 leading-relaxed text-lg mb-8 font-merriweather">
-                            {children}
-                          </p>
-                        ),
-                        [BLOCKS.HEADING_1]: (node: Block | Inline, children: React.ReactNode) => (
-                          <h1 className="text-4xl md:text-5xl font-bold text-white mb-10 mt-12 leading-tight tracking-tight font-playfair">
-                            {children}
-                          </h1>
-                        ),
-                        [BLOCKS.HEADING_2]: (node: Block | Inline, children: React.ReactNode) => (
-                          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 mt-10 leading-tight tracking-tight font-playfair">
-                            {children}
-                          </h2>
-                        ),
-                        [BLOCKS.HEADING_3]: (node: Block | Inline, children: React.ReactNode) => (
-                          <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 mt-8 leading-tight tracking-tight font-playfair">
-                            {children}
-                          </h3>
-                        ),
-                        [BLOCKS.HEADING_4]: (node: Block | Inline, children: React.ReactNode) => (
-                          <h4 className="text-xl md:text-2xl font-bold text-white mb-5 mt-6 leading-tight tracking-tight font-playfair">
-                            {children}
-                          </h4>
-                        ),
-                        [BLOCKS.HEADING_5]: (node: Block | Inline, children: React.ReactNode) => (
-                          <h5 className="text-lg md:text-xl font-bold text-white mb-4 mt-5 leading-tight tracking-tight font-playfair">
-                            {children}
-                          </h5>
-                        ),
-                        [BLOCKS.HEADING_6]: (node: Block | Inline, children: React.ReactNode) => (
-                          <h6 className="text-base md:text-lg font-bold text-white mb-3 mt-4 leading-tight tracking-tight font-playfair">
-                            {children}
-                          </h6>
-                        ),
-                        [BLOCKS.UL_LIST]: (node: Block | Inline, children: React.ReactNode) => (
-                          <ul className="list-disc list-outside space-y-3 text-primary-100 my-6 text-lg leading-relaxed pl-6 font-merriweather">
-                            {children}
-                          </ul>
-                        ),
-                        [BLOCKS.OL_LIST]: (node: Block | Inline, children: React.ReactNode) => (
-                          <ol className="list-decimal list-outside space-y-3 text-primary-100 my-6 text-lg leading-relaxed pl-6 font-merriweather">
-                            {children}
-                          </ol>
-                        ),
-                        [BLOCKS.LIST_ITEM]: (node: Block | Inline, children: React.ReactNode) => (
-                          <li className="mb-2 pl-2 font-merriweather">
-                            {children}
-                          </li>
-                        ),
-                        [BLOCKS.QUOTE]: (node: Block | Inline, children: React.ReactNode) => (
-                          <blockquote className="border-l-4 border-accent-200 pl-6 py-4 my-8 italic text-primary-200 text-lg leading-relaxed bg-primary-800/30 rounded-r-xl font-merriweather">
-                            {children}
-                          </blockquote>
-                        ),
-                        [BLOCKS.HR]: () => (
-                          <hr className="my-12 border-primary-700/50" />
-                        ),
-                        [BLOCKS.EMBEDDED_ENTRY]: (node: Block | Inline) => {
-                          const { data } = node as any;
-                          if (data.target.sys.contentType.sys.id === 'codeBlock') {
-                            const code = data.target.fields.code;
-                            const language = data.target.fields.language || 'text';
-                            
-                            return (
-                              <div className="relative group my-8">
-                                <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                  <button
-                                    onClick={() => {
-                                      navigator.clipboard.writeText(code);
-                                      toast.success('Code copied to clipboard!');
-                                    }}
-                                    className="px-3 py-1.5 bg-primary-800/80 text-primary-200 rounded-lg text-sm hover:bg-primary-700/80 transition-colors duration-200"
-                                  >
-                                    Copy
-                                  </button>
-                                </div>
-                                <SyntaxHighlighter
-                                  language={language}
-                                  style={vscDarkPlus}
-                                  customStyle={{
-                                    margin: 0,
-                                    padding: '1.5rem',
-                                    borderRadius: '0.75rem',
-                                    background: 'rgba(17, 24, 39, 0.7)',
-                                    fontSize: '0.875rem',
-                                    lineHeight: '1.5',
-                                  }}
-                                  wrapLines={true}
-                                  wrapLongLines={true}
-                                >
-                                  {code}
-                                </SyntaxHighlighter>
-                              </div>
-                            );
-                          }
-                          return null;
-                        },
-                        [INLINES.HYPERLINK]: (node: Block | Inline, children: React.ReactNode) => (
-                          <a 
-                            href={(node as any).data.uri} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-accent-200 hover:text-accent-300 transition-colors duration-200 underline decoration-2 underline-offset-4 font-merriweather"
-                          >
-                            {children}
-                          </a>
-                        ),
-                        [BLOCKS.EMBEDDED_ASSET]: (node: Block | Inline) => {
-                          const { title, file } = (node as any).data.target.fields;
-                          return (
-                            <figure className="my-10">
-                              <img
-                                src={file.url}
-                                alt={title}
-                                className="rounded-xl shadow-xl w-full h-auto"
-                              />
-                              {title && (
-                                <figcaption className="text-center text-primary-300 mt-3 text-sm font-merriweather">
-                                  {title}
-                                </figcaption>
-                              )}
-                            </figure>
-                          );
-                        },
-                      }
+                      renderNode,
                     })}
                   </div>
                 )}

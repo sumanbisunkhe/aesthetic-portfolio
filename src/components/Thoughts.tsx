@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { auth, db } from '../lib/firebase';
-import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp, doc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, onSnapshot, Timestamp, doc, getDoc } from 'firebase/firestore';
 import { fetchBlogPosts, type BlogPost } from '../lib/contentful';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -14,29 +14,19 @@ import {
   FunnelIcon,
   XMarkIcon,
   CalendarIcon,
-  UserIcon,
   EyeIcon,
   HeartIcon,
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import AuthModal from './AuthModal';
+import { toast } from 'react-hot-toast';
 
 interface Comment {
   id: string;
   text: string;
-  userId: string;
   userName: string;
   userAvatar: string;
   createdAt: Timestamp;
-  postId: string;
-}
-
-interface ContentItem {
-  value?: string;
-}
-
-interface ContentBlock {
-  content?: ContentItem[];
 }
 
 const Thoughts = () => {
@@ -44,7 +34,6 @@ const Thoughts = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
   const [comments, setComments] = useState<{ [key: string]: Comment[] }>({});
-  const [selectedPost, setSelectedPost] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -55,9 +44,23 @@ const Thoughts = () => {
   const [postViews, setPostViews] = useState<{ [key: string]: number }>({});
   const [showFavorites, setShowFavorites] = useState(false);
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
+  const [selectedPost, setSelectedPost] = useState<string | null>(null);
 
   // Get all unique tags from posts
   const allTags = Array.from(new Set(posts.flatMap(post => post.fields.tags || [])));
+
+  const handleTagClick = (tag: string) => {
+    setSelectedTags(prev => {
+      if (prev.includes(tag)) {
+        return prev.filter(t => t !== tag);
+      }
+      return [...prev, tag];
+    });
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    setSelectedTags(prev => prev.filter(t => t !== tag));
+  };
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -195,20 +198,22 @@ const Thoughts = () => {
 
   const handleAddComment = async (postId: string) => {
     if (!auth.currentUser || !newComment.trim()) return;
-
+    
     try {
-      await addDoc(collection(db, 'comments'), {
-        text: newComment,
+      const commentRef = collection(db, 'comments');
+      await addDoc(commentRef, {
+        postId,
         userId: auth.currentUser.uid,
-        userName: auth.currentUser.displayName,
-        userAvatar: auth.currentUser.photoURL,
+        userName: auth.currentUser.displayName || 'Anonymous',
+        userAvatar: auth.currentUser.photoURL || '',
+        text: newComment.trim(),
         createdAt: Timestamp.now(),
-        postId
       });
-
       setNewComment('');
+      toast.success('Comment added successfully!');
     } catch (error) {
       console.error('Error adding comment:', error);
+      toast.error('Failed to add comment. Please try again.');
     }
   };
 
@@ -350,13 +355,7 @@ const Thoughts = () => {
                     {allTags.map(tag => (
                       <button
                         key={tag}
-                        onClick={() => {
-                          setSelectedTags(prev =>
-                            prev.includes(tag)
-                              ? prev.filter(t => t !== tag)
-                              : [...prev, tag]
-                          );
-                        }}
+                        onClick={() => handleTagClick(tag)}
                         className={`px-4 py-2 rounded-full text-sm font-merriweather transition-all duration-200 flex items-center gap-2 ${
                           selectedTags.includes(tag)
                             ? 'bg-accent-900 text-primary-900'
