@@ -34,7 +34,7 @@ const ScrollToTop = () => {
 };
 
 // BlogPostWrapper component to handle navigation and provide context
-const BlogPostWrapper = ({ isAuthModalOpen, setIsAuthModalOpen }: { isAuthModalOpen: boolean; setIsAuthModalOpen: (isOpen: boolean) => void }) => {
+const BlogPostWrapper = ({ setIsAuthModalOpen }: { setIsAuthModalOpen: (isOpen: boolean) => void }) => {
   const navigate = useNavigate();
   return (
     <div className="bg-primary-900 min-h-screen">
@@ -62,7 +62,7 @@ function App() {
         }}
       />
       <Routes>
-        <Route path="/thoughts/:slug" element={<BlogPostWrapper isAuthModalOpen={isAuthModalOpen} setIsAuthModalOpen={setIsAuthModalOpen} />} />
+        <Route path="/thoughts/:slug" element={<BlogPostWrapper setIsAuthModalOpen={setIsAuthModalOpen} />} />
         <Route path="/thoughts" element={
           <div className="bg-primary-900 min-h-screen">
             <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />

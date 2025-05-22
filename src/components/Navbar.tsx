@@ -37,6 +37,17 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
   const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(auth.currentUser);
+
+  // Effect to listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setCurrentUser(user);
+    });
+
+    // Clean up the listener on component unmount
+    return () => unsubscribe();
+  }, []); // Empty dependency array means this effect runs once on mount
 
   // Function to get the correct href based on current location
   const getCorrectHref = (href: string) => {
@@ -411,7 +422,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
 
               {/* Authentication */}
               <div className="flex items-center pl-4 border-l border-primary-700/50">
-                {auth.currentUser ? (
+                {currentUser ? (
                   <div className="relative group">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -424,8 +435,8 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                         
                         {/* Avatar Image */}
                       <img
-                        src={auth.currentUser.photoURL || ''}
-                        alt={auth.currentUser.displayName || ''}
+                        src={currentUser.photoURL || ''}
+                        alt={currentUser.displayName || ''}
                           className="relative w-10 h-10 rounded-full ring-2 ring-accent-900/20 group-hover:ring-accent-900/40 transition-all duration-300 object-cover"
                       />
                         
@@ -457,8 +468,8 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                               
                               <img
-                                src={auth.currentUser.photoURL || ''}
-                                alt={auth.currentUser.displayName || ''}
+                                src={currentUser.photoURL || ''}
+                                alt={currentUser.displayName || ''}
                                 className="relative w-12 h-12 rounded-xl ring-2 ring-accent-900/20 object-cover"
                               />
                               
@@ -469,10 +480,10 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-primary-200 truncate">
-                                {auth.currentUser.displayName}
+                                {currentUser.displayName}
                               </p>
                               <p className="text-xs text-primary-400 truncate">
-                                {auth.currentUser.email}
+                                {currentUser.email}
                               </p>
                             </div>
                           </div>
@@ -533,7 +544,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
             {/* Mobile menu button and auth */}
             <div className="lg:hidden flex items-center gap-2">
               {/* Authentication for mobile */}
-              {auth.currentUser ? (
+              {currentUser ? (
                 <div className="relative group">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -546,8 +557,8 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       
                       {/* Avatar Image */}
                       <img
-                        src={auth.currentUser.photoURL || ''}
-                        alt={auth.currentUser.displayName || ''}
+                        src={currentUser.photoURL || ''}
+                        alt={currentUser.displayName || ''}
                         className="relative w-6 h-6 rounded-full ring-2 ring-accent-900/20 group-hover:ring-accent-900/40 transition-all duration-300 object-cover"
                       />
                       
@@ -579,8 +590,8 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                             <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                             
                             <img
-                              src={auth.currentUser.photoURL || ''}
-                              alt={auth.currentUser.displayName || ''}
+                              src={currentUser.photoURL || ''}
+                              alt={currentUser.displayName || ''}
                               className="relative w-12 h-12 rounded-xl ring-2 ring-accent-900/20 object-cover"
                             />
                             
@@ -591,10 +602,10 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-primary-200 truncate">
-                              {auth.currentUser.displayName}
+                              {currentUser.displayName}
                             </p>
                             <p className="text-xs text-primary-400 truncate">
-                              {auth.currentUser.email}
+                              {currentUser.email}
                             </p>
                           </div>
                         </div>
