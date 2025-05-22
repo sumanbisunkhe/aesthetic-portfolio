@@ -39,11 +39,25 @@ const Contact = () => {
         }
       );
 
-      toast.success('Message sent successfully!');
+      toast.success('Message sent! I\'ll get back to you soon.', {
+        icon: '✨',
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+        },
+      });
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('Error sending email:', error);
-      toast.error('Failed to send message. Please try again.');
+      toast.error('Failed to send message. Please try again.', {
+        icon: '⚠️',
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+        },
+      });
     } finally {
       setIsSubmitting(false);
     }

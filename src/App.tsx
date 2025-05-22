@@ -51,13 +51,42 @@ function App() {
     <Router>
       <ScrollToTop />
       <Toaster
-        position="top-right"
+        position="bottom-right"
         toastOptions={{
-          duration: 3000,
+          duration: 2000,
           style: {
-            background: '#1a1a1a',
+            background: 'rgba(26, 26, 26, 0.95)',
             color: '#fff',
             border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(8px)',
+            maxWidth: '320px',
+            width: '100%',
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+            margin: '0 160px 16px 0',
+          },
+          success: {
+            iconTheme: {
+              primary: '#4ade80',
+              secondary: '#fff',
+            },
+            style: {
+              background: 'linear-gradient(to right, rgba(74, 222, 128, 0.1), rgba(26, 26, 26, 0.95))',
+              borderLeft: '3px solid #4ade80',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+            style: {
+              background: 'linear-gradient(to right, rgba(239, 68, 68, 0.1), rgba(26, 26, 26, 0.95))',
+              borderLeft: '3px solid #ef4444',
+            },
           },
         }}
       />
