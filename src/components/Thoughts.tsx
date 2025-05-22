@@ -471,79 +471,25 @@ const Thoughts = () => {
                           alt="Suman Bisunkhe"
                           className="relative w-6 h-6 rounded-full ring-2 ring-accent-900/20 object-cover"
                         />
-                      </div>
+                          </div>
                       <span className="text-primary-200 text-xs font-merriweather">Suman Bisunkhe</span>
-                    </div>
+                        </div>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1 text-primary-400 text-xs">
                         <EyeIcon className="w-3.5 h-3.5" />
                         {postViews[post.sys.id]?.toLocaleString() || 0}
-                      </div>
+                              </div>
                       <div className="flex items-center gap-1 text-primary-400 text-xs">
                         <ChatBubbleLeftIcon className="w-3.5 h-3.5" />
                         {comments[post.sys.id]?.length || 0}
                       </div>
                     </div>
                   </div>
-                  </div>
-
-                  {/* Comments Section */}
-                <div className="px-4 pb-4">
-                      {/* Comment Form */}
-                  {auth.currentUser ? (
-                    <div className="flex gap-3 mt-3">
-                          <img
-                            src={auth.currentUser.photoURL || ''}
-                            alt={auth.currentUser.displayName || ''}
-                        className="w-6 h-6 rounded-full"
-                          />
-                          <div className="flex-1">
-                            <textarea
-                              value={newComment}
-                              onChange={(e) => setNewComment(e.target.value)}
-                              placeholder="Add a comment..."
-                          className="w-full px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-merriweather text-xs"
-                          rows={2}
-                            />
-                            <button
-                              onClick={() => handleAddComment(post.sys.id)}
-                          className="mt-1.5 px-3 py-1.5 bg-accent-900 text-primary-900 rounded-lg hover:bg-accent-800 transition-colors duration-200 text-xs font-merriweather"
-                            >
-                              Post Comment
-                            </button>
-                          </div>
-                        </div>
-                  ) : (
-                    <button
-                      onClick={() => setIsAuthModalOpen(true)}
-                      className="w-full mt-3 px-3 py-2 bg-primary-700/30 rounded-lg text-primary-200 hover:bg-primary-700/50 transition-colors duration-200 text-xs font-merriweather"
-                    >
-                      Sign in to comment
-                    </button>
-                      )}
-
-                      {/* Comments List */}
-                  <div className="space-y-3 mt-3">
-                        {comments[post.sys.id]?.map((comment) => (
-                      <div key={comment.id} className="flex gap-2">
-                            <img
-                              src={comment.userAvatar}
-                              alt={comment.userName}
-                          className="w-6 h-6 rounded-full"
-                            />
-                            <div className="flex-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-primary-200 text-xs font-merriweather">{comment.userName}</span>
-                            <time className="text-primary-400 text-[10px]">
-                                  {format(comment.createdAt.toDate(), 'MMM d, yyyy')}
-                                </time>
-                              </div>
-                          <p className="text-primary-300 text-xs mt-0.5 font-merriweather">{comment.text}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                 </div>
+
+                  {/* Comments Section - Removed */}
+                  {/* The comments section and adding option are available on the individual blog post page */}
+
               </motion.article>
             ))}
           </div>
