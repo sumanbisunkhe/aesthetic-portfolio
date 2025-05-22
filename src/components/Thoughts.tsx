@@ -201,26 +201,6 @@ const Thoughts = () => {
     }
   }, [posts]);
 
-  const handleAddComment = async (postId: string) => {
-    if (!auth.currentUser || !newComment.trim()) return;
-
-    try {
-      const commentRef = collection(db, 'comments');
-      await addDoc(commentRef, {
-        postId,
-        userId: auth.currentUser.uid,
-        userName: auth.currentUser.displayName || 'Anonymous',
-        userAvatar: auth.currentUser.photoURL || '',
-        text: newComment.trim(),
-        createdAt: Timestamp.now(),
-      });
-      setNewComment('');
-      toast.success('Comment added successfully!');
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      toast.error('Failed to add comment. Please try again.');
-    }
-  };
 
   const handlePostClick = (post: BlogPost) => {
     navigate(`/thoughts/${post.fields.slug}`);
