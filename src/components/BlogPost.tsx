@@ -15,7 +15,6 @@ import {
   ShareIcon,
   BookmarkIcon,
   HeartIcon,
-  EllipsisHorizontalIcon,
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import AuthModal from './AuthModal';
@@ -93,11 +92,9 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);
-  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState('');
 
   // Load post data based on slug
@@ -211,39 +208,6 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
     } catch (error) {
       console.error('Error adding comment:', error);
       toast.error('Failed to add comment. Please try again.');
-    }
-  };
-
-  const handleEditComment = async (commentId: string) => {
-    if (!auth.currentUser || !editCommentText.trim()) return;
-
-    try {
-      const commentRef = doc(db, 'comments', commentId);
-      await updateDoc(commentRef, {
-        text: editCommentText.trim(),
-        isEdited: true,
-        editedAt: Timestamp.now()
-      });
-
-      setEditingCommentId(null);
-      setEditCommentText('');
-      toast.success('Comment updated successfully!');
-    } catch (error) {
-      console.error('Error updating comment:', error);
-      toast.error('Failed to update comment');
-    }
-  };
-
-  const handleDeleteComment = async (commentId: string) => {
-    if (!auth.currentUser) return;
-
-    try {
-      const commentRef = doc(db, 'comments', commentId);
-      await deleteDoc(commentRef);
-      toast.success('Comment deleted successfully!');
-    } catch (error) {
-      console.error('Error deleting comment:', error);
-      toast.error('Failed to delete comment');
     }
   };
 
