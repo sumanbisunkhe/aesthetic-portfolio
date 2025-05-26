@@ -56,6 +56,32 @@ interface BlogPostViewProps {
   onBack: () => void;
 }
 
+// Function to get user initials
+const getUserInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase();
+};
+
+// Function to get fallback avatar SVG
+const getFallbackAvatar = (name: string) => {
+  const initials = getUserInitials(name);
+  return `data:image/svg+xml,${encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#4B5563;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100" height="100" fill="url(#grad)"/>
+      <text x="50" y="50" font-family="Arial" font-size="40" fill="white" text-anchor="middle" dominant-baseline="central">${initials}</text>
+    </svg>
+  `)}`;
+};
+
 const BlogPostView = ({ onBack }: BlogPostViewProps) => {
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -527,11 +553,17 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
                 <div className="flex items-center gap-6 p-4 rounded-xl bg-primary-800/30 border border-primary-700/20">
                   <div className="flex items-center gap-2 text-primary-300">
                     <EyeIcon className="w-5 h-5" />
-                    <span className="font-merriweather">{views.toLocaleString()} views</span>
+                    <span className="font-merriweather">
+                      {views.toLocaleString()}
+                      <span className="hidden sm:inline ml-1">views</span>
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-primary-300">
                     <ChatBubbleLeftIcon className="w-5 h-5" />
-                    <span className="font-merriweather">{comments.length} comments</span>
+                    <span className="font-merriweather">
+                      {comments.length}
+                      <span className="hidden sm:inline ml-1">comments</span>
+                    </span>
                   </div>
                   <div className="flex items-center gap-4">
                     <button
@@ -658,11 +690,20 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
               {/* Comment Form */}
               {auth.currentUser ? (
                 <div className="flex gap-6 mb-16">
-                  <img
-                    src={auth.currentUser.photoURL || '/images/default-avatar.png'}
-                    alt={auth.currentUser.displayName || 'Anonymous'}
-                    className="w-12 h-12 rounded-full ring-2 ring-accent-200/20"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
+                    <img
+                      src={auth.currentUser.photoURL || getFallbackAvatar(auth.currentUser.displayName || 'Anonymous')}
+                      alt={auth.currentUser.displayName || 'Anonymous'}
+                      className="relative w-12 h-12 rounded-full ring-2 ring-accent-200/20 object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null; // Prevent infinite loop
+                        target.src = getFallbackAvatar(auth.currentUser?.displayName || 'Anonymous');
+                      }}
+                    />
+                  </div>
                   <div className="flex-1">
                     <textarea
                       value={newComment}
@@ -729,11 +770,20 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
                       
                       {/* Comment Content */}
                       <div className="relative flex gap-6 p-6 rounded-xl border border-primary-700/20">
-                        <img
-                          src={comment.userAvatar || '/images/default-avatar.png'}
-                          alt={comment.userName || 'Anonymous'}
-                          className="w-12 h-12 rounded-full ring-2 ring-accent-200/20"
-                        />
+                        <div className="relative">
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
+                          <img
+                            src={comment.userAvatar || getFallbackAvatar(comment.userName || 'Anonymous')}
+                            alt={comment.userName || 'Anonymous'}
+                            className="relative w-12 h-12 rounded-full ring-2 ring-accent-200/20 object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null; // Prevent infinite loop
+                              target.src = getFallbackAvatar(comment.userName || 'Anonymous');
+                            }}
+                          />
+                        </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-3">

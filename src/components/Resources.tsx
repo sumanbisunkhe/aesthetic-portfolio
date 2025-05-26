@@ -132,12 +132,12 @@ const Resources = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.7, delay: 0.3 }}
-              className="w-full max-w-[280px] md:max-w-[320px] lg:max-w-[360px] shrink-0 aspect-[8.5/11] rounded-xl overflow-hidden border-2 border-primary-700/40 shadow-lg bg-black/80 flex items-center justify-center relative group"
+              className="w-full max-w-[280px] md:max-w-[320px] lg:max-w-[360px] shrink-0 aspect-[8.5/11] rounded-xl overflow-hidden border-2 border-primary-700/40 shadow-lg bg-black/80 flex items-center justify-center"
             >
-              <iframe
-                src="/docs/sumanbisunkhe-resume.pdf#toolbar=0&navpanes=0&scrollbar=0"
-                title="Suman Bisunkhe Resume Preview"
-                className="w-full h-full min-h-[400px] bg-black/90 rounded-xl border-none transition-all duration-300 group-hover:scale-[1.01]"
+              <img
+                src="/images/resume-preview.png"
+                alt="Resume Preview"
+                className="w-full h-full object-cover object-center rounded-xl"
                 loading="lazy"
               />
             </motion.div>
@@ -150,7 +150,7 @@ const Resources = () => {
               transition={{ duration: 0.7, delay: 0.4 }}
               className="flex-1 flex flex-col items-center lg:items-start gap-6 lg:gap-8 text-center lg:text-left"
             >
-              <h3 className="text-2xl md:text-3xl font-bold text-white font-oldenburg mb-3">View or Download Resume</h3>
+              <h3 className="text-2xl md:text-3xl font-bold text-white font-oldenburg mb-3">Download Resume</h3>
               <p className="text-primary-300 font-josefin mb-4 leading-relaxed">
                 Explore my qualifications, skills, and professional background. You can view the interactive preview below or download the PDF for a complete record.
               </p>
@@ -161,9 +161,20 @@ const Resources = () => {
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)" }}
                 whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-accent-900 to-accent-700 text-primary-900 font-bold shadow-lg shadow-accent-900/30 hover:from-accent-800 hover:to-accent-700 transition-all duration-300 text-lg font-josefin uppercase tracking-wide"
+                className="inline-flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-8 py-2.5 sm:py-4 rounded-full bg-gradient-to-r from-accent-900 to-accent-700 text-primary-900 font-bold shadow-lg shadow-accent-900/30 hover:from-accent-800 hover:to-accent-700 transition-all duration-300 text-sm sm:text-lg font-josefin uppercase tracking-wide w-full sm:w-auto"
+                onClick={(e) => {
+                  // Ensure the download starts even if the target="_blank" behavior is blocked
+                  if (e.currentTarget.href) {
+                    const link = document.createElement('a');
+                    link.href = e.currentTarget.href;
+                    link.download = "Suman_Bisunkhe_Resume.pdf";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }
+                }}
               >
-                <ArrowDownTrayIcon className="w-6 h-6" />
+                <ArrowDownTrayIcon className="w-4 h-4 sm:w-6 sm:h-6" />
                 Download Resume
               </motion.a>
             </motion.div>

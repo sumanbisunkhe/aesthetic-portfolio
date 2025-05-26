@@ -203,14 +203,14 @@ const Work = () => {
     : projects.filter(project => project.category === selectedCategory);
 
   return (
-    <section id="work" className="min-h-screen py-24 bg-gradient-to-b from-black via-black to-black">
+    <section id="work" className="min-h-screen py-24 bg-gradient-to-b from-black via-black to-black -mt-27 sm:mt-0">
       <div className="container mx-auto px-4">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-16 -mt-12 sm:mt-0"
         >
           <span className="text-accent-900 font-josefin text-sm tracking-wider uppercase mb-3 block">
             My Works
@@ -229,7 +229,7 @@ const Work = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-3 mb-12"
+          className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-3 mb-12"
         >
           {categories.map((category) => (
             <motion.button

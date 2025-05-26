@@ -117,21 +117,19 @@ const Hero = () => {
                   className="flex flex-wrap gap-6 justify-center lg:justify-start pt-4"
                 >
                   <motion.a
-                    // href="#work"
                     onClick={() => scrollToSection('work')}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-6 py-3 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 font-medium rounded-full shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 text-base font-josefin cursor-pointer"
+                    className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 font-medium rounded-full shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 text-sm sm:text-base font-josefin cursor-pointer"
                     aria-label="View my work portfolio"
                   >
                     View My Work
                   </motion.a>
                   <motion.a
-                    // href="#contact"
                     onClick={() => scrollToSection('contact')}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-6 py-3 bg-primary-800/50 text-primary-50 font-medium rounded-full hover:bg-primary-700/50 transition-colors duration-200 backdrop-blur-sm border border-primary-700/50 text-base font-josefin cursor-pointer"
+                    className="px-4 sm:px-6 py-2 sm:py-3 bg-primary-800/50 text-primary-50 font-medium rounded-full hover:bg-primary-700/50 transition-colors duration-200 backdrop-blur-sm border border-primary-700/50 text-sm sm:text-base font-josefin cursor-pointer"
                     aria-label="Contact me"
                   >
                     Contact Me

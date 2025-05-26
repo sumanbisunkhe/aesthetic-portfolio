@@ -282,39 +282,39 @@ const Thoughts = () => {
               </div>
 
               {/* Filter Controls */}
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3 sm:gap-4 w-full sm:w-auto">
                 <button
                   onClick={() => setShowFavorites(!showFavorites)}
-                  className={`flex items-center gap-2 px-6 py-4 bg-black/50 border border-primary-700/50 rounded-xl transition-all duration-200 ${
+                  className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-4 bg-primary-800/50 border border-primary-700/50 rounded-xl transition-all duration-200 ${
                     showFavorites 
-                      ? 'text-accent-200 border-accent-200/50 hover:bg-black/70' 
-                      : 'text-primary-200 hover:bg-black/70 hover:text-accent-900'
+                      ? 'text-accent-200 border-accent-200/50 hover:bg-primary-800/70' 
+                      : 'text-primary-200 hover:bg-primary-800/70 hover:text-accent-900'
                   }`}
                 >
                   {showFavorites ? (
-                    <HeartIconSolid className="w-5 h-5" />
+                    <HeartIconSolid className="w-4 h-4 sm:w-5 sm:h-5" />
                   ) : (
-                    <HeartIcon className="w-5 h-5" />
+                    <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                   )}
-                  <span className="font-merriweather">Favorites</span>
+                  <span className="font-merriweather text-sm sm:text-base">Favorites</span>
                 </button>
 
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center gap-2 px-6 py-4 bg-black/50 border border-primary-700/50 rounded-xl transition-all duration-200 ${
+                  className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-4 bg-primary-800/50 border border-primary-700/50 rounded-xl transition-all duration-200 ${
                     showFilters 
-                      ? 'text-accent-200 border-accent-200/50 hover:bg-black/70' 
-                      : 'text-primary-200 hover:bg-black/70 hover:text-accent-900'
+                      ? 'text-accent-200 border-accent-200/50 hover:bg-primary-800/70' 
+                      : 'text-primary-200 hover:bg-primary-800/70 hover:text-accent-900'
                   }`}
                 >
-                  <FunnelIcon className="w-5 h-5" />
-                  <span className="font-merriweather">Filters</span>
+                  <FunnelIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="font-merriweather text-sm sm:text-base">Filters</span>
                 </button>
 
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'date' | 'comments' | 'views' | 'favorites')}
-                  className="px-6 py-4 bg-black/50 border border-primary-700/50 rounded-xl text-primary-200 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-merriweather appearance-none cursor-pointer hover:bg-black/70 transition-colors duration-200"
+                  className="col-span-2 sm:col-span-1 px-4 sm:px-6 py-3 sm:py-4 bg-primary-800/50 border border-primary-700/50 rounded-xl text-primary-200 focus:outline-none focus:ring-2 focus:ring-accent-900/50 font-merriweather appearance-none cursor-pointer hover:bg-primary-800/70 transition-colors duration-200 text-sm sm:text-base"
                 >
                   <option value="date" className="bg-black text-primary-200">Latest First</option>
                   <option value="comments" className="bg-black text-primary-200">Most Commented</option>
@@ -327,25 +327,25 @@ const Thoughts = () => {
             {/* Tags Filter */}
             <AnimatePresence>
               {showFilters && (
-        <motion.div
+                <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-6 p-6 bg-black/30 rounded-xl border border-primary-700/50"
-        >
-                  <div className="flex flex-wrap gap-3">
+                  className="mt-6 p-4 sm:p-6 bg-black/30 rounded-xl border border-primary-700/50"
+                >
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
                     {allTags.map(tag => (
                       <button
                         key={tag}
                         onClick={() => handleTagClick(tag)}
-                        className={`px-4 py-2 rounded-full text-sm font-merriweather transition-all duration-200 flex items-center gap-2 ${
+                        className={`px-3 sm:px-4 py-2 rounded-full text-sm font-merriweather transition-all duration-200 flex items-center justify-center gap-1.5 ${
                           selectedTags.includes(tag)
-                            ? 'bg-accent-900 text-primary-900'
-                            : 'bg-black/50 text-primary-200 hover:bg-black/70'
+                            ? 'bg-accent-800 text-primary-200'
+                            : 'bg-primary-800/50 text-primary-200 hover:bg-primary-800/70'
                         }`}
                       >
-                        <TagIcon className="w-4 h-4" />
-                        {tag}
+                        <TagIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <span className="truncate">{tag}</span>
                       </button>
                     ))}
                   </div>
@@ -372,14 +372,14 @@ const Thoughts = () => {
             <p className="text-primary-400 text-lg font-merriweather">No articles found matching your criteria.</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
             {filteredPosts.map((post) => (
               <motion.article
                 key={post.sys.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="group relative bg-primary-800/30 rounded-xl overflow-hidden border border-primary-700/30 hover:border-accent-900/30 transition-all duration-300 cursor-pointer"
+                className="group relative bg-primary-800/30 rounded-lg sm:rounded-xl overflow-hidden border border-primary-700/30 hover:border-accent-900/30 transition-all duration-300 cursor-pointer"
                 onClick={() => handlePostClick(post)}
               >
                 {/* Cover Image with Overlay */}
@@ -396,17 +396,17 @@ const Thoughts = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-900 via-primary-900/50 to-transparent opacity-80" />
                   
                   {/* Tags Overlay */}
-                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-wrap gap-1">
                     {post.fields.tags?.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 bg-accent-900/90 backdrop-blur-sm rounded-full text-xs text-primary-900 font-merriweather"
+                        className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-accent-900/90 backdrop-blur-sm rounded-full text-[7px] sm:text-xs text-primary-900 font-merriweather"
                       >
                         {tag}
                       </span>
                     ))}
                     {post.fields.tags && post.fields.tags.length > 2 && (
-                      <span className="px-2 py-1 bg-primary-900/90 backdrop-blur-sm rounded-full text-xs text-primary-200 font-merriweather">
+                      <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-primary-900/90 backdrop-blur-sm rounded-full text-[7px] sm:text-xs text-primary-200 font-merriweather">
                         +{post.fields.tags.length - 2}
                       </span>
                     )}
@@ -414,14 +414,14 @@ const Thoughts = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-4 space-y-3">
+                <div className="p-2.5 sm:p-4 space-y-2 sm:space-y-3">
                   {/* Title and Date */}
-                    <div>
-                    <h3 className="text-lg font-merriweather text-white group-hover:text-accent-900 transition-colors duration-300 line-clamp-2">
+                  <div>
+                    <h3 className="text-[10px] sm:text-sm lg:text-base font-merriweather text-white group-hover:text-accent-900 transition-colors duration-300 line-clamp-2 leading-tight">
                       {post.fields.title}
                     </h3>
-                    <div className="flex items-center gap-2 mt-1.5 text-primary-400 text-xs">
-                      <CalendarIcon className="w-3.5 h-3.5" />
+                    <div className="flex items-center gap-0.5 mt-0.5 text-primary-400 text-[7px] sm:text-xs">
+                      <CalendarIcon className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5" />
                       <time>
                         {format(new Date(post.fields.publishedDate || post.sys.createdAt), 'MMM d, yyyy')}
                       </time>
@@ -429,44 +429,46 @@ const Thoughts = () => {
                   </div>
 
                   {/* Content Preview */}
-                  <div className="text-primary-300 text-sm line-clamp-2 font-merriweather">
+                  <div className="text-primary-300 text-[8px] sm:text-sm line-clamp-2 font-merriweather leading-tight">
                     {post.fields.content ? (
-                      <div className="prose prose-invert max-w-none">
+                      <div className="prose prose-invert max-w-none prose-[7px] sm:prose-sm">
                         {documentToReactComponents(post.fields.content)}
                       </div>
                     ) : null}
                   </div>
 
                   {/* Author and Stats */}
-                  <div className="flex items-center justify-between pt-3 border-t border-primary-700/30">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between pt-1.5 sm:pt-2 border-t border-primary-700/30">
+                    <div className="flex items-center gap-0.5 sm:gap-2">
                       <div className="relative">
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                         <img
                           src="/images/pp.webp"
                           alt="Suman Bisunkhe"
-                          className="relative w-6 h-6 rounded-full ring-2 ring-accent-900/20 object-cover"
+                          className="relative w-2.5 h-2.5 sm:w-5 sm:h-5 rounded-full ring-1 ring-accent-900/20 object-cover"
                         />
-                          </div>
-                      <span className="text-primary-200 text-xs font-merriweather">Suman Bisunkhe</span>
-                        </div>
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1 text-primary-400 text-xs">
-                        <EyeIcon className="w-3.5 h-3.5" />
-                        {postViews[post.sys.id]?.toLocaleString() || 0}
-                              </div>
-                      <div className="flex items-center gap-1 text-primary-400 text-xs">
-                        <ChatBubbleLeftIcon className="w-3.5 h-3.5" />
-                        {comments[post.sys.id]?.length || 0}
+                      </div>
+                      <span className="text-primary-200 text-[6px] sm:text-xs font-merriweather">Suman Bisunkhe</span>
+                    </div>
+                    <div className="flex items-center gap-1 sm:gap-3">
+                      <div className="flex items-center gap-0.5 text-primary-400 text-[6px] sm:text-xs">
+                        <EyeIcon className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5" />
+                        <span className="sm:ml-1">
+                          {postViews[post.sys.id]?.toLocaleString() || 0}
+                          <span className="hidden sm:inline ml-1">Views</span>
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-0.5 text-primary-400 text-[6px] sm:text-xs">
+                        <ChatBubbleLeftIcon className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5" />
+                        <span className="sm:ml-1">
+                          {comments[post.sys.id]?.length || 0}
+                          <span className="hidden sm:inline ml-1">Comments</span>
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                  {/* Comments Section - Removed */}
-                  {/* The comments section and adding option are available on the individual blog post page */}
-
               </motion.article>
             ))}
           </div>
