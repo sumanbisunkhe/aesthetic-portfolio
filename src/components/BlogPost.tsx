@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 import { auth, db } from '../lib/firebase';
-import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp, increment, doc, updateDoc, getDoc, setDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { collection, addDoc, query, where, orderBy, onSnapshot, Timestamp, increment, doc, updateDoc, getDoc, setDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { 
   ChatBubbleLeftIcon, 
@@ -95,7 +95,6 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);
-  const [editCommentText, setEditCommentText] = useState('');
 
   // Load post data based on slug
   useEffect(() => {
