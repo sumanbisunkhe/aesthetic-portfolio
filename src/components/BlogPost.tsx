@@ -509,39 +509,39 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
         {/* Article Container */}
         <div className="max-w-7xl mx-auto">
           {/* Article Header with Gradient Background */}
-          <div className="relative mb-16 p-8 rounded-2xl bg-gradient-to-br from-primary-800/50 to-primary-900/50 border border-primary-700/20">
+          <div className="relative mb-12 p-6 rounded-2xl bg-gradient-to-br from-primary-800/50 to-primary-900/50 border border-primary-700/20">
             <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent-200/5 via-transparent to-transparent" />
             
             <div className="relative">
               {/* Back Button */}
               <button
                 onClick={onBack}
-                className="group inline-flex items-center gap-2 mb-8 text-primary-100 hover:text-accent-200 transition-colors duration-200"
+                className="group inline-flex items-center gap-2 mb-6 text-primary-100 hover:text-accent-200 transition-colors duration-200"
               >
-                <ArrowLeftIcon className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200" />
-                <span className="font-merriweather">Back to Articles</span>
+                <ArrowLeftIcon className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform duration-200" />
+                <span className="font-merriweather text-sm">Back to Articles</span>
               </button>
 
-              <h1 className="blog-title text-primary-50 mb-10 font-playfair">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-playfair text-primary-50 mb-8">
                 {post.fields.title}
               </h1>
               
               {/* Author and Date Section */}
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
                   <div className="relative">
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-200 via-accent-300 to-accent-400 animate-spin-slow opacity-50 blur-sm" />
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-200 via-accent-300 to-accent-400 opacity-20" />
                     <img
                       src="/images/pp.webp"
                       alt="Suman Bisunkhe"
-                      className="relative w-14 h-14 rounded-full ring-2 ring-accent-200/20 object-cover"
+                      className="relative w-10 h-10 rounded-full ring-2 ring-accent-200/20 object-cover"
                     />
                   </div>
                   <div>
-                    <h2 className="text-xl font-playfair text-primary-100">Suman Bisunkhe</h2>
-                    <div className="flex items-center gap-2 text-primary-300 font-merriweather">
-                      <CalendarIcon className="w-5 h-5" />
+                    <h2 className="text-base sm:text-lg font-playfair text-primary-100">Suman Bisunkhe</h2>
+                    <div className="flex items-center gap-2 text-primary-300 text-sm font-merriweather">
+                      <CalendarIcon className="w-4 h-4" />
                       <time>
                         {format(new Date(post.fields.publishedDate || post.sys.createdAt), 'MMMM d, yyyy')}
                       </time>
@@ -550,30 +550,30 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
                 </div>
 
                 {/* Post Stats with Gradient Background */}
-                <div className="flex items-center gap-6 p-4 rounded-xl bg-primary-800/30 border border-primary-700/20">
-                  <div className="flex items-center gap-2 text-primary-300">
-                    <EyeIcon className="w-5 h-5" />
+                <div className="flex items-center gap-4 p-3 rounded-xl bg-primary-800/30 border border-primary-700/20">
+                  <div className="flex items-center gap-2 text-primary-300 text-sm">
+                    <EyeIcon className="w-4 h-4" />
                     <span className="font-merriweather">
                       {views.toLocaleString()}
                       <span className="hidden sm:inline ml-1">views</span>
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-primary-300">
-                    <ChatBubbleLeftIcon className="w-5 h-5" />
+                  <div className="flex items-center gap-2 text-primary-300 text-sm">
+                    <ChatBubbleLeftIcon className="w-4 h-4" />
                     <span className="font-merriweather">
                       {comments.length}
                       <span className="hidden sm:inline ml-1">comments</span>
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={handleLikePost}
                       className="flex items-center gap-2 text-primary-300 hover:text-accent-200 transition-colors duration-200"
                     >
                       {isLiked ? (
-                        <HeartIconSolid className="w-5 h-5 text-accent-200" />
+                        <HeartIconSolid className="w-4 h-4 text-accent-200" />
                       ) : (
-                        <HeartIcon className="w-5 h-5" />
+                        <HeartIcon className="w-4 h-4" />
                       )}
                     </button>
                     <button
@@ -581,14 +581,14 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
                       className="text-primary-300 hover:text-accent-200 transition-colors duration-200"
                       title="Bookmark this article"
                     >
-                      <BookmarkIcon className={`w-5 h-5 ${isBookmarked ? 'fill-accent-200 text-accent-200' : ''}`} />
+                      <BookmarkIcon className={`w-4 h-4 ${isBookmarked ? 'fill-accent-200 text-accent-200' : ''}`} />
                     </button>
                     <div className="relative">
                       <button
                         onClick={() => setShowShareMenu(!showShareMenu)}
                         className="text-primary-300 hover:text-accent-200 transition-colors duration-200"
                       >
-                        <ShareIcon className="w-5 h-5" />
+                        <ShareIcon className="w-4 h-4" />
                       </button>
                       <AnimatePresence>
                         {showShareMenu && (
@@ -635,7 +635,7 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
           </div>
 
           {/* Cover Image with Gradient Overlay */}
-          <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-16 shadow-2xl">
+          <div className="relative aspect-[21/9] rounded-xl overflow-hidden mb-12 shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-t from-primary-900/90 via-primary-900/50 to-transparent z-10" />
             <img
               src={post.fields.coverImage?.fields?.file?.url || '/fallback-image.jpg'}
@@ -645,31 +645,63 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
           </div>
 
           {/* Tags Section */}
-          <div className="flex flex-wrap gap-3 mb-16">
+          <div className="flex flex-wrap gap-2 mb-12">
             {post.fields.tags?.map((tag) => (
               <span
                 key={tag}
-                className="px-5 py-2.5 bg-primary-800/40 rounded-full text-primary-100 flex items-center gap-2 hover:bg-primary-700/40 transition-colors duration-200 font-merriweather"
+                className="px-4 py-2 bg-primary-800/40 rounded-full text-primary-100 text-sm flex items-center gap-2 hover:bg-primary-700/40 transition-colors duration-200 font-merriweather"
               >
-                <TagIcon className="w-5 h-5" />
+                <TagIcon className="w-4 h-4" />
                 {tag}
               </span>
             ))}
           </div>
 
           {/* Content Section with Gradient Background */}
-          <div className="prose prose-invert prose-lg max-w-none mb-20">
+          <div className="prose prose-invert prose-base max-w-none mb-16">
             <div className="relative">
               {/* Main Content Background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-800/50 to-primary-900/50 rounded-2xl" />
-              <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent-200/5 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary-800/50 to-primary-900/50 rounded-xl" />
+              <div className="absolute inset-0 rounded-xl bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent-200/5 via-transparent to-transparent" />
               
               {/* Content Container */}
-              <div className="relative p-8 md:p-12 lg:p-16 rounded-2xl border border-primary-700/20">
+              <div className="relative p-6 md:p-8 lg:p-10 rounded-xl border border-primary-700/20">
                 {post.fields.content && (
-                  <div className="space-y-8">
+                  <div className="space-y-6">
                     {documentToReactComponents(post.fields.content, {
-                      renderNode,
+                      renderNode: {
+                        ...renderNode,
+                        [BLOCKS.PARAGRAPH]: (_node: any, children: React.ReactNode) => (
+                          <p className="mb-3 text-primary-200 text-sm leading-relaxed">{children}</p>
+                        ),
+                        [BLOCKS.HEADING_1]: (_node: any, children: React.ReactNode) => (
+                          <h1 className="text-2xl font-bold mb-4 text-white">{children}</h1>
+                        ),
+                        [BLOCKS.HEADING_2]: (_node: any, children: React.ReactNode) => (
+                          <h2 className="text-xl font-bold mb-3 text-white">{children}</h2>
+                        ),
+                        [BLOCKS.HEADING_3]: (_node: any, children: React.ReactNode) => (
+                          <h3 className="text-lg font-bold mb-3 text-white">{children}</h3>
+                        ),
+                        [BLOCKS.HEADING_4]: (_node: any, children: React.ReactNode) => (
+                          <h4 className="text-base font-bold mb-2 text-white">{children}</h4>
+                        ),
+                        [BLOCKS.HEADING_5]: (_node: any, children: React.ReactNode) => (
+                          <h5 className="text-sm font-bold mb-2 text-white">{children}</h5>
+                        ),
+                        [BLOCKS.HEADING_6]: (_node: any, children: React.ReactNode) => (
+                          <h6 className="text-xs font-bold mb-2 text-white">{children}</h6>
+                        ),
+                        [BLOCKS.UL_LIST]: (_node: any, children: React.ReactNode) => (
+                          <ul className="list-disc mb-3 ml-4 text-primary-200 text-sm">{children}</ul>
+                        ),
+                        [BLOCKS.OL_LIST]: (_node: any, children: React.ReactNode) => (
+                          <ol className="list-decimal mb-3 ml-4 text-primary-200 text-sm">{children}</ol>
+                        ),
+                        [BLOCKS.QUOTE]: (_node: any, children: React.ReactNode) => (
+                          <blockquote className="border-l-4 border-accent-900 pl-4 italic my-3 text-primary-300 text-sm">{children}</blockquote>
+                        ),
+                      },
                     })}
                   </div>
                 )}
@@ -678,28 +710,28 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
           </div>
 
           {/* Comments Section with Gradient Background */}
-          <div className="relative border-t border-primary-700/20 pt-16">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-800/30 to-primary-900/30 rounded-2xl" />
+          <div className="relative border-t border-primary-700/20 pt-12">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-800/30 to-primary-900/30 rounded-xl" />
             
             <div className="relative">
-              <h3 className="text-3xl font-playfair text-primary-50 mb-12 flex items-center gap-3">
-                <ChatBubbleLeftIcon className="w-8 h-8" />
+              <h3 className="text-xl sm:text-2xl font-playfair text-primary-50 mb-8 flex items-center gap-2">
+                <ChatBubbleLeftIcon className="w-6 h-6" />
                 Comments ({comments.length})
               </h3>
 
               {/* Comment Form */}
               {auth.currentUser ? (
-                <div className="flex gap-6 mb-16">
+                <div className="flex gap-4 mb-12">
                   <div className="relative">
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                     <img
                       src={auth.currentUser.photoURL || getFallbackAvatar(auth.currentUser.displayName || 'Anonymous')}
                       alt={auth.currentUser.displayName || 'Anonymous'}
-                      className="relative w-12 h-12 rounded-full ring-2 ring-accent-200/20 object-cover"
+                      className="relative w-10 h-10 rounded-full ring-2 ring-accent-200/20 object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.onerror = null; // Prevent infinite loop
+                        target.onerror = null;
                         target.src = getFallbackAvatar(auth.currentUser?.displayName || 'Anonymous');
                       }}
                     />
@@ -712,27 +744,27 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
                         setCommentError(null);
                       }}
                       placeholder="Share your thoughts..."
-                      className={`w-full px-6 py-4 bg-primary-800/40 rounded-xl text-primary-100 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-200/50 font-merriweather ${
+                      className={`w-full px-4 py-3 bg-primary-800/40 rounded-lg text-primary-100 text-sm placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-200/50 font-merriweather ${
                         commentError ? 'ring-2 ring-red-500/50' : ''
                       }`}
-                      rows={4}
+                      rows={3}
                       maxLength={1000}
                     />
                     {commentError && (
-                      <p className="mt-2 text-sm text-red-400 font-merriweather">{commentError}</p>
+                      <p className="mt-2 text-xs text-red-400 font-merriweather">{commentError}</p>
                     )}
-                    <div className="flex items-center justify-between mt-4">
-                      <span className="text-sm text-primary-400 font-merriweather">
+                    <div className="flex items-center justify-between mt-3">
+                      <span className="text-xs text-primary-400 font-merriweather">
                         {newComment.length}/1000 characters
                       </span>
                       <button
                         onClick={handleAddComment}
                         disabled={isSubmittingComment || !newComment.trim()}
-                        className="px-8 py-3 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 rounded-xl hover:shadow-lg hover:shadow-accent-900/20 transition-all duration-200 font-merriweather disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-6 py-2 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 rounded-lg hover:shadow-lg hover:shadow-accent-900/20 transition-all duration-200 font-merriweather text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                       >
                         {isSubmittingComment ? (
                           <>
-                            <div className="w-5 h-5 border-2 border-primary-900 border-t-transparent rounded-full animate-spin" />
+                            <div className="w-4 h-4 border-2 border-primary-900 border-t-transparent rounded-full animate-spin" />
                             <span>Posting...</span>
                           </>
                         ) : (
@@ -745,148 +777,71 @@ const BlogPostView = ({ onBack }: BlogPostViewProps) => {
               ) : (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="w-full px-8 py-5 bg-primary-800/40 rounded-xl text-primary-100 hover:bg-primary-700/40 transition-colors duration-200 font-merriweather mb-16"
+                  className="w-full px-6 py-4 bg-primary-800/40 rounded-lg text-primary-100 text-sm hover:bg-primary-700/40 transition-colors duration-200 font-merriweather mb-12"
                 >
                   Sign in to comment
                 </button>
               )}
 
               {/* Comments List */}
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {isLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent-200"></div>
+                  <div className="flex justify-center py-6">
+                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-accent-200"></div>
                   </div>
                 ) : comments.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-primary-400 font-merriweather">No comments yet. Be the first to comment!</p>
+                  <div className="text-center py-6">
+                    <p className="text-primary-400 text-sm font-merriweather">No comments yet. Be the first to comment!</p>
                   </div>
                 ) : (
                   comments.map((comment) => (
                     <div key={comment.id} className="relative">
                       {/* Comment Background */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary-800/30 to-primary-900/20 rounded-xl" />
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent-200/5 via-transparent to-transparent rounded-xl" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary-800/30 to-primary-900/20 rounded-lg" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent-200/5 via-transparent to-transparent rounded-lg" />
                       
                       {/* Comment Content */}
-                      <div className="relative flex gap-6 p-6 rounded-xl border border-primary-700/20">
+                      <div className="relative flex gap-4 p-4 rounded-lg border border-primary-700/20">
                         <div className="relative">
                           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
                           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                           <img
                             src={comment.userAvatar || getFallbackAvatar(comment.userName || 'Anonymous')}
                             alt={comment.userName || 'Anonymous'}
-                            className="relative w-12 h-12 rounded-full ring-2 ring-accent-200/20 object-cover"
+                            className="relative w-10 h-10 rounded-full ring-2 ring-accent-200/20 object-cover"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
-                              target.onerror = null; // Prevent infinite loop
+                              target.onerror = null;
                               target.src = getFallbackAvatar(comment.userName || 'Anonymous');
                             }}
                           />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-3">
-                              <span className="text-lg font-playfair text-primary-100">{comment.userName || 'Anonymous'}</span>
-                              <time className="text-sm font-merriweather text-primary-300">
+                            <div className="flex items-center gap-2">
+                              <span className="text-base font-playfair text-primary-100">{comment.userName || 'Anonymous'}</span>
+                              <time className="text-xs font-merriweather text-primary-300">
                                 {format(comment.createdAt.toDate(), 'MMM d, yyyy')}
                                 {comment.isEdited && (
                                   <span className="ml-2 text-primary-400">(edited)</span>
                                 )}
                               </time>
                             </div>
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
                               <button
                                 onClick={() => handleLikeComment(comment.id)}
                                 className="flex items-center gap-1 text-primary-300 hover:text-accent-200 transition-colors duration-200"
                               >
                                 {comment.likedBy?.includes(auth.currentUser?.uid || '') ? (
-                                  <HeartIconSolid className="w-4 h-4 text-accent-200" />
+                                  <HeartIconSolid className="w-3.5 h-3.5 text-accent-200" />
                                 ) : (
-                                  <HeartIcon className="w-4 h-4" />
+                                  <HeartIcon className="w-3.5 h-3.5" />
                                 )}
-                                <span className="text-sm font-merriweather">{comment.likes || 0}</span>
+                                <span className="text-xs font-merriweather">{comment.likes || 0}</span>
                               </button>
-                              
-                              {/* Comment Actions */}
-                              {auth.currentUser?.uid === comment.userId && (
-                                <div className="relative">
-                                  <button
-                                    onClick={() => setShowMoreMenu(showMoreMenu === comment.id ? null : comment.id)}
-                                    className="text-primary-300 hover:text-accent-200 transition-colors duration-200"
-                                  >
-                                    <EllipsisHorizontalIcon className="w-5 h-5" />
-                                  </button>
-                                  
-                                  <AnimatePresence>
-                                    {showMoreMenu === comment.id && (
-                                      <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: 10 }}
-                                        className="absolute right-0 mt-2 w-48 bg-primary-800 rounded-xl shadow-xl border border-primary-700/50 overflow-hidden z-50"
-                                      >
-                                        <div className="py-1">
-                                          <button
-                                            onClick={() => {
-                                              setEditingCommentId(comment.id);
-                                              setEditCommentText(comment.text);
-                                              setShowMoreMenu(null);
-                                            }}
-                                            className="w-full px-4 py-2 text-left text-primary-200 hover:bg-primary-700/50 hover:text-accent-200 transition-colors duration-200 font-merriweather"
-                                          >
-                                            Edit
-                                          </button>
-                                          <button
-                                            onClick={() => {
-                                              if (window.confirm('Are you sure you want to delete this comment?')) {
-                                                handleDeleteComment(comment.id);
-                                              }
-                                              setShowMoreMenu(null);
-                                            }}
-                                            className="w-full px-4 py-2 text-left text-red-400 hover:bg-primary-700/50 hover:text-red-300 transition-colors duration-200 font-merriweather"
-                                          >
-                                            Delete
-                                          </button>
-                                        </div>
-                                      </motion.div>
-                                    )}
-                                  </AnimatePresence>
-                                </div>
-                              )}
                             </div>
                           </div>
-                          
-                          {editingCommentId === comment.id ? (
-                            <div className="mt-4">
-                              <textarea
-                                value={editCommentText}
-                                onChange={(e) => setEditCommentText(e.target.value)}
-                                className="w-full px-4 py-2 bg-primary-800/40 rounded-lg text-primary-100 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-accent-200/50 font-merriweather"
-                                rows={3}
-                                maxLength={1000}
-                              />
-                              <div className="flex justify-end gap-2 mt-2">
-                                <button
-                                  onClick={() => {
-                                    setEditingCommentId(null);
-                                    setEditCommentText('');
-                                  }}
-                                  className="px-4 py-2 text-primary-300 hover:text-primary-100 transition-colors duration-200 font-merriweather"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  onClick={() => handleEditComment(comment.id)}
-                                  className="px-4 py-2 bg-accent-900 text-primary-900 rounded-lg hover:bg-accent-800 transition-colors duration-200 font-merriweather"
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <p className="text-primary-200 font-merriweather">{comment.text}</p>
-                          )}
+                          <p className="text-primary-200 text-sm font-merriweather">{comment.text}</p>
                         </div>
                       </div>
                     </div>

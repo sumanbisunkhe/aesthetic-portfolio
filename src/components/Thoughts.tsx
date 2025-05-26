@@ -417,11 +417,11 @@ const Thoughts = () => {
                 <div className="p-2.5 sm:p-4 space-y-2 sm:space-y-3">
                   {/* Title and Date */}
                   <div>
-                    <h3 className="text-[10px] sm:text-sm lg:text-base font-merriweather text-white group-hover:text-accent-900 transition-colors duration-300 line-clamp-2 leading-tight">
+                    <h3 className="text-sm sm:text-lg lg:text-xl font-merriweather text-white group-hover:text-accent-900 transition-colors duration-300 line-clamp-2 leading-tight">
                       {post.fields.title}
                     </h3>
-                    <div className="flex items-center gap-0.5 mt-0.5 text-primary-400 text-[7px] sm:text-xs">
-                      <CalendarIcon className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5" />
+                    <div className="flex items-center gap-1.5 mt-1.5 text-primary-400 text-[10px] sm:text-base">
+                      <CalendarIcon className="w-2.5 h-2.5 sm:w-5 sm:h-5" />
                       <time>
                         {format(new Date(post.fields.publishedDate || post.sys.createdAt), 'MMM d, yyyy')}
                       </time>
@@ -429,38 +429,38 @@ const Thoughts = () => {
                   </div>
 
                   {/* Content Preview */}
-                  <div className="text-primary-300 text-[8px] sm:text-sm line-clamp-2 font-merriweather leading-tight">
+                  <div className="text-primary-300 text-[11px] sm:text-lg line-clamp-2 font-merriweather leading-tight">
                     {post.fields.content ? (
-                      <div className="prose prose-invert max-w-none prose-[7px] sm:prose-sm">
+                      <div className="prose prose-invert max-w-none prose-[10px] sm:prose-lg">
                         {documentToReactComponents(post.fields.content)}
                       </div>
                     ) : null}
                   </div>
 
                   {/* Author and Stats */}
-                  <div className="flex items-center justify-between pt-1.5 sm:pt-2 border-t border-primary-700/30">
-                    <div className="flex items-center gap-0.5 sm:gap-2">
+                  <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-primary-700/30">
+                    <div className="flex items-center gap-1.5 sm:gap-3">
                       <div className="relative">
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                         <img
                           src="/images/pp.webp"
                           alt="Suman Bisunkhe"
-                          className="relative w-2.5 h-2.5 sm:w-5 sm:h-5 rounded-full ring-1 ring-accent-900/20 object-cover"
+                          className="relative w-4 h-4 sm:w-7 sm:h-7 rounded-full ring-1 ring-accent-900/20 object-cover"
                         />
                       </div>
-                      <span className="text-primary-200 text-[6px] sm:text-xs font-merriweather">Suman Bisunkhe</span>
+                      <span className="text-primary-200 text-[10px] sm:text-base font-merriweather">Suman Bisunkhe</span>
                     </div>
-                    <div className="flex items-center gap-1 sm:gap-3">
-                      <div className="flex items-center gap-0.5 text-primary-400 text-[6px] sm:text-xs">
-                        <EyeIcon className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5" />
+                    <div className="flex items-center gap-2 sm:gap-4">
+                      <div className="flex items-center gap-1 text-primary-400 text-[10px] sm:text-base">
+                        <EyeIcon className="w-2.5 h-2.5 sm:w-5 sm:h-5" />
                         <span className="sm:ml-1">
                           {postViews[post.sys.id]?.toLocaleString() || 0}
                           <span className="hidden sm:inline ml-1">Views</span>
                         </span>
                       </div>
-                      <div className="flex items-center gap-0.5 text-primary-400 text-[6px] sm:text-xs">
-                        <ChatBubbleLeftIcon className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5" />
+                      <div className="flex items-center gap-1 text-primary-400 text-[10px] sm:text-base">
+                        <ChatBubbleLeftIcon className="w-2.5 h-2.5 sm:w-5 sm:h-5" />
                         <span className="sm:ml-1">
                           {comments[post.sys.id]?.length || 0}
                           <span className="hidden sm:inline ml-1">Comments</span>
