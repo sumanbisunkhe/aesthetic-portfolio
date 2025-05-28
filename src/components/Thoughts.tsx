@@ -340,7 +340,7 @@ const Thoughts = () => {
                         onClick={() => handleTagClick(tag)}
                         className={`px-3 sm:px-4 py-2 rounded-full text-sm font-merriweather transition-all duration-200 flex items-center justify-center gap-1.5 ${
                           selectedTags.includes(tag)
-                            ? 'bg-accent-800 text-primary-200'
+                            ? 'text-accent-900 border border-accent-900/50'
                             : 'bg-primary-800/50 text-primary-200 hover:bg-primary-800/70'
                         }`}
                       >
@@ -356,7 +356,7 @@ const Thoughts = () => {
         </div>
 
         {/* Results Count */}
-        <div className="mb-8">
+        <div className="mb-8 flex justify-center">
           <p className="text-primary-400 font-merriweather">
             {filteredPosts.length} {filteredPosts.length === 1 ? 'article' : 'articles'} found
           </p>
@@ -417,11 +417,11 @@ const Thoughts = () => {
                 <div className="p-2.5 sm:p-4 space-y-2 sm:space-y-3">
                   {/* Title and Date */}
                   <div>
-                    <h3 className="text-sm sm:text-lg lg:text-xl font-merriweather text-white group-hover:text-accent-900 transition-colors duration-300 line-clamp-2 leading-tight">
+                    <h3 className="text-base sm:text-lg lg:text-xl font-merriweather text-white group-hover:text-accent-900 transition-colors duration-300 line-clamp-2 leading-tight">
                       {post.fields.title}
                     </h3>
-                    <div className="flex items-center gap-1.5 mt-1.5 text-primary-400 text-[10px] sm:text-base">
-                      <CalendarIcon className="w-2.5 h-2.5 sm:w-5 sm:h-5" />
+                    <div className="flex items-center gap-1.5 mt-1.5 text-primary-400 text-xs sm:text-sm">
+                      <CalendarIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                       <time>
                         {format(new Date(post.fields.publishedDate || post.sys.createdAt), 'MMM d, yyyy')}
                       </time>
@@ -429,9 +429,9 @@ const Thoughts = () => {
                   </div>
 
                   {/* Content Preview */}
-                  <div className="text-primary-300 text-[11px] sm:text-lg line-clamp-2 font-merriweather leading-tight">
+                  <div className="text-primary-300 text-xs sm:text-sm line-clamp-4 font-merriweather leading-relaxed">
                     {post.fields.content ? (
-                      <div className="prose prose-invert max-w-none prose-[10px] sm:prose-lg">
+                      <div className="prose prose-invert max-w-none prose-sm sm:prose-base">
                         {documentToReactComponents(post.fields.content)}
                       </div>
                     ) : null}
@@ -446,24 +446,22 @@ const Thoughts = () => {
                         <img
                           src="/images/pp.webp"
                           alt="Suman Bisunkhe"
-                          className="relative w-4 h-4 sm:w-7 sm:h-7 rounded-full ring-1 ring-accent-900/20 object-cover"
+                          className="relative w-4 h-4 sm:w-6 sm:h-6 rounded-full ring-1 ring-accent-900/20 object-cover"
                         />
                       </div>
-                      <span className="text-primary-200 text-[10px] sm:text-base font-merriweather">Suman Bisunkhe</span>
+                      <span className="text-primary-200 text-xs sm:text-sm font-merriweather">Suman Bisunkhe</span>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-4">
-                      <div className="flex items-center gap-1 text-primary-400 text-[10px] sm:text-base">
-                        <EyeIcon className="w-2.5 h-2.5 sm:w-5 sm:h-5" />
-                        <span className="sm:ml-1">
+                      <div className="flex items-center gap-1 text-primary-400 text-xs sm:text-sm">
+                        <EyeIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span>
                           {postViews[post.sys.id]?.toLocaleString() || 0}
-                          <span className="hidden sm:inline ml-1">Views</span>
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 text-primary-400 text-[10px] sm:text-base">
-                        <ChatBubbleLeftIcon className="w-2.5 h-2.5 sm:w-5 sm:h-5" />
-                        <span className="sm:ml-1">
+                      <div className="flex items-center gap-1 text-primary-400 text-xs sm:text-sm">
+                        <ChatBubbleLeftIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span>
                           {comments[post.sys.id]?.length || 0}
-                          <span className="hidden sm:inline ml-1">Comments</span>
                         </span>
                       </div>
                     </div>

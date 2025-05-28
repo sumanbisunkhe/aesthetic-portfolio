@@ -413,7 +413,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       {activeSection === item.name.toLowerCase() && (
                         <motion.div
                           layoutId="nav-pill"
-                          className="absolute inset-0 bg-royal-900/20 rounded-lg -z-10"
+                          className="absolute inset-0 rounded-lg -z-10"
                           transition={{ type: "spring", duration: 0.5 }}
                         />
                       )}
@@ -440,7 +440,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       {activeSection === item.name.toLowerCase() && (
                         <motion.div
                           layoutId="nav-pill"
-                          className="absolute inset-0 bg-royal-900/20 rounded-lg -z-10"
+                          className="absolute inset-0 rounded-lg -z-10"
                           transition={{ type: "spring", duration: 0.5 }}
                         />
                       )}
@@ -804,7 +804,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                           <Link
                             to={item.href}
                             className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 ${
-                              activeSection === item.name.toLowerCase() ? 'bg-primary-800/70 text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
+                              activeSection === item.name.toLowerCase() ? 'text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
                             }`}
                             onClick={() => {
                               setActiveSection(item.name.toLowerCase());
@@ -820,7 +820,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                           key={item.name}
                           href={getCorrectHref(item.href || '')}
                           className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 ${
-                            activeSection === item.name.toLowerCase() ? 'bg-primary-800/70 text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
+                            activeSection === item.name.toLowerCase() ? 'text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
                           }`}
                           onClick={(e) => {
                             e.preventDefault();

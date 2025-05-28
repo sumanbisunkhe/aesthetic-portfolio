@@ -51,7 +51,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <Toaster
-        position="bottom-right"
+        position="bottom-center"
         toastOptions={{
           duration: 2000,
           style: {
@@ -66,7 +66,7 @@ function App() {
             width: '100%',
             fontSize: '0.875rem',
             lineHeight: '1.25rem',
-            margin: '0 320px 16px 0',
+            margin: '0 auto 16px auto',
           },
           success: {
             iconTheme: {
