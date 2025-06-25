@@ -42,7 +42,7 @@ const Resources = () => {
           <span className="text-accent-900 font-josefin text-sm tracking-wider uppercase mb-3 block">
             Resources
           </span>
-          <h2 className="text-4xl md:text-5xl font-oldenburg font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-oldenburg font-bold text-white mb-6">
             My <span className="text-accent-900">Experience</span> & Resume
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-accent-900 to-accent-700 mx-auto mb-8 rounded-full"></div>

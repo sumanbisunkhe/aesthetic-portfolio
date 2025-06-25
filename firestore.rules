@@ -1,0 +1,67 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Base rules for all collections
+    match /{document=**} {
+      allow read: if true;  // Allow all read operations
+      allow write: if request.auth != null;  // Require auth for writes
+    }
+
+    // Blog posts collection
+    match /posts/{postId} {
+      allow read: if true;
+      
+      // Allow view count updates even without auth
+      allow update: if 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']) ||
+        (request.auth != null && 
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likedBy', 'bookmarkedBy']));
+      
+      // Only allow creating/deleting posts if authenticated
+      allow create, delete: if request.auth != null;
+      
+      // Comments subcollection within posts
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if request.auth != null;
+        allow update, delete: if request.auth != null 
+          && request.auth.uid == resource.data.userId;
+      }
+    }
+
+    // Comments collection (top-level)
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // Thoughts/Posts collection
+    match /thoughts/{thoughtId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null;
+      
+      // Allow likes and views updates
+      match /likes/{userId} {
+        allow read: if true;
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null 
+        && request.auth.uid == userId;
+    }
+
+    // Blog categories
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}

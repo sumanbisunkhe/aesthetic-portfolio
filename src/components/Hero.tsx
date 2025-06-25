@@ -49,7 +49,7 @@ const Hero = () => {
   return (
     <section 
       id="home"
-      className="relative min-h-screen bg-black overflow-hidden"
+      className="relative min-h-screen bg-black overflow-hidden pb-8 lg:pb-0"
       aria-label="Introduction"
     >
       {/* Background gradient */}
@@ -61,7 +61,7 @@ const Hero = () => {
       {/* Main content */}
       <div className="relative z-10 min-h-screen flex flex-col justify-between">
         {/* Top section with name and title */}
-        <div className="flex-1 flex items-center pt-28 sm:pt-20 lg:pt-0">
+        <div className="flex-1 flex items-center pt-32 sm:pt-28 lg:pt-16">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               {/* Text content */}
@@ -76,7 +76,7 @@ const Hero = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="inline-block text-lg text-primary-300 font-josefin"
+                    className="inline-block text-base sm:text-lg text-primary-300 font-josefin"
                   >
                     Hi, I'm
                   </motion.span>
@@ -84,7 +84,7 @@ const Hero = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-3xl sm:text-4xl lg:text-5xl font-oldenburg"
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-oldenburg tracking-tight"
                   >
                     <span className="bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 bg-clip-text text-transparent">
                       Suman Bisunkhe

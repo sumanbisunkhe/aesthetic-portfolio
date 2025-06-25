@@ -61,7 +61,7 @@ const Now: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-4xl md:text-5xl font-oldenburg font-bold text-white mb-6 relative"
+            className="text-3xl md:text-4xl font-oldenburg font-bold text-white mb-6 relative"
           >
             <span className="relative inline-block">
               What I'm <span className="text-accent-900 relative">

@@ -215,7 +215,7 @@ const Work = () => {
           <span className="text-accent-900 font-josefin text-sm tracking-wider uppercase mb-3 block">
             My Works
           </span>
-          <h2 className="text-4xl md:text-5xl font-oldenburg font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-oldenburg font-bold text-white mb-6">
             Featured <span className="text-accent-900">Projects</span>
           </h2>
           <div className="w-24 h-1 bg-accent-900 mx-auto mb-8"></div>
