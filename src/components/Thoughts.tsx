@@ -444,7 +444,7 @@ const Thoughts = () => {
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                         <img
-                          src="/images/pp.webp"
+                          src="/images/pH.webp"
                           alt="Suman Bisunkhe"
                           className="relative w-4 h-4 sm:w-6 sm:h-6 rounded-full ring-1 ring-accent-900/20 object-cover"
                         />

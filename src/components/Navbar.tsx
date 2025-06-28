@@ -317,11 +317,11 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg group"
+                          className="relative inline-flex items-center px-3 py-2 text-sm font-medium font-caesar tracking-wider rounded-lg group"
                           aria-expanded={resourcesDropdownOpen}
                           aria-haspopup="true"
                         >
-                          <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 ${
+                          <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 font-caesar tracking-wider ${
                             resourcesDropdownOpen || 
                             activeSection === 'resources' || 
                             activeSection === 'resources-experience' || 
@@ -369,7 +369,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                         handleNavigationClick(e, subItem.href);
                                         setResourcesDropdownOpen(false);
                                       }}
-                                      className={`flex items-center px-4 py-2 text-sm ${
+                                      className={`flex items-center px-4 py-2 text-sm font-caesar tracking-wider ${
                                         isActive 
                                           ? 'bg-primary-700/50 text-accent-900' 
                                           : 'text-primary-50 hover:bg-primary-700/50 hover:text-accent-900'
@@ -377,7 +377,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                       role="menuitem"
                                     >
                                       {SubIcon && <SubIcon className="w-4 h-4 mr-2" aria-hidden="true" />}
-                                      {subItem.name}
+                                      <span className="font-caesar tracking-wider text-base">{subItem.name}</span>
                                     </a>
                                   );
                                 })}
@@ -395,11 +395,11 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       key={item.name}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg group"
+                      className="relative inline-flex items-center px-3 py-2 text-sm font-caesar tracking-wider rounded-lg group"
                     >
                       <Link
                         to={item.href}
-                        className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 ${
+                        className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 font-caesar tracking-wider ${
                           activeSection === item.name.toLowerCase()
                             ? 'text-accent-900'
                             : 'text-primary-50 hover:text-accent-200'
@@ -425,11 +425,11 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       onClick={(e) => handleNavigationClick(e, item.href || '')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg group"
+                      className="relative inline-flex items-center px-3 py-2 text-sm font-caesar tracking-wider rounded-lg group"
                       role="menuitem"
                       aria-current={activeSection === item.name.toLowerCase() ? 'page' : undefined}
                     >
-                      <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 ${
+                      <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 font-caesar tracking-wider ${
                         activeSection === item.name.toLowerCase()
                           ? 'text-accent-900'
                           : 'text-primary-50 hover:text-accent-200'
@@ -472,7 +472,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                     activeSection === 'contact'
                       ? 'bg-yellow-400 text-black'
                       : 'bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900'
-                  } text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-accent/20 transition-all duration-200 flex items-center gap-1.5`}
+                  } text-sm font-caesar tracking-wider rounded-lg hover:shadow-lg hover:shadow-accent/20 transition-all duration-200 flex items-center gap-1.5`}
                   aria-label="Open contact section"
                 >
                   <ChatBubbleLeftRightIcon className="w-4 h-4" />
@@ -687,8 +687,8 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                         <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
                         
                         <img
-                          src={avatarError ? getFallbackAvatar(currentUser.displayName || 'User') : currentUser.photoURL || ''}
-                          alt={currentUser.displayName || ''}
+                          src={avatarError ? getFallbackAvatar(currentUser?.displayName || 'User') : currentUser?.photoURL || ''}
+                          alt={currentUser?.displayName || ''}
                           className="relative w-12 h-12 rounded-xl ring-2 ring-accent-900/20 object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
@@ -766,7 +766,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                            <div key={item.name} className="space-y-2">
                              <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-accent-900">
                                <Icon className="w-4 h-4" />
-                               <span className="font-medium text-base">{item.name}</span>
+                               <span className="font-caesar tracking-wider text-base">{item.name}</span>
                              </div>
                              <div className="pl-6 space-y-2 border-l border-primary-700/50">
                                 {item.dropdown.map((subItem) => {
@@ -775,7 +775,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                      <motion.a
                                         key={subItem.name}
                                         href={subItem.href}
-                                        className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 ${activeSection === subItem.href.substring(1) ? 'bg-primary-800/70 text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'}`}
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-xl font-caesar tracking-wider transition-all duration-200 ${activeSection === subItem.href.substring(1) ? 'bg-primary-800/70 text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'}`}
                                         onClick={(e) => {
                                            e.preventDefault();
                                            handleNavigationClick(e, subItem.href);
@@ -786,7 +786,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                         transition={{ type: "spring", stiffness: 300 }}
                                      >
                                        {SubIcon && <SubIcon className="w-4 h-4" />}
-                                       <span className="font-medium text-base">{subItem.name}</span>
+                                       <span className="font-caesar tracking-wider text-base">{subItem.name}</span>
                                      </motion.a>
                                    );
                                 })}
@@ -803,7 +803,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                         >
                           <Link
                             to={item.href}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 ${
+                            className={`flex items-center gap-2 px-3 py-2 rounded-xl font-caesar tracking-wider transition-all duration-200 ${
                               activeSection === item.name.toLowerCase() ? 'text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
                             }`}
                             onClick={() => {
@@ -812,14 +812,14 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                             }}
                           >
                             <Icon className="w-4 h-4" />
-                            <span className="font-medium text-base">{item.name}</span>
+                            <span className="font-caesar tracking-wider text-base">{item.name}</span>
                           </Link>
                         </motion.div>
                       ) : (
                         <motion.a
                           key={item.name}
                           href={getCorrectHref(item.href || '')}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 ${
+                          className={`flex items-center gap-2 px-3 py-2 rounded-xl font-caesar tracking-wider transition-all duration-200 ${
                             activeSection === item.name.toLowerCase() ? 'text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
                           }`}
                           onClick={(e) => {
@@ -831,7 +831,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                           transition={{ type: "spring", stiffness: 300 }}
                         >
                           <Icon className="w-4 h-4" />
-                          <span className="font-medium text-base">{item.name}</span>
+                          <span className="font-caesar tracking-wider text-base">{item.name}</span>
                         </motion.a>
                       );
                     })}
@@ -857,7 +857,7 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                       }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`flex-1 px-4 py-2 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 font-medium rounded-xl shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 flex items-center justify-center gap-2`}
+                      className={`flex-1 px-4 py-2 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 font-caesar tracking-wider rounded-xl shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 flex items-center justify-center gap-2`}
                     >
                       <ChatBubbleLeftRightIcon className="w-4 h-4" />
                       Let's Talk

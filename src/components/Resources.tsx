@@ -155,22 +155,31 @@ const Resources = () => {
                 Explore my qualifications, skills, and professional background. You can view the interactive preview below or download the PDF for a complete record.
               </p>
               <motion.a
-                href="/docs/sumanbisunkhe-resume.pdf"
-                download="Suman_Bisunkhe_Resume.pdf"
+                href="/sumanbisunkhe-resume.pdf"
+                download="sumanbisunkhe-resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)" }}
                 whileTap={{ scale: 0.95 }}
                 className="inline-flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-8 py-2.5 sm:py-4 rounded-full bg-gradient-to-r from-accent-900 to-accent-700 text-primary-900 font-bold shadow-lg shadow-accent-900/30 hover:from-accent-800 hover:to-accent-700 transition-all duration-300 text-sm sm:text-lg font-josefin uppercase tracking-wide w-full sm:w-auto"
-                onClick={(e) => {
-                  // Ensure the download starts even if the target="_blank" behavior is blocked
-                  if (e.currentTarget.href) {
+                onClick={async (e) => {
+                  e.preventDefault();
+                  try {
+                    const response = await fetch('/sumanbisunkhe-resume.pdf');
+                    if (!response.ok) throw new Error('Failed to download file');
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
                     const link = document.createElement('a');
-                    link.href = e.currentTarget.href;
-                    link.download = "Suman_Bisunkhe_Resume.pdf";
+                    link.href = url;
+                    link.download = "sumanbisunkhe-resume.pdf";
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                  } catch (error) {
+                    console.error('Download failed:', error);
+                    // Fallback to direct link
+                    window.open('/sumanbisunkhe-resume.pdf', '_blank');
                   }
                 }}
               >

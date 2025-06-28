@@ -61,7 +61,7 @@ const Hero = () => {
       {/* Main content */}
       <div className="relative z-10 min-h-screen flex flex-col justify-between">
         {/* Top section with name and title */}
-        <div className="flex-1 flex items-center pt-32 sm:pt-28 lg:pt-16">
+        <div className="flex-1 flex items-center pt-40 sm:pt-36 lg:pt-32">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               {/* Text content */}
