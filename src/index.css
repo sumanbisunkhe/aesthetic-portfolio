@@ -4,6 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Nova+Round&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Caesar+Dressing&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Metamorphous&display=swap');
 
 /* CSS Reset for consistent font rendering */
 * {
@@ -93,6 +94,12 @@ html, body, #root {
 
   .font-caesar {
     font-family: 'Caesar Dressing', system-ui, sans-serif;
+  }
+  
+  .metamorphous-regular {
+    font-family: "Metamorphous", serif;
+    font-weight: 400;
+    font-style: normal;
   }
 }
 

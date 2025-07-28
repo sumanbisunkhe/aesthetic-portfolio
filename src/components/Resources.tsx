@@ -4,10 +4,18 @@ import { BriefcaseIcon, AcademicCapIcon, ArrowDownTrayIcon } from '@heroicons/re
 const experiences = [
   {
     type: 'work',
-    title: 'Java Programmer Intern',
+    title: 'Java Developer',
     org: 'Qpixel',
-    period: '2025 - Present',
-    description: 'Working on Spring Boot applications and gaining hands-on experience with real-world Java development. Contributing to backend services and API development.',
+    period: 'July 2025  - present',
+    description: 'Developing and maintaining production-ready Java applications, contributing to backend services, and API development.',
+    icon: <BriefcaseIcon className="w-6 h-6 text-accent-900" />,
+  },
+  {
+    type: 'work',
+    title: 'Java Developer Intern',
+    org: 'Qpixel',
+    period: 'April 2025  - June 2025',
+    description: 'Worked on Spring Boot applications and gaining hands-on experience with real-world Java development. Contributed to backend services and API development.',
     icon: <BriefcaseIcon className="w-6 h-6 text-accent-900" />,
   },
   {

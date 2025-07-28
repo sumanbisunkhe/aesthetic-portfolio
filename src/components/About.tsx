@@ -80,7 +80,7 @@ const About = () => {
                 <div className="absolute -left-4 top-0 h-full w-0.5 bg-gradient-to-b from-accent-900 to-transparent"></div>
                 <div className="space-y-4 text-primary-200 font-josefin leading-relaxed">
                   <p className="first-letter:text-3xl first-letter:font-oldenburg first-letter:text-accent-900 first-letter:mr-1">
-                    Hi there! I'm Suman Bisunkhe, a passionate Java enthusiast currently pursuing a BSc.CSIT in my fifth semester. With a keen interest in building robust and scalable applications, I am driven by an unwavering desire to learn and innovate throughout my software development journey.
+                    Hi there! I'm Suman Bisunkhe, a passionate Java enthusiast currently pursuing a BSc.CSIT in my sixth semester. With a keen interest in building robust and scalable applications, I am driven by an unwavering desire to learn and innovate throughout my software development journey.
                   </p>
                   <p>
                     I started my programming journey with a fascination for how software could solve real-world problems. Currently, I'm pursuing my B.Sc. CSIT at Texas International College while gaining practical experience through my Java development internship.
