@@ -75,16 +75,20 @@ const Experience = () => {
                                 {/* Timeline Dot (Desktop Only) */}
                                 <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-primary-900 border-4 border-accent-900 z-20 shadow-lg group-hover:scale-125 transition-transform duration-300 hidden lg:block" />
 
-                                <div className={`w-full max-w-sm bg-gradient-to-br from-primary-800/70 to-primary-900/80 backdrop-blur-lg border border-primary-700/40 rounded-2xl shadow-xl p-8 transition-all duration-300 hover:border-accent-900 hover:shadow-2xl ${idx % 2 === 0 ? 'lg:ml-8' : 'lg:mr-8'}`}>
+                                <motion.div
+                                    whileHover={{ scale: 1.05, translateY: -5 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                                    className={`w-full max-w-sm bg-gradient-to-br from-primary-800/70 to-primary-900/80 backdrop-blur-lg border border-primary-700/40 rounded-2xl shadow-xl p-8 transition-all duration-300 hover:border-accent-900/50 hover:shadow-accent-900/10 hover:shadow-2xl cursor-default group ${idx % 2 === 0 ? 'lg:ml-8' : 'lg:mr-8'}`}
+                                >
                                     <div className="flex items-center gap-3 mb-3">
-                                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent-900/10 shrink-0">
+                                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent-900/10 shrink-0 group-hover:scale-110 transition-transform duration-300">
                                             {exp.icon}
                                         </span>
-                                        <span className="px-4 py-1 rounded-full text-xs font-josefin uppercase tracking-wider bg-accent-900/20 text-accent-900 border border-accent-900/30">
+                                        <span className="px-4 py-1 rounded-full text-xs font-josefin uppercase tracking-wider bg-accent-900/20 text-accent-900 border border-accent-900/30 group-hover:bg-accent-900/30 transition-colors duration-300">
                                             {exp.period}
                                         </span>
                                     </div>
-                                    <h3 className="text-xl font-bold text-white mb-2 font-josefin">
+                                    <h3 className="text-xl font-bold text-white mb-2 font-josefin group-hover:text-accent-900 transition-colors duration-300">
                                         {exp.title}
                                     </h3>
                                     <h4 className="text-primary-300 font-josefin mb-3">
@@ -93,7 +97,7 @@ const Experience = () => {
                                     <p className="text-primary-200 font-josefin text-sm leading-relaxed">
                                         {exp.description}
                                     </p>
-                                </div>
+                                </motion.div>
                             </motion.div>
                         ))}
                     </div>

@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import {
   MapPinIcon,
   BriefcaseIcon,
-  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
 import {
   SiSpringboot,
@@ -17,7 +16,7 @@ import {
   SiDocker,
   SiGit
 } from 'react-icons/si';
-import { FaJava, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { FaJava, FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
 
 const About = () => {
   const skills = [
@@ -87,9 +86,9 @@ const About = () => {
                   <a href="https://www.linkedin.com/in/suman-bisunkhe-3a72032a2/" target="_blank" rel="noreferrer" className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white hover:text-accent-900 transition-colors">
                     <FaLinkedin className="w-5 h-5" />
                   </a>
-                  <button className="p-2 rounded-full bg-accent-900 text-primary-900 hover:bg-white transition-colors" title="Download Resume">
-                    <ArrowDownTrayIcon className="w-5 h-5" />
-                  </button>
+                  <a href="https://www.instagram.com/suman_bisunkhe" target="_blank" rel="noreferrer" className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white hover:text-accent-900 transition-colors" title="Instagram">
+                    <FaInstagram className="w-5 h-5" />
+                  </a>
                 </div>
               </div>
             </motion.div>

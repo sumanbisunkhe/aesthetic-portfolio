@@ -84,9 +84,9 @@ export default {
         poppins: ['Poppins', 'sans-serif'],
         josefin: ['Josefin Sans', 'sans-serif'],
         oldenburg: ['Oldenburg', 'cursive'],
-        'merriweather': ['Merriweather', 'serif'],
+        merriweather: ['Merriweather', 'serif'],
         inter: ['Inter', 'sans-serif'],
-        merriweather: ['Merriweather Sans', 'sans-serif'],
+        metamorphous: ['Metamorphous', 'cursive'],
         piedra: ['Piedra', 'cursive'],
       },
       boxShadow: {

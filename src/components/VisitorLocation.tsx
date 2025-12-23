@@ -15,7 +15,13 @@ const VisitorLocation = () => {
         const fetchLocation = async () => {
             try {
                 // Using ipwho.is - fast, reliable, and better CORS support for local dev
-                const response = await fetch('https://ipwho.is/');
+                const response = await fetch('https://ipwho.is/', {
+                    // Prevent hanging on proxy issues
+                    signal: AbortSignal.timeout(5000)
+                });
+
+                if (!response.ok) throw new Error('Network response fallback');
+
                 const data = await response.json();
 
                 if (data && data.success) {
@@ -26,8 +32,7 @@ const VisitorLocation = () => {
                     });
                 }
             } catch (error) {
-                console.error('Error fetching visitor location:', error);
-                // Silent fallback to avoid complete disappearance if API is blocked
+                // Silently fail to avoid console clutter from proxy/certificate issues
             } finally {
                 setLoading(false);
             }
@@ -47,14 +52,14 @@ const VisitorLocation = () => {
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1.2, duration: 0.8 }}
-            className="fixed bottom-4 right-4 z-[100] pointer-events-none"
+            className="fixed bottom-4 right-4 z-[150] pointer-events-none"
         >
             <div className="relative group pointer-events-auto">
                 {/* Subtle outer glow to ensure visibility on all backgrounds */}
                 <div className="absolute -inset-1 bg-royal-400/10 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
 
                 <div className="relative flex items-center gap-2.5 bg-black/80 backdrop-blur-xl border border-white/20 px-3 py-1.5 rounded-xl transition-all duration-500 shadow-2xl">
-                    <span className="text-[9px] text-yellow-400 uppercase tracking-widest font-bold font-josefin opacity-90">Hello !</span>
+                    {/* <span className="text-[9px] text-yellow-400 uppercase tracking-widest font-bold font-josefin opacity-90">Hello !</span> */}
                     <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-white font-josefin tracking-tight">
                             {displayData.city}

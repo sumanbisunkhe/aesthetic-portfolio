@@ -42,7 +42,7 @@ const BlogPostWrapper = ({ setIsAuthModalOpen }: { setIsAuthModalOpen: (isOpen: 
   return (
     <div className="bg-primary-900 min-h-screen">
       <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />
-      <BlogPostView onBack={() => navigate('/thoughts')} />
+      <BlogPostView onBack={() => navigate('/blogs')} setIsAuthModalOpen={setIsAuthModalOpen} />
     </div>
   );
 };
@@ -94,8 +94,8 @@ function App() {
         }}
       />
       <Routes>
-        <Route path="/thoughts/:slug" element={<BlogPostWrapper setIsAuthModalOpen={setIsAuthModalOpen} />} />
-        <Route path="/thoughts" element={
+        <Route path="/blogs/:slug" element={<BlogPostWrapper setIsAuthModalOpen={setIsAuthModalOpen} />} />
+        <Route path="/blogs" element={
           <div className="bg-primary-900 min-h-screen">
             <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />
             <Thoughts />

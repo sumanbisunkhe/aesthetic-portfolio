@@ -85,14 +85,14 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
         { name: 'Experience', href: '#resources-experience', icon: BriefcaseIcon },
         { name: 'Resume', href: '#resources-resume', icon: DocumentTextIcon },
         { name: 'Now', href: '#now', icon: ClockIcon },
-        { name: 'Blogs', href: '/thoughts', icon: NewspaperIcon },
+        { name: 'Blogs', href: '/blogs', icon: NewspaperIcon },
     ];
 
     // Scroll spy effect
     useEffect(() => {
-        if (location.pathname === '/thoughts') {
+        if (location.pathname === '/blogs') {
             setActiveSection('blogs');
-        } else if (location.pathname.startsWith('/thoughts/')) {
+        } else if (location.pathname.startsWith('/blogs/')) {
             setActiveSection('blogs');
         } else if (location.pathname === '/') {
             const handleScroll = () => {
@@ -240,8 +240,10 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                         return (
                                             <Link
                                                 key={item.name}
-                                                to={item.href || '/thoughts'}
-                                                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 outline-none ${isActive ? 'text-black font-bold' : 'text-gray-300 hover:text-white'
+                                                to={item.href || '/blogs'}
+                                                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 outline-none ${isActive
+                                                    ? 'text-black font-bold'
+                                                    : 'text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20'
                                                     }`}
                                             >
                                                 {isActive && (
@@ -453,7 +455,9 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                                 }}
                                                 className={`group flex items-center justify-between px-5 py-4 rounded-2xl text-lg font-bold transition-all relative overflow-hidden ${isActive
                                                     ? 'text-yellow-400'
-                                                    : 'text-gray-400 hover:text-white'
+                                                    : item.name === 'Blogs'
+                                                        ? 'text-white bg-blue-600/40 hover:bg-blue-600/60 border border-blue-500/20'
+                                                        : 'text-gray-400 hover:text-white'
                                                     }`}
                                             >
                                                 {isActive && (

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { db } from '../lib/firebase';
-import { doc, getDoc, updateDoc, increment, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, increment, onSnapshot, runTransaction } from 'firebase/firestore';
 
 const VisitorCounter = () => {
     const [count, setCount] = useState<number | null>(null);
@@ -9,34 +9,61 @@ const VisitorCounter = () => {
 
     useEffect(() => {
         const counterDoc = doc(db, 'analytics', 'visitor_count');
-        const SESSION_KEY = 'portfolio_visitor_session';
+        const UNIQUE_VISITOR_KEY = 'portfolio_unique_id';
+        const SESSION_CHECK_KEY = 'portfolio_processed_session';
 
-        const updateCounter = async () => {
+        const trackVisitor = async () => {
+            // Guard: don't run if we've already processed this session in this tab
+            if (sessionStorage.getItem(SESSION_CHECK_KEY)) return;
+
             try {
-                // Check if this session has already been counted
-                const hasVisited = sessionStorage.getItem(SESSION_KEY);
+                let uniqueId = localStorage.getItem(UNIQUE_VISITOR_KEY);
 
-                if (!hasVisited) {
-                    // This is a new session - increment the counter
-                    const docSnap = await getDoc(counterDoc);
+                if (!uniqueId) {
+                    try {
+                        const response = await fetch('https://api.ipify.org?format=json');
+                        const data = await response.json();
+                        uniqueId = data.ip;
+                    } catch (e) {
+                        uniqueId = 'visitor_' + Math.random().toString(36).substring(2, 15);
+                    }
+                    if (uniqueId) localStorage.setItem(UNIQUE_VISITOR_KEY, uniqueId);
+                }
 
-                    if (!docSnap.exists()) {
-                        // Initialize if it doesn't exist
-                        await setDoc(counterDoc, { count: 1 });
+                if (!uniqueId) return;
+
+                // Mark as processed BEFORE starting the transaction to prevent double-firing
+                sessionStorage.setItem(SESSION_CHECK_KEY, 'true');
+
+                const visitorRecordRef = doc(db, 'unique_visitors', uniqueId);
+
+                await runTransaction(db, async (transaction) => {
+                    const visitorSnap = await transaction.get(visitorRecordRef);
+                    const globalSnap = await transaction.get(counterDoc);
+
+                    if (!visitorSnap.exists()) {
+                        // NEW VISITOR!
+                        transaction.set(visitorRecordRef, {
+                            firstVisit: new Date().toISOString(),
+                            lastVisit: new Date().toISOString()
+                        });
+
+                        if (!globalSnap.exists()) {
+                            transaction.set(counterDoc, { count: 1 });
+                        } else {
+                            transaction.update(counterDoc, { count: increment(1) });
+                        }
                     } else {
-                        // Increment in Firestore
-                        await updateDoc(counterDoc, {
-                            count: increment(1)
+                        // Returning visitor
+                        transaction.update(visitorRecordRef, {
+                            lastVisit: new Date().toISOString()
                         });
                     }
-
-                    // Mark this session as counted
-                    sessionStorage.setItem(SESSION_KEY, 'true');
-                }
-                // If hasVisited is true, we skip the increment (just display current count)
+                });
             } catch (error) {
-                console.error('Error updating visitor count:', error);
-                // If it fails, we'll still try to read the current value
+                // If it failed, allow a retry on next refresh
+                sessionStorage.removeItem(SESSION_CHECK_KEY);
+                console.error('Visitor Counter Error:', error);
             }
         };
 
@@ -48,7 +75,7 @@ const VisitorCounter = () => {
             setLoading(false);
         });
 
-        updateCounter();
+        trackVisitor();
 
         return () => unsubscribe();
     }, []);
@@ -60,7 +87,7 @@ const VisitorCounter = () => {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1, duration: 0.8 }}
-            className="fixed bottom-4 left-4 z-[40] pointer-events-none"
+            className="fixed bottom-4 left-4 z-[150] pointer-events-none"
         >
             <div className="relative group pointer-events-auto">
                 <div className="relative flex items-center gap-2.5 bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-xl transition-all duration-500 shadow-lg">
@@ -73,7 +100,7 @@ const VisitorCounter = () => {
                             {count?.toLocaleString() || '...'}
                         </span>
                     </div>
-                    <span className="text-[9px] text-accent-900 uppercase tracking-widest font-bold font-josefin opacity-80">Visits</span>
+                    <span className="text-[9px] text-accent-900 uppercase tracking-widest font-bold font-josefin opacity-80">Views</span>
                 </div>
             </div>
         </motion.div>
