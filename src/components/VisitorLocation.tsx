@@ -52,7 +52,7 @@ const VisitorLocation = () => {
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1.2, duration: 0.8 }}
-            className="fixed bottom-4 right-4 z-[150] pointer-events-none"
+            className="fixed bottom-4 right-4 z-[150] pointer-events-none visitor-location"
         >
             <div className="relative group pointer-events-auto">
                 {/* Subtle outer glow to ensure visibility on all backgrounds */}
@@ -68,7 +68,7 @@ const VisitorLocation = () => {
                             <img
                                 src={`https://flagcdn.com/w20/${displayData.country_code.toLowerCase()}.png`}
                                 alt={displayData.country_name}
-                                className="w-3.5 h-auto opacity-100 rounded-sm shadow-sm"
+                                className="w-3 h-3 opacity-100 rounded-sm shadow-sm"
                             />
                         )}
                     </div>

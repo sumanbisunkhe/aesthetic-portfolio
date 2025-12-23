@@ -189,4 +189,11 @@ body,
   .shadow-glow {
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
   }
+
+  body.mobile-menu-open .visitor-counter,
+  body.mobile-menu-open .visitor-location {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.3s ease;
+  }
 }

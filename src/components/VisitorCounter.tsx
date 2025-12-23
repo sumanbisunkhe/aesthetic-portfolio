@@ -32,7 +32,7 @@ const VisitorCounter = () => {
 
                 if (!uniqueId) return;
 
-                // Mark as processed BEFORE starting the transaction to prevent double-firing
+                // Mark as processed BEFORE starting the transaction to prevent double-firing in same tab
                 sessionStorage.setItem(SESSION_CHECK_KEY, 'true');
 
                 const visitorRecordRef = doc(db, 'unique_visitors', uniqueId);
@@ -41,23 +41,25 @@ const VisitorCounter = () => {
                     const visitorSnap = await transaction.get(visitorRecordRef);
                     const globalSnap = await transaction.get(counterDoc);
 
+                    // Update or set visitor record
                     if (!visitorSnap.exists()) {
-                        // NEW VISITOR!
                         transaction.set(visitorRecordRef, {
                             firstVisit: new Date().toISOString(),
-                            lastVisit: new Date().toISOString()
+                            lastVisit: new Date().toISOString(),
+                            sessions: 1
                         });
-
-                        if (!globalSnap.exists()) {
-                            transaction.set(counterDoc, { count: 1 });
-                        } else {
-                            transaction.update(counterDoc, { count: increment(1) });
-                        }
                     } else {
-                        // Returning visitor
                         transaction.update(visitorRecordRef, {
-                            lastVisit: new Date().toISOString()
+                            lastVisit: new Date().toISOString(),
+                            sessions: increment(1)
                         });
+                    }
+
+                    // ALWAYS increment global count for a new session
+                    if (!globalSnap.exists()) {
+                        transaction.set(counterDoc, { count: 1 });
+                    } else {
+                        transaction.update(counterDoc, { count: increment(1) });
                     }
                 });
             } catch (error) {
@@ -87,7 +89,7 @@ const VisitorCounter = () => {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1, duration: 0.8 }}
-            className="fixed bottom-4 left-4 z-[150] pointer-events-none"
+            className="fixed bottom-4 left-4 z-[150] pointer-events-none visitor-counter"
         >
             <div className="relative group pointer-events-auto">
                 <div className="relative flex items-center gap-2.5 bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-xl transition-all duration-500 shadow-lg">

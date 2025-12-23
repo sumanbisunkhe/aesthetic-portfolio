@@ -39,6 +39,15 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
     const [currentUser, setCurrentUser] = useState(auth.currentUser);
     const [avatarError, setAvatarError] = useState(false);
 
+    // Toggle body class when mobile menu opens/closes
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.classList.add('mobile-menu-open');
+        } else {
+            document.body.classList.remove('mobile-menu-open');
+        }
+    }, [mobileMenuOpen]);
+
     // Effect to listen for authentication state changes
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -395,93 +404,131 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: '100%', opacity: 0 }}
                             transition={{ type: "spring", damping: 30, stiffness: 200 }}
-                            className="absolute right-0 top-0 bottom-0 w-full sm:w-[400px] bg-black/40 border-l border-white/5 p-8 flex flex-col shadow-2xl relative z-10"
+                            className="absolute right-0 top-0 bottom-0 w-full sm:w-[400px] bg-[#0a0a0a]/95 border-l border-white/5 p-6 sm:p-8 flex flex-col shadow-2xl relative z-10"
                         >
                             {/* Mobile Header */}
-                            <div className="flex items-center justify-between mb-12">
+                            <div className="flex items-center justify-between mb-10">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-yellow-500/20">
                                         <span className="text-black font-extrabold font-fascinate text-xl">S</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-sm font-bold text-yellow-500 tracking-[0.2em] uppercase leading-none mb-1">Navigation</span>
-                                        <span className="text-xl font-bold text-white tracking-tight leading-none">Explore</span>
+                                        <span className="text-[10px] font-bold text-yellow-500 tracking-[0.2em] uppercase leading-none mb-1">Portfolio</span>
+                                        <span className="text-lg font-bold text-white tracking-tight leading-none">Menu</span>
                                     </div>
                                 </div>
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all border border-white/10"
+                                    className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all border border-white/10"
                                 >
-                                    <XMarkIcon className="w-6 h-6" />
+                                    <XMarkIcon className="w-5 h-5" />
                                 </motion.button>
                             </div>
 
-                            {/* Mobile Nav Links with Staggered Animation */}
-                            <div className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
-                                {navigation.map((item, index) => {
-                                    const Icon = item.icon;
-                                    const sectionId = item.href?.startsWith('#') ? item.href.substring(1) : item.name.toLowerCase();
-                                    const isActive = activeSection === sectionId;
-
-                                    return (
-                                        <motion.div
-                                            key={item.name}
-                                            initial={{ opacity: 0, x: 20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: 0.1 + index * 0.05 }}
-                                        >
-                                            {item.name === 'Blogs' && (
-                                                <div className="mt-8 mb-4">
-                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] ml-4">Content</span>
-                                                    <div className="mt-2 h-px bg-gradient-to-r from-white/10 to-transparent mx-4" />
-                                                </div>
-                                            )}
-                                            <a
-                                                href={item.href || ''}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    if (item.href?.startsWith('/')) {
-                                                        navigate(item.href);
+                            {/* Mobile Nav Links Organized by Sections */}
+                            <div className="flex-1 space-y-8 overflow-y-auto custom-scrollbar pr-2">
+                                {/* Navigation Section */}
+                                <section>
+                                    <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] ml-4 mb-3">Navigation</h3>
+                                    <div className="space-y-1">
+                                        {navigation.filter(item => ['Home', 'Work', 'About'].includes(item.name)).map((item, index) => {
+                                            const Icon = item.icon;
+                                            const sectionId = item.href?.startsWith('#') ? item.href.substring(1) : item.name.toLowerCase();
+                                            const isActive = activeSection === sectionId;
+                                            return (
+                                                <motion.a
+                                                    key={item.name}
+                                                    initial={{ opacity: 0, x: 15 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: 0.1 + index * 0.05 }}
+                                                    href={item.href}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
                                                         setMobileMenuOpen(false);
-                                                    } else {
-                                                        // Close menu first for smoother transition
-                                                        setMobileMenuOpen(false);
-                                                        // Small timeout to allow menu animation to start closing
-                                                        setTimeout(() => {
-                                                            handleNavigationClick(e, item.href || '');
-                                                        }, 100);
-                                                    }
-                                                }}
-                                                className={`group flex items-center justify-between px-5 py-4 rounded-2xl text-lg font-bold transition-all relative overflow-hidden ${isActive
-                                                    ? 'text-yellow-400'
-                                                    : item.name === 'Blogs'
-                                                        ? 'text-white bg-blue-600/40 hover:bg-blue-600/60 border border-blue-500/20'
-                                                        : 'text-gray-400 hover:text-white'
-                                                    }`}
-                                            >
-                                                {isActive && (
-                                                    <motion.div
-                                                        layoutId="mobile-active-bg"
-                                                        className="absolute inset-0 bg-yellow-400/10 border border-yellow-400/20"
-                                                    />
-                                                )}
-                                                <div className="flex items-center gap-4 relative z-10">
-                                                    <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-yellow-400/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
-                                                        <Icon className={`w-5 h-5 ${isActive ? 'text-yellow-400' : 'text-gray-400 group-hover:text-white'}`} />
-                                                    </div>
-                                                    <span className="tracking-tight">{item.name}</span>
-                                                </div>
-                                                <motion.div
-                                                    animate={isActive ? { x: 0, opacity: 1 } : { x: -10, opacity: 0 }}
-                                                    className="relative z-10"
+                                                        setTimeout(() => handleNavigationClick(e, item.href || ''), 150);
+                                                    }}
+                                                    className={`group flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all relative ${isActive ? 'text-yellow-400 bg-yellow-400/5' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                                                 >
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
+                                                    <div className="flex items-center gap-3 relative z-10">
+                                                        <Icon className={`w-4 h-4 ${isActive ? 'text-yellow-400' : 'text-gray-500 group-hover:text-white'}`} />
+                                                        <span className="tracking-tight">{item.name}</span>
+                                                    </div>
+                                                    {isActive && <div className="w-1 h-1 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]" />}
+                                                </motion.a>
+                                            );
+                                        })}
+                                    </div>
+                                </section>
+
+                                {/* Highlights Section */}
+                                <section>
+                                    <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] ml-4 mb-3">Resources</h3>
+                                    <div className="space-y-1">
+                                        {navigation.filter(item => ['Experience', 'Resume', 'Now'].includes(item.name)).map((item, index) => {
+                                            const Icon = item.icon;
+                                            const sectionId = item.href?.startsWith('#') ? item.href.substring(1) : item.name.toLowerCase();
+                                            const isActive = activeSection === sectionId;
+                                            return (
+                                                <motion.a
+                                                    key={item.name}
+                                                    initial={{ opacity: 0, x: 15 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: 0.2 + index * 0.05 }}
+                                                    href={item.href}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setMobileMenuOpen(false);
+                                                        setTimeout(() => handleNavigationClick(e, item.href || ''), 150);
+                                                    }}
+                                                    className={`group flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all relative ${isActive ? 'text-yellow-400 bg-yellow-400/5' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                                >
+                                                    <div className="flex items-center gap-3 relative z-10">
+                                                        <Icon className={`w-4 h-4 ${isActive ? 'text-yellow-400' : 'text-gray-500 group-hover:text-white'}`} />
+                                                        <span className="tracking-tight">{item.name}</span>
+                                                    </div>
+                                                    {isActive && <div className="w-1 h-1 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]" />}
+                                                </motion.a>
+                                            );
+                                        })}
+                                    </div>
+                                </section>
+
+                                {/* Content Section */}
+                                <section>
+                                    <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] ml-4 mb-3">Insights</h3>
+                                    <div className="space-y-1">
+                                        {navigation.filter(item => item.name === 'Blogs').map((item) => {
+                                            const Icon = item.icon;
+                                            const isActive = activeSection === 'blogs';
+                                            return (
+                                                <motion.div
+                                                    key={item.name}
+                                                    initial={{ opacity: 0, x: 15 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: 0.35 }}
+                                                >
+                                                    <Link
+                                                        to={item.href || '/blogs'}
+                                                        onClick={() => setMobileMenuOpen(false)}
+                                                        className={`group flex items-center justify-between px-4 py-4 rounded-xl text-sm font-bold transition-all border ${isActive ? 'text-yellow-400 bg-yellow-400/5 border-yellow-400/20' : 'text-white bg-blue-600/10 hover:bg-blue-600/20 border-blue-500/20'}`}
+                                                    >
+                                                        <div className="flex items-center gap-3 relative z-10">
+                                                            <div className={`p-1.5 rounded-lg ${isActive ? 'bg-yellow-400/10' : 'bg-blue-500/20'}`}>
+                                                                <Icon className={`w-4 h-4 ${isActive ? 'text-yellow-400' : 'text-blue-400'}`} />
+                                                            </div>
+                                                            <span className="tracking-tight">{item.name}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-[9px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full uppercase tracking-tighter font-bold">New Articles</span>
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                                                        </div>
+                                                    </Link>
                                                 </motion.div>
-                                            </a>
-                                        </motion.div>
-                                    );
-                                })}
+                                            );
+                                        })}
+                                    </div>
+                                </section>
                             </div>
 
                             {/* Mobile Footer Area */}
@@ -489,23 +536,24 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.5 }}
-                                className="pt-8 mt-6 border-t border-white/10 space-y-6"
+                                className="pt-6 mt-6 border-t border-white/5 space-y-6"
                             >
                                 {currentUser ? (
-                                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-4">
-                                        <div className="relative">
+                                    <div className="p-3 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-3">
+                                        <div className="relative shrink-0">
                                             <img
                                                 src={avatarError ? getFallbackAvatar(currentUser.displayName || 'User') : currentUser.photoURL || ''}
-                                                className="w-12 h-12 rounded-2xl bg-gray-700 object-cover border border-white/10 shadow-lg"
+                                                className="w-10 h-10 rounded-xl bg-gray-700 object-cover border border-white/10 shadow-lg"
                                                 alt="User"
+                                                onError={() => setAvatarError(true)}
                                             />
-                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-black rounded-full" />
+                                            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-black rounded-full" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-white font-bold text-sm truncate">{currentUser.displayName}</p>
+                                            <p className="text-white font-bold text-xs truncate">{currentUser.displayName}</p>
                                             <button
                                                 onClick={handleSignOut}
-                                                className="text-xs text-red-400 hover:text-red-300 font-semibold uppercase tracking-wider mt-1 flex items-center gap-1"
+                                                className="text-[10px] text-red-400 hover:text-red-300 font-bold uppercase tracking-wider mt-0.5"
                                             >
                                                 Sign Out
                                             </button>
@@ -513,40 +561,41 @@ const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
                                     </div>
                                 ) : (
                                     <motion.button
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
+                                        whileHover={{ scale: 1.01 }}
+                                        whileTap={{ scale: 0.99 }}
                                         onClick={() => {
                                             onOpenAuthModal();
                                             setMobileMenuOpen(false);
                                         }}
-                                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-extrabold text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-yellow-500/20"
+                                        className="w-full py-4 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest hover:bg-gray-200 transition-all shadow-xl shadow-white/5"
                                     >
-                                        Sign In Provider
+                                        Sign In
                                     </motion.button>
                                 )}
 
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-2">
                                         <motion.a
-                                            whileHover={{ y: -3 }}
+                                            whileHover={{ y: -2, backgroundColor: 'rgba(255,255,255,0.1)' }}
                                             href="https://github.com/sumanbisunkhe"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                                            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all"
                                         >
                                             <FaGithub className="w-5 h-5" />
                                         </motion.a>
                                     </div>
                                     <motion.a
                                         href="#contact"
-                                        whileTap={{ scale: 0.95 }}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
                                         onClick={(e) => {
                                             setMobileMenuOpen(false);
-                                            setTimeout(() => handleNavigationClick(e, '#contact'), 100);
+                                            setTimeout(() => handleNavigationClick(e, '#contact'), 150);
                                         }}
-                                        className="px-6 py-3 rounded-xl bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors shadow-lg"
+                                        className="flex-1 py-3 px-4 rounded-xl bg-yellow-400 text-black text-center text-xs font-bold uppercase tracking-widest shadow-lg shadow-yellow-400/10"
                                     >
-                                        Let's Chat
+                                        Get In Touch
                                     </motion.a>
                                 </div>
                             </motion.div>
