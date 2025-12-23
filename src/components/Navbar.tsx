@@ -4,873 +4,554 @@ import { auth } from '../lib/firebase';
 import { signOutUser } from '../lib/auth';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
-import { HiOutlineUser } from 'react-icons/hi';
+
 import {
-  HomeIcon,
-  UserCircleIcon,
-  BriefcaseIcon,
-  BookOpenIcon,
-  ClockIcon,
-  XMarkIcon,
-  LightBulbIcon,
-  DocumentTextIcon,
-  Bars3Icon,
-  ChatBubbleLeftRightIcon,
+    HomeIcon,
+    UserCircleIcon,
+    BriefcaseIcon,
+    ClockIcon,
+    XMarkIcon,
+    NewspaperIcon,
+    DocumentTextIcon,
+    Bars3Icon,
 } from '@heroicons/react/24/outline';
+import { UserIcon } from '@heroicons/react/24/solid';
 
 interface NavItem {
-  name: string;
-  href?: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  dropdown?: { name: string; href: string; icon?: React.ComponentType<React.SVGProps<SVGSVGElement>> }[];
+    name: string;
+    href?: string;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    dropdown?: { name: string; href: string; icon?: React.ComponentType<React.SVGProps<SVGSVGElement>> }[];
 }
 
 interface NavbarProps {
-  onOpenAuthModal: () => void;
+    onOpenAuthModal: () => void;
 }
 
 const Navbar = ({ onOpenAuthModal }: NavbarProps) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
-  const [isSigningOut, setIsSigningOut] = useState(false);
-  const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(auth.currentUser);
-  const [avatarError, setAvatarError] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Effect to listen for authentication state changes
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      setCurrentUser(user);
-      if (user) {
-        console.log('User logged in:', {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          emailVerified: user.emailVerified,
-          metadata: {
-            creationTime: user.metadata.creationTime,
-            lastSignInTime: user.metadata.lastSignInTime
-          }
+    const [activeSection, setActiveSection] = useState('home');
+    const [isSigningOut, setIsSigningOut] = useState(false);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [currentUser, setCurrentUser] = useState(auth.currentUser);
+    const [avatarError, setAvatarError] = useState(false);
+
+    // Effect to listen for authentication state changes
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
+            setCurrentUser(user);
         });
-      } else {
-        console.log('User logged out');
-      }
-    });
 
-    // Clean up the listener on component unmount
-    return () => unsubscribe();
-  }, []); // Empty dependency array means this effect runs once on mount
+        return () => unsubscribe();
+    }, []);
 
-  // Function to get the correct href based on current location
-  const getCorrectHref = (href: string) => {
-    if (href.startsWith('/')) return href; // Keep route links as is
-    if (location.pathname !== '/') {
-      return `/#${href.substring(1)}`; // Add /# for hash links when not on main page
-    }
-    return href; // Keep hash links as is for main page
-  };
-
-  // Function to handle navigation clicks
-  const handleNavigationClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith('#')) {
-      e.preventDefault();
-      const targetId = href.substring(1);
-      if (location.pathname !== '/') {
-        // If not on main page, navigate to main page with hash
-        navigate('/', { state: { scrollTo: targetId } });
-      } else {
-        // If on main page, just scroll to the section
-        const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-          // Update active section immediately
-          setActiveSection(targetId);
+    // Function to get the correct href based on current location
+    const getCorrectHref = (href: string) => {
+        if (href.startsWith('/')) return href;
+        if (location.pathname !== '/') {
+            return `/#${href.substring(1)}`;
         }
-      }
-    } else if (href.startsWith('/')) {
-      // For route links, update active section based on the route
-      const routeName = href.substring(1);
-      setActiveSection(routeName);
-      // Close mobile menu if open
-      setMobileMenuOpen(false);
-    }
-  };
+        return href;
+    };
 
-  const navigation: NavItem[] = [
-    { name: 'Home', href: '#home', icon: HomeIcon },
-    { name: 'Work', href: '#work', icon: BriefcaseIcon },
-    { name: 'About', href: '#about', icon: UserCircleIcon },
-    {
-      name: 'Resources',
-      icon: BookOpenIcon,
-      dropdown: [
+    // Function to handle navigation clicks
+    const handleNavigationClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        if (href.startsWith('#')) {
+            e.preventDefault();
+            const targetId = href.substring(1);
+            if (location.pathname !== '/') {
+                navigate('/', { state: { scrollTo: targetId } });
+            } else {
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                    setActiveSection(targetId);
+                }
+            }
+        } else if (href.startsWith('/')) {
+            const routeName = href.substring(1);
+            setActiveSection(routeName);
+            setMobileMenuOpen(false);
+        }
+    };
+
+    const navigation: NavItem[] = [
+        { name: 'Home', href: '#home', icon: HomeIcon },
+        { name: 'Work', href: '#work', icon: BriefcaseIcon },
+        { name: 'About', href: '#about', icon: UserCircleIcon },
         { name: 'Experience', href: '#resources-experience', icon: BriefcaseIcon },
         { name: 'Resume', href: '#resources-resume', icon: DocumentTextIcon },
-      ],
-    },
-    { name: 'Now', href: '#now', icon: ClockIcon },
-    { name: 'Thoughts', href: '/thoughts', icon: LightBulbIcon },
-  ];
+        { name: 'Now', href: '#now', icon: ClockIcon },
+        { name: 'Blogs', href: '/thoughts', icon: NewspaperIcon },
+    ];
 
-  // Update active section based on current route
-  useEffect(() => {
-    if (location.pathname === '/thoughts') {
-      setActiveSection('thoughts');
-    } else if (location.pathname.startsWith('/thoughts/')) {
-      setActiveSection('thoughts');
-    } else if (location.pathname === '/') {
-      // Only run scroll spy on main page
-      const handleScroll = () => {
-        setScrolled(window.scrollY > 20);
-        const scrollPosition = window.scrollY + 100;
+    // Scroll spy effect
+    useEffect(() => {
+        if (location.pathname === '/thoughts') {
+            setActiveSection('blogs');
+        } else if (location.pathname.startsWith('/thoughts/')) {
+            setActiveSection('blogs');
+        } else if (location.pathname === '/') {
+            const handleScroll = () => {
 
-        // Check if we're at the top of the page (home section)
-        if (scrollPosition < 100) {
-          setActiveSection('home');
-          return;
-        }
+                // Increased offset to account for scroll-padding (80px) and section scroll-margins
+                const scrollPosition = window.scrollY + 300;
 
-        // Check if we're in resources section (either experience or resume)
-        const resourcesSection = document.getElementById('resources');
-        const experienceSection = document.getElementById('resources-experience');
-        const resumeSection = document.getElementById('resources-resume');
-        const contactSection = document.getElementById('contact');
+                const sections = [
+                    ...navigation
+                        .filter(item => item.href?.startsWith('#'))
+                        .map(item => item.href!.substring(1)),
+                    'contact'
+                ];
 
-        if (contactSection && scrollPosition >= contactSection.offsetTop - 100) {
-          setActiveSection('contact');
-          return;
-        }
-
-        if (resourcesSection) {
-          const { offsetTop, offsetHeight } = resourcesSection;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            // Check if we're specifically in experience or resume sections
-            if (experienceSection) {
-              const expTop = experienceSection.offsetTop;
-              const expHeight = experienceSection.offsetHeight;
-              if (scrollPosition >= expTop && scrollPosition < expTop + expHeight) {
-                setActiveSection('resources-experience');
-                return;
-              }
-            }
-            if (resumeSection) {
-              const resumeTop = resumeSection.offsetTop;
-              const resumeHeight = resumeSection.offsetHeight;
-              if (scrollPosition >= resumeTop && scrollPosition < resumeTop + resumeHeight) {
-                setActiveSection('resources-resume');
-                return;
-              }
-            }
-            // If we're in the resources section but not specifically in experience or resume
-            setActiveSection('resources');
-            return;
-          }
-        }
-
-        // Check other sections
-        const sections = navigation.flatMap(item => 
-          item.dropdown ? item.dropdown.map(subItem => subItem.href.substring(1)) : (item.href ? [item.href.substring(1)] : [])
-        );
-
-        for (const section of sections) {
-          const element = document.getElementById(section);
-          if (element) {
-            const { offsetTop, offsetHeight } = element;
-            if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-              setActiveSection(section);
-              break;
-            }
-          }
-        }
-      };
-
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-  }, [location.pathname]);
-
-  // Add effect to handle scroll after navigation
-  useEffect(() => {
-    if (location.state?.scrollTo) {
-      const targetId = location.state.scrollTo;
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  }, [location]);
-
-  const handleSignOut = async () => {
-    try {
-      setIsSigningOut(true);
-      await signOutUser();
-    } catch (error) {
-      console.error('Error signing out:', error);
-      // You might want to show a toast notification here
-    } finally {
-      setIsSigningOut(false);
-    }
-  };
-
-  // Function to get user initials
-  const getUserInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase();
-  };
-
-  // Function to get fallback avatar SVG
-  const getFallbackAvatar = (name: string) => {
-    const initials = getUserInitials(name);
-    return `data:image/svg+xml,${encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <defs>
-          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#4B5563;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <rect width="100" height="100" fill="url(#grad)"/>
-        <text x="50" y="50" font-family="Arial" font-size="40" fill="white" text-anchor="middle" dominant-baseline="central">${initials}</text>
-      </svg>
-    `)}`;
-  };
-
-  // Effect to handle avatar loading
-  useEffect(() => {
-    if (currentUser?.photoURL) {
-      const img = new Image();
-      img.src = currentUser.photoURL;
-      img.onload = () => setAvatarError(false);
-      img.onerror = () => setAvatarError(true);
-    }
-  }, [currentUser?.photoURL]);
-
-  return (
-    <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 50, damping: 20 }}
-        className={`fixed w-full z-50 transition-all duration-500 ${
-          scrolled 
-            ? 'py-3 sm:py-4 bg-primary-900/95 backdrop-blur-lg shadow-lg' 
-            : 'py-4 sm:py-6 bg-primary-900'
-        }`}
-        role="navigation"
-        aria-label="Main navigation"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <motion.a
-              href="#home"
-              onClick={(e) => {
-                e.preventDefault();
-                if (location.pathname !== '/') {
-                  navigate('/', { state: { scrollTo: 'home' } });
-                } else {
-                  const homeElement = document.getElementById('home');
-                  if (homeElement) {
-                    homeElement.scrollIntoView({ behavior: 'smooth' });
-                  }
+                for (const section of sections) {
+                    const element = document.getElementById(section);
+                    if (element) {
+                        const { offsetTop, offsetHeight } = element;
+                        if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+                            setActiveSection(section);
+                            break;
+                        }
+                    }
                 }
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="relative group z-10 shrink-0"
-              aria-label="Go to home section"
-            >
-              <span className="logo-text text-base sm:text-lg md:text-xl lg:text-2xl">
-                <span className="bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 bg-clip-text text-transparent">
-                  SUMAN BISUNKHE
-                </span>
-              </span>
-              <motion.div
-                className="absolute -bottom-2 left-0 w-0 h-[2px] bg-gradient-to-r from-accent-900 to-accent-700"
-                whileHover={{ width: "100%" }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.a>
+            };
 
-            {/* Desktop Navigation */}
-            <div className="hidden xl:flex items-center space-x-1">
-              <nav className="flex items-center space-x-1" role="menubar">
-                {navigation.map((item) => {
-                  const Icon = item.icon;
-                  
-                  if (item.dropdown) {
-                    return (
-                      <div
-                        key={item.name}
-                        className="relative group"
-                        onMouseEnter={() => setResourcesDropdownOpen(true)}
-                        onMouseLeave={() => setResourcesDropdownOpen(false)}
-                      >
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="relative inline-flex items-center px-3 py-2 text-sm font-medium metamorphous-regular tracking-wider rounded-lg group"
-                          aria-expanded={resourcesDropdownOpen}
-                          aria-haspopup="true"
-                        >
-                          <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 metamorphous-regular tracking-wider ${
-                            resourcesDropdownOpen || 
-                            activeSection === 'resources' || 
-                            activeSection === 'resources-experience' || 
-                            activeSection === 'resources-resume' 
-                              ? 'text-accent-900' 
-                              : 'text-primary-50 hover:text-accent-200'
-                          }`}>
-                            <Icon className="w-4 h-4" aria-hidden="true" />
-                            <span>{item.name}</span>
-                            {/* Dropdown Arrow */}
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`w-4 h-4 transform transition-transform duration-200 ${resourcesDropdownOpen ? 'rotate-180' : 'rotate-0'}`} aria-hidden="true">
-                              <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                            </svg>
-                          </span>
-                          {(resourcesDropdownOpen || 
-                            activeSection === 'resources' || 
-                            activeSection === 'resources-experience' || 
-                            activeSection === 'resources-resume') && (
-                            <motion.div
-                              layoutId="nav-pill"
-                              className="absolute inset-0 bg-royal-900/20 rounded-lg -z-10"
-                              transition={{ type: "spring", duration: 0.5 }}
-                            />
-                          )}
-                        </motion.button>
-                        <AnimatePresence>
-                          {resourcesDropdownOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 10 }}
-                              transition={{ duration: 0.2 }}
-                              className="absolute left-0 mt-2 w-48 rounded-lg shadow-xl bg-black backdrop-blur-md ring-1 ring-primary-700/50 z-50 origin-top"
+            window.addEventListener('scroll', handleScroll);
+            handleScroll();
+            return () => window.removeEventListener('scroll', handleScroll);
+        }
+    }, [location.pathname]); // Removed navigation from dependencies to avoid loop, using stable sections
+
+    const handleSignOut = async () => {
+        setIsSigningOut(true);
+        try {
+            await signOutUser();
+            navigate('/');
+        } catch (error) {
+            console.error('Error signing out:', error);
+        } finally {
+            setIsSigningOut(false);
+        }
+    };
+
+    const getFallbackAvatar = (name: string) => {
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`;
+    };
+
+    return (
+        <>
+            <motion.header
+                initial={{ y: -100 }}
+                animate={{ y: 0 }}
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500`}
+            >
+                <nav
+                    className={`bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300`}
+                    role="navigation"
+                    aria-label="Main navigation"
+                >
+                    <div className="px-2 sm:px-4 lg:px-8 container mx-auto">
+                        <div className="flex items-center justify-between h-14 sm:h-16 gap-4">
+
+                            {/* Left Side: Logo */}
+                            <motion.a
+                                href="#home"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    if (location.pathname !== '/') {
+                                        navigate('/', { state: { scrollTo: 'home' } });
+                                    } else {
+                                        const homeElement = document.getElementById('home');
+                                        if (homeElement) {
+                                            window.scrollTo({
+                                                top: 0,
+                                                behavior: 'smooth'
+                                            });
+                                        }
+                                    }
+                                }}
+                                className="relative group z-10 flex items-center gap-1.5 lg:gap-2 shrink-0"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                             >
-                              <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="resources-menu-button">
-                                {item.dropdown.map((subItem) => {
-                                  const SubIcon = subItem.icon;
-                                  const isActive = activeSection === subItem.href.substring(1);
-                  return (
+                                <div className="flex items-center justify-center ">
+                                    <span className="text-yellow-500 font-bold font-fascinate text-sm lg:text-lg">SUMAN</span>
+                                </div>
+                                <span className="logo-text text-sm lg:text-xl font-bold bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent tracking-tight">
+                                    BISUNKHE
+                                </span>
+                            </motion.a>
+
+                            {/* Center: Desktop Navigation */}
+                            <div className="hidden lg:flex items-center flex-1 justify-end pr-8">
+                                <div className="flex items-center p-1.5 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm shadow-inner shadow-black/20">
+                                    {navigation.filter(item => item.name !== 'Blogs').map((item) => {
+                                        const sectionId = item.href?.startsWith('#') ? item.href.substring(1) : item.name.toLowerCase();
+                                        const isActive = activeSection === sectionId;
+
+                                        return item.href?.startsWith('/') ? (
+                                            <Link
+                                                key={item.name}
+                                                to={item.href}
+                                                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 outline-none ${isActive ? 'text-black font-bold' : 'text-gray-300 hover:text-white'
+                                                    }`}
+                                            >
+                                                {isActive && (
+                                                    <motion.div
+                                                        layoutId="nav-bg"
+                                                        className="absolute inset-0 bg-[#FFFF00] rounded-full shadow-lg shadow-[#FFFF00]/30"
+                                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                    />
+                                                )}
+                                                <span className="relative z-10 tracking-wide">{item.name}</span>
+                                            </Link>
+                                        ) : (
+                                            <a
+                                                key={item.name}
+                                                href={getCorrectHref(item.href || '')}
+                                                onClick={(e) => handleNavigationClick(e, item.href || '')}
+                                                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 outline-none ${isActive ? 'text-black font-bold' : 'text-gray-300 hover:text-white'
+                                                    }`}
+                                            >
+                                                {isActive && (
+                                                    <motion.div
+                                                        layoutId="nav-bg"
+                                                        className="absolute inset-0 bg-[#FFFF00] rounded-full shadow-lg shadow-[#FFFF00]/30"
+                                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                    />
+                                                )}
+                                                <span className="relative z-10 tracking-wide">{item.name}</span>
+                                            </a>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Right Side: Blogs, Social & Auth */}
+                            <div className="flex items-center gap-4 shrink-0">
+                                {/* Blogs Tab (Desktop Only, pushed further right) */}
+                                <div className="hidden lg:block h-6 w-px bg-white/10 mx-1"></div>
+                                <div className="hidden lg:flex items-center p-1.5 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm shadow-inner shadow-black/20">
+                                    {navigation.filter(item => item.name === 'Blogs').map((item) => {
+                                        const isActive = activeSection === item.name.toLowerCase();
+                                        return (
+                                            <Link
+                                                key={item.name}
+                                                to={item.href || '/thoughts'}
+                                                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 outline-none ${isActive ? 'text-black font-bold' : 'text-gray-300 hover:text-white'
+                                                    }`}
+                                            >
+                                                {isActive && (
+                                                    <motion.div
+                                                        layoutId="nav-bg-blogs"
+                                                        className="absolute inset-0 bg-[#FFFF00] rounded-full shadow-lg shadow-[#FFFF00]/30"
+                                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                    />
+                                                )}
+                                                <span className="relative z-10 flex items-center gap-2">
+                                                    <NewspaperIcon className="w-4 h-4" />
+                                                    {item.name}
+                                                </span>
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="hidden lg:block h-6 w-px bg-white/10 mx-1"></div>
+
+                                <div className="hidden lg:flex items-center gap-2">
                                     <a
-                                      key={subItem.name}
-                                      href={subItem.href}
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        handleNavigationClick(e, subItem.href);
-                                        setResourcesDropdownOpen(false);
-                                      }}
-                                      className={`flex items-center px-4 py-2 text-sm metamorphous-regular tracking-wider ${
-                                        isActive 
-                                          ? 'bg-primary-700/50 text-accent-900' 
-                                          : 'text-primary-50 hover:bg-primary-700/50 hover:text-accent-900'
-                                      } transition-colors duration-200`}
-                                      role="menuitem"
+                                        href="https://github.com/sumanbisunkhe"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                                        aria-label="GitHub"
                                     >
-                                      {SubIcon && <SubIcon className="w-4 h-4 mr-2" aria-hidden="true" />}
-                                      <span className="metamorphous-regular tracking-wider text-base">{subItem.name}</span>
+                                        <FaGithub className="w-5 h-5" />
                                     </a>
-                                  );
-                                })}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    );
-                  }
 
-                  // Default navigation item rendering
-                  return item.href?.startsWith('/') ? (
-                    <motion.div
-                      key={item.name}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative inline-flex items-center px-3 py-2 text-sm metamorphous-regular tracking-wider rounded-lg group"
-                    >
-                      <Link
-                        to={item.href}
-                        className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 metamorphous-regular tracking-wider ${
-                          activeSection === item.name.toLowerCase()
-                            ? 'text-accent-900'
-                            : 'text-primary-50 hover:text-accent-200'
-                        }`}
-                        role="menuitem"
-                        aria-current={activeSection === item.name.toLowerCase() ? 'page' : undefined}
-                      >
-                        <Icon className="w-4 h-4" aria-hidden="true" />
-                        <span>{item.name}</span>
-                      </Link>
-                      {activeSection === item.name.toLowerCase() && (
-                        <motion.div
-                          layoutId="nav-pill"
-                          className="absolute inset-0 rounded-lg -z-10"
-                          transition={{ type: "spring", duration: 0.5 }}
-                        />
-                      )}
-                    </motion.div>
-                  ) : (
-                    <motion.a
-                      key={item.name}
-                      href={getCorrectHref(item.href || '')}
-                      onClick={(e) => handleNavigationClick(e, item.href || '')}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative inline-flex items-center px-3 py-2 text-sm metamorphous-regular tracking-wider rounded-lg group"
-                      role="menuitem"
-                      aria-current={activeSection === item.name.toLowerCase() ? 'page' : undefined}
-                    >
-                      <span className={`relative z-10 transition-colors duration-200 flex items-center gap-1.5 metamorphous-regular tracking-wider ${
-                        activeSection === item.name.toLowerCase()
-                          ? 'text-accent-900'
-                          : 'text-primary-50 hover:text-accent-200'
-                      }`}>
-                        <Icon className="w-4 h-4" aria-hidden="true" />
-                        <span>{item.name}</span>
-                      </span>
-                      {activeSection === item.name.toLowerCase() && (
-                        <motion.div
-                          layoutId="nav-pill"
-                          className="absolute inset-0 rounded-lg -z-10"
-                          transition={{ type: "spring", duration: 0.5 }}
-                        />
-                      )}
-                    </motion.a>
-                  );
-                })}
-              </nav>
-
-              {/* Social Links & Contact */}
-              <div className="flex items-center pl-4 space-x-3 border-l border-primary-700/50">
-                <a
-                  href="https://github.com/sumanbisunkhe"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-primary-800/50 text-primary-50 hover:bg-primary-700/50 hover:text-accent-900 transition-colors duration-200"
-                  aria-label="Visit my GitHub profile"
-                >
-                  <FaGithub className="w-5 h-5" />
-                </a>
-                <motion.a
-                  href="#contact"
-                  onClick={(e) => {
-                    handleNavigationClick(e, '#contact');
-                    setMobileMenuOpen(false);
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-4 py-2 ${
-                    activeSection === 'contact'
-                      ? 'bg-yellow-400 text-black'
-                      : 'bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900'
-                  } text-sm metamorphous-regular tracking-wider rounded-lg hover:shadow-lg hover:shadow-accent/20 transition-all duration-200 flex items-center gap-1.5`}
-                  aria-label="Open contact section"
-                >
-                  <ChatBubbleLeftRightIcon className="w-4 h-4" />
-                  Let's Talk
-                </motion.a>
-              </div>
-
-              {/* Authentication */}
-              <div className="flex items-center pl-4 border-l border-primary-700/50">
-                {currentUser ? (
-                  <div className="relative group">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      className="relative"
-                    >
-                      <div className="relative">
-                        {/* Avatar Container with Gradient Border */}
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
-                        
-                        {/* Avatar Image */}
-                      <img
-                          src={avatarError ? getFallbackAvatar(currentUser?.displayName || 'User') : currentUser?.photoURL || ''}
-                          alt={currentUser?.displayName || ''}
-                          className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full ring-2 ring-accent-900/20 group-hover:ring-accent-900/40 transition-all duration-300 object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.onerror = null; // Prevent infinite loop
-                            setAvatarError(true);
-                          }}
-                          loading="eager"
-                          crossOrigin="anonymous"
-                      />
-                        
-                        {/* Hover Effects */}
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-900/10 to-accent-700/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-                        
-                        {/* Active Indicator */}
-                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-primary-900 group-hover:ring-accent-900/40 transition-all duration-300">
-                          <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75" />
-                        </div>
-                      </div>
-                    </motion.button>
-
-                    {/* User Menu Dropdown */}
-                    <div className="absolute right-0 mt-3 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
-                      <div className="bg-gradient-to-b from-primary-800 to-primary-900 rounded-2xl shadow-2xl border border-primary-700/50 overflow-hidden">
-                        {/* Decorative Elements */}
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700" />
-                        <div className="absolute -top-3 -left-3 w-16 h-16 border-t-2 border-l-2 border-accent-900/50 rounded-tl-2xl" />
-                        <div className="absolute -bottom-3 -right-3 w-16 h-16 border-b-2 border-r-2 border-accent-900/50 rounded-br-2xl" />
-
-                        {/* User Info Section */}
-                        <div className="p-4 border-b border-primary-700/50">
-                          <div className="flex items-center gap-3">
-                            <div className="relative">
-                              {/* Avatar Container with Gradient Border */}
-                              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
-                              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
-                              
-                              <img
-                                src={avatarError ? getFallbackAvatar(currentUser?.displayName || 'User') : currentUser?.photoURL || ''}
-                                alt={currentUser?.displayName || ''}
-                                className="relative w-12 h-12 rounded-xl ring-2 ring-accent-900/20 object-cover"
-                              />
-                              
-                              {/* Active Indicator */}
-                              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-primary-900">
-                                <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75" />
-                              </div>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-primary-200 truncate">
-                                {currentUser.displayName}
-                              </p>
-                              <p className="text-xs text-primary-400 truncate">
-                                {currentUser.email}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Menu Items */}
-                        <div className="p-2">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleSignOut}
-                            disabled={isSigningOut}
-                            className="w-full px-4 py-3 text-left text-sm text-primary-200 hover:bg-primary-700/50 hover:text-accent-900 rounded-xl transition-colors duration-200 flex items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {isSigningOut ? (
-                              <>
-                                <div className="w-5 h-5 border-2 border-primary-200 border-t-transparent rounded-full animate-spin" />
-                                <span>Signing out...</span>
-                              </>
-                            ) : (
-                              <>
-                                <svg 
-                                  className="w-5 h-5 text-primary-400 group-hover:text-accent-900 transition-colors duration-200" 
-                                  fill="none" 
-                                  viewBox="0 0 24 24" 
-                                  stroke="currentColor"
-                                >
-                                  <path 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    strokeWidth={2} 
-                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
-                                  />
-                                </svg>
-                                <span>Sign Out</span>
-                              </>
-                            )}
-                      </motion.button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={onOpenAuthModal}
-                    className="relative p-2 rounded-lg bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 hover:shadow-lg hover:shadow-accent/20 transition-all duration-200 group"
-                    aria-label="Sign in"
-                  >
-                    <HiOutlineUser className="w-5 h-5" />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-accent-900/20 to-accent-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </motion.button>
-                )}
-              </div>
-            </div>
-
-            {/* Mobile menu button and auth */}
-            <div className="xl:hidden flex items-center gap-2">
-            {/* Mobile menu button */}
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-lg bg-primary-800/50 text-accent-900 hover:bg-primary-700/50"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={mobileMenuOpen ? 'close' : 'menu'}
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {mobileMenuOpen ? (
-                    <XMarkIcon className="w-6 h-6" aria-hidden="true" />
-                  ) : (
-                    <Bars3Icon className="w-6 h-6" aria-hidden="true" />
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </motion.button>
-            </div>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Mobile menu dropdown */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 xl:hidden"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 20, stiffness: 100 }}
-              className="fixed top-0 right-0 bottom-0 w-full sm:w-80 bg-primary-900/95 backdrop-blur-xl z-50 xl:hidden shadow-2xl"
-            >
-              <div className="h-full flex flex-col">
-                {/* Header with Logo and Close button */}
-                <div className="flex items-center justify-between p-3 border-b border-primary-700/50">
-                  <span className="logo-text text-lg">
-                    <span className="bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 bg-clip-text text-transparent">
-                      SUMAN BISUNKHE
-                    </span>
-                  </span>
-                  <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="p-1.5 rounded-lg bg-primary-800/50 text-accent-900 hover:bg-primary-700/50"
-                    aria-label="Close menu"
-                  >
-                    <XMarkIcon className="w-5 h-5" />
-                  </motion.button>
-                </div>
-
-                {/* User Profile Section */}
-                {currentUser ? (
-                  <div className="p-4 border-b border-primary-700/50 bg-gradient-to-b from-primary-800/50 to-transparent">
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        {/* Avatar Container with Gradient Border */}
-                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 animate-spin-slow opacity-50 blur-sm" />
-                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent-900 via-accent-800 to-accent-700 opacity-20" />
-                        
-                        <img
-                          src={avatarError ? getFallbackAvatar(currentUser?.displayName || 'User') : currentUser?.photoURL || ''}
-                          alt={currentUser?.displayName || ''}
-                          className="relative w-12 h-12 rounded-xl ring-2 ring-accent-900/20 object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.onerror = null;
-                            setAvatarError(true);
-                          }}
-                        />
-                        
-                        {/* Active Indicator */}
-                        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-primary-900">
-                          <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-base font-medium text-primary-200 truncate">
-                          {currentUser.displayName}
-                        </p>
-                        <p className="text-xs text-primary-400 truncate">
-                          {currentUser.email}
-                        </p>
-                      </div>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleSignOut}
-                        disabled={isSigningOut}
-                        className="p-1.5 rounded-lg bg-primary-800/50 text-primary-200 hover:bg-primary-700/50 hover:text-accent-900 transition-colors duration-200"
-                        aria-label="Sign out"
-                      >
-                        {isSigningOut ? (
-                          <div className="w-4 h-4 border-2 border-primary-200 border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <svg 
-                            className="w-4 h-4" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
-                            stroke="currentColor"
-                          >
-                            <path 
-                              strokeLinecap="round" 
-                              strokeLinejoin="round" 
-                              strokeWidth={2} 
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
-                            />
-                          </svg>
-                        )}
-                      </motion.button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="p-4 border-b border-primary-700/50 bg-gradient-to-b from-primary-800/50 to-transparent">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        onOpenAuthModal();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full px-3 py-2 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 font-medium rounded-xl shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 flex items-center justify-center gap-2"
-                    >
-                      <HiOutlineUser className="w-4 h-4" />
-                      <span>Sign In</span>
-                    </motion.button>
-                  </div>
-                )}
-
-                {/* Navigation items */}
-                <nav className="flex-1 py-3 px-3">
-                  <div className="grid gap-2">
-                    {navigation.map((item) => {
-                      const Icon = item.icon;
-                      
-                      if (item.dropdown) {
-                         return (
-                           <div key={item.name} className="space-y-2">
-                             <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-accent-900">
-                               <Icon className="w-4 h-4" />
-                               <span className="metamorphous-regular tracking-wider text-base">{item.name}</span>
-                             </div>
-                             <div className="pl-6 space-y-2 border-l border-primary-700/50">
-                                {item.dropdown.map((subItem) => {
-                                   const SubIcon = subItem.icon;
-                                   return (
-                                     <motion.a
-                                        key={subItem.name}
-                                        href={subItem.href}
-                                        className={`flex items-center gap-2 px-3 py-2 rounded-xl metamorphous-regular tracking-wider transition-all duration-200 ${activeSection === subItem.href.substring(1) ? 'bg-primary-800/70 text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'}`}
+                                    <motion.a
+                                        href="#contact"
                                         onClick={(e) => {
-                                           e.preventDefault();
-                                           handleNavigationClick(e, subItem.href);
-                                           setMobileMenuOpen(false);
-                                           setResourcesDropdownOpen(false);
+                                            handleNavigationClick(e, '#contact');
                                         }}
-                                        whileHover={{ x: 4 }}
-                                        transition={{ type: "spring", stiffness: 300 }}
-                                     >
-                                       {SubIcon && <SubIcon className="w-4 h-4" />}
-                                       <span className="metamorphous-regular tracking-wider text-base">{subItem.name}</span>
-                                     </motion.a>
-                                   );
-                                })}
-                             </div>
-                           </div>
-                         );
-                      }
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 shadow-lg ${activeSection === 'contact'
+                                            ? 'bg-[#FFFF00] text-black shadow-[#FFFF00]/30'
+                                            : 'bg-white text-black hover:bg-gray-200 shadow-white/10'
+                                            }`}
+                                    >
+                                        Let's Talk
+                                    </motion.a>
+                                </div>
 
-                      return item.href?.startsWith('/') ? (
-                        <motion.div
-                          key={item.name}
-                          whileHover={{ x: 4 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
-                          <Link
-                            to={item.href}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xl metamorphous-regular tracking-wider transition-all duration-200 ${
-                              activeSection === item.name.toLowerCase() ? 'text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
-                            }`}
-                            onClick={() => {
-                              setActiveSection(item.name.toLowerCase());
-                              setMobileMenuOpen(false);
-                            }}
-                          >
-                            <Icon className="w-4 h-4" />
-                            <span className="metamorphous-regular tracking-wider text-base">{item.name}</span>
-                          </Link>
-                        </motion.div>
-                      ) : (
-                        <motion.a
-                          key={item.name}
-                          href={getCorrectHref(item.href || '')}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-xl metamorphous-regular tracking-wider transition-all duration-200 ${
-                            activeSection === item.name.toLowerCase() ? 'text-accent-900' : 'text-primary-50 hover:bg-primary-800/40 hover:text-accent-200'
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleNavigationClick(e, item.href || '');
-                            setMobileMenuOpen(false);
-                          }}
-                          whileHover={{ x: 4 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
-                          <Icon className="w-4 h-4" />
-                          <span className="metamorphous-regular tracking-wider text-base">{item.name}</span>
-                        </motion.a>
-                      );
-                    })}
-                  </div>
+                                {/* Auth Buttons (Visible on desktop) */}
+                                <div className="hidden lg:flex items-center">
+                                    {currentUser ? (
+                                        <div className="relative group ml-2">
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                className="relative block"
+                                            >
+                                                <div className="w-10 h-10 rounded-full p-0.5 bg-gradient-to-br from-accent-400 to-accent-600 shadow-lg shadow-accent-500/20">
+                                                    <img
+                                                        src={avatarError ? getFallbackAvatar(currentUser?.displayName || 'User') : currentUser?.photoURL || ''}
+                                                        alt={currentUser?.displayName || ''}
+                                                        className="w-full h-full rounded-full object-cover border-2 border-[#0a0a0a]"
+                                                        onError={() => setAvatarError(true)}
+                                                    />
+                                                </div>
+                                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#0a0a0a] rounded-full"></div>
+                                            </motion.button>
+
+                                            <div className="absolute right-0 mt-4 w-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right">
+                                                <div className="p-1 rounded-2xl bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 shadow-2xl">
+                                                    <div className="p-3 border-b border-white/5 mb-1">
+                                                        <p className="text-sm font-bold text-white truncate">{currentUser.displayName}</p>
+                                                        <p className="text-xs text-gray-400 truncate">{currentUser.email}</p>
+                                                    </div>
+                                                    <button
+                                                        onClick={handleSignOut}
+                                                        disabled={isSigningOut}
+                                                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-xl transition-colors font-medium"
+                                                    >
+                                                        {isSigningOut ? 'Signing out...' : 'Sign Out'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <motion.button
+                                            whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={onOpenAuthModal}
+                                            className="ml-2 w-10 h-10 rounded-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center text-white transition-all shadow-lg"
+                                        >
+                                            <UserIcon className="w-5 h-5 text-gray-300" />
+                                        </motion.button>
+                                    )}
+                                </div>
+
+                                {/* Mobile Toggle */}
+                                <div className="lg:hidden flex items-center gap-3">
+                                    <motion.button
+                                        whileTap={{ scale: 0.9 }}
+                                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                        className="p-2 rounded-full bg-white/5 text-white hover:bg-white/10 transition-colors border border-white/5"
+                                    >
+                                        {mobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
+                                    </motion.button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </nav>
+            </motion.header>
 
-                {/* Bottom section with social links and contact */}
-                <div className="p-4 border-t border-primary-700/50">
-                  <div className="flex items-center justify-between gap-3">
-                    <a
-                      href="https://github.com/sumanbisunkhe"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-xl bg-primary-800/50 text-primary-50 hover:bg-primary-700/50 hover:text-accent-900 transition-all duration-200"
+            {/* Mobile Menu */}
+            <AnimatePresence>
+                {mobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] lg:hidden"
                     >
-                      <FaGithub className="w-5 h-5" />
-                    </a>
-                    <motion.a
-                      href="#contact"
-                      onClick={(e) => {
-                        handleNavigationClick(e, '#contact');
-                        setMobileMenuOpen(false);
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`flex-1 px-4 py-2 bg-gradient-to-r from-accent-900 to-accent-800 text-primary-900 metamorphous-regular tracking-wider rounded-xl shadow-lg shadow-accent-900/10 hover:shadow-accent-900/20 transition-all duration-200 flex items-center justify-center gap-2`}
-                    >
-                      <ChatBubbleLeftRightIcon className="w-4 h-4" />
-                      Let's Talk
-                    </motion.a>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </>
-  );
+                        {/* Backdrop with enhanced blur */}
+                        <div
+                            className="absolute inset-0 bg-[#0a0a0a]/90 backdrop-blur-2xl"
+                            onClick={() => setMobileMenuOpen(false)}
+                        />
+
+                        {/* Animated background elements for depth */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.2, 1],
+                                    rotate: [0, 90, 0],
+                                    transition: { duration: 20, repeat: Infinity }
+                                }}
+                                className="absolute -top-1/4 -right-1/4 w-[500px] h-[500px] bg-accent-900/10 rounded-full blur-[100px]"
+                            />
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.3, 1],
+                                    rotate: [0, -90, 0],
+                                    transition: { duration: 25, repeat: Infinity }
+                                }}
+                                className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-yellow-900/5 rounded-full blur-[120px]"
+                            />
+                        </div>
+
+                        <motion.div
+                            initial={{ x: '100%', opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: '100%', opacity: 0 }}
+                            transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                            className="absolute right-0 top-0 bottom-0 w-full sm:w-[400px] bg-black/40 border-l border-white/5 p-8 flex flex-col shadow-2xl relative z-10"
+                        >
+                            {/* Mobile Header */}
+                            <div className="flex items-center justify-between mb-12">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-yellow-500/20">
+                                        <span className="text-black font-extrabold font-fascinate text-xl">S</span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-bold text-yellow-500 tracking-[0.2em] uppercase leading-none mb-1">Navigation</span>
+                                        <span className="text-xl font-bold text-white tracking-tight leading-none">Explore</span>
+                                    </div>
+                                </div>
+                                <motion.button
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all border border-white/10"
+                                >
+                                    <XMarkIcon className="w-6 h-6" />
+                                </motion.button>
+                            </div>
+
+                            {/* Mobile Nav Links with Staggered Animation */}
+                            <div className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-2">
+                                {navigation.map((item, index) => {
+                                    const Icon = item.icon;
+                                    const sectionId = item.href?.startsWith('#') ? item.href.substring(1) : item.name.toLowerCase();
+                                    const isActive = activeSection === sectionId;
+
+                                    return (
+                                        <motion.div
+                                            key={item.name}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.1 + index * 0.05 }}
+                                        >
+                                            {item.name === 'Blogs' && (
+                                                <div className="mt-8 mb-4">
+                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] ml-4">Content</span>
+                                                    <div className="mt-2 h-px bg-gradient-to-r from-white/10 to-transparent mx-4" />
+                                                </div>
+                                            )}
+                                            <a
+                                                href={item.href || ''}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    if (item.href?.startsWith('/')) {
+                                                        navigate(item.href);
+                                                        setMobileMenuOpen(false);
+                                                    } else {
+                                                        // Close menu first for smoother transition
+                                                        setMobileMenuOpen(false);
+                                                        // Small timeout to allow menu animation to start closing
+                                                        setTimeout(() => {
+                                                            handleNavigationClick(e, item.href || '');
+                                                        }, 100);
+                                                    }
+                                                }}
+                                                className={`group flex items-center justify-between px-5 py-4 rounded-2xl text-lg font-bold transition-all relative overflow-hidden ${isActive
+                                                    ? 'text-yellow-400'
+                                                    : 'text-gray-400 hover:text-white'
+                                                    }`}
+                                            >
+                                                {isActive && (
+                                                    <motion.div
+                                                        layoutId="mobile-active-bg"
+                                                        className="absolute inset-0 bg-yellow-400/10 border border-yellow-400/20"
+                                                    />
+                                                )}
+                                                <div className="flex items-center gap-4 relative z-10">
+                                                    <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-yellow-400/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
+                                                        <Icon className={`w-5 h-5 ${isActive ? 'text-yellow-400' : 'text-gray-400 group-hover:text-white'}`} />
+                                                    </div>
+                                                    <span className="tracking-tight">{item.name}</span>
+                                                </div>
+                                                <motion.div
+                                                    animate={isActive ? { x: 0, opacity: 1 } : { x: -10, opacity: 0 }}
+                                                    className="relative z-10"
+                                                >
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
+                                                </motion.div>
+                                            </a>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Mobile Footer Area */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                className="pt-8 mt-6 border-t border-white/10 space-y-6"
+                            >
+                                {currentUser ? (
+                                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-4">
+                                        <div className="relative">
+                                            <img
+                                                src={avatarError ? getFallbackAvatar(currentUser.displayName || 'User') : currentUser.photoURL || ''}
+                                                className="w-12 h-12 rounded-2xl bg-gray-700 object-cover border border-white/10 shadow-lg"
+                                                alt="User"
+                                            />
+                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-black rounded-full" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-white font-bold text-sm truncate">{currentUser.displayName}</p>
+                                            <button
+                                                onClick={handleSignOut}
+                                                className="text-xs text-red-400 hover:text-red-300 font-semibold uppercase tracking-wider mt-1 flex items-center gap-1"
+                                            >
+                                                Sign Out
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => {
+                                            onOpenAuthModal();
+                                            setMobileMenuOpen(false);
+                                        }}
+                                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-extrabold text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-yellow-500/20"
+                                    >
+                                        Sign In Provider
+                                    </motion.button>
+                                )}
+
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <motion.a
+                                            whileHover={{ y: -3 }}
+                                            href="https://github.com/sumanbisunkhe"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                                        >
+                                            <FaGithub className="w-5 h-5" />
+                                        </motion.a>
+                                    </div>
+                                    <motion.a
+                                        href="#contact"
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={(e) => {
+                                            setMobileMenuOpen(false);
+                                            setTimeout(() => handleNavigationClick(e, '#contact'), 100);
+                                        }}
+                                        className="px-6 py-3 rounded-xl bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors shadow-lg"
+                                    >
+                                        Let's Chat
+                                    </motion.a>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
+    );
 };
 
-export default Navbar; 
+export default Navbar;

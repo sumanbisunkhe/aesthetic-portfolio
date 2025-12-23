@@ -1,129 +1,213 @@
 import { motion } from 'framer-motion';
-import { BookOpenIcon, AcademicCapIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
+import {
+  MapPinIcon,
+  BriefcaseIcon,
+  ArrowDownTrayIcon
+} from '@heroicons/react/24/outline';
+import {
+  SiSpringboot,
+  SiPostgresql,
+  SiSpring,
+  SiMysql,
+  SiNextdotjs,
+  SiTypescript,
+  SiTailwindcss,
+  SiNodedotjs,
+  SiReact,
+  SiDocker,
+  SiGit
+} from 'react-icons/si';
+import { FaJava, FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const About = () => {
+  const skills = [
+    { icon: <FaJava className="w-5 h-5" />, name: 'Java' },
+    { icon: <SiSpringboot className="w-5 h-5" />, name: 'Spring Boot' },
+    { icon: <SiSpring className="w-5 h-5" />, name: 'Security' },
+    { icon: <SiPostgresql className="w-5 h-5" />, name: 'PostgreSQL' },
+    { icon: <SiMysql className="w-5 h-5" />, name: 'MySQL' },
+    { icon: <SiReact className="w-5 h-5" />, name: 'React' },
+    { icon: <SiNextdotjs className="w-5 h-5" />, name: 'Next.js' },
+    { icon: <SiTypescript className="w-5 h-5" />, name: 'TypeScript' },
+    { icon: <SiTailwindcss className="w-5 h-5" />, name: 'Tailwind' },
+    { icon: <SiNodedotjs className="w-5 h-5" />, name: 'Node.js' },
+    { icon: <SiDocker className="w-5 h-5" />, name: 'Docker' },
+    { icon: <SiGit className="w-5 h-5" />, name: 'Git' },
+  ];
+
   return (
-    <section id="about" className="py-16 bg-gradient-to-b from-black to-black relative overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-12 w-24 h-24 bg-accent-900/5 rounded-full blur-xl"></div>
-        <div className="absolute bottom-1/4 -right-12 w-32 h-32 bg-royal-900/5 rounded-full blur-xl"></div>
+    <section id="about" className="py-12 bg-black relative overflow-hidden">
+      {/* Subtle Background Glows */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-accent-900/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-royal-900/5 rounded-full blur-[120px]" />
       </div>
 
-      <div className="container mx-auto px-4 relative">
-        {/* Header */}
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-12 mt-0"
+          className="mb-12 text-center"
         >
-          <span className="text-accent-900 font-josefin text-sm tracking-wider uppercase mb-2 block">
-            About Me
-          </span>
-          <h2 className="text-3xl md:text-4xl font-oldenburg font-bold text-white mb-4">
-            Get to <span className="text-accent-900">Know Me</span>
+          <h2 className="text-3xl md:text-4xl font-oldenburg font-bold text-white mb-3">
+            About <span className="text-accent-900">Me</span>
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-accent-900 to-accent-700 mx-auto mb-6 rounded-full"></div>
         </motion.div>
 
-        {/* Main Content */}
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
-          {/* Profile Photo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-3 lg:sticky lg:top-24"
-          >
-            <div className="relative max-w-[240px] mx-auto">
-              {/* Decorative elements */}
-              <div className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-accent-900/50"></div>
-              <div className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-accent-900/50"></div>
-              
-              {/* Image container */}
-              <div className="relative overflow-hidden rounded-xl aspect-[3.6/5] bg-gradient-to-b from-accent-900/10 to-transparent p-1">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          {/* LEFT COLUMN: Profile (Span 3) */}
+          <div className="lg:col-span-3 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="bg-primary-900/40 backdrop-blur-md border border-white/10 rounded-3xl p-3 h-full flex flex-col"
+            >
+              <div className="relative aspect-[4/5] w-full rounded-2xl overflow-hidden mb-4">
                 <img
                   src="/images/pp.webp"
                   alt="Suman Bisunkhe"
-                  className="w-full h-full object-cover object-center rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
                 />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 to-transparent opacity-50"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
 
-              {/* Quick Info Cards */}
-              <div className="mt-4 space-y-3">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="bg-primary-800/50 backdrop-blur-sm border border-primary-700/30 rounded-lg p-3 flex items-center gap-3 hover:border-accent-900/30 transition-colors duration-300"
-                >
-                  <BriefcaseIcon className="w-5 h-5 text-accent-900" />
-                  <span className="text-sm font-josefin text-primary-200">Suman Bisunkhe - Java Developer</span>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
+              <div className="px-2 pb-2 text-center mt-auto">
+                <h3 className="text-xl font-oldenburg text-white mb-1">Suman Bisunkhe</h3>
+                <p className="text-accent-900/90 text-sm font-josefin tracking-wide uppercase mb-4">Java Developer</p>
 
-          {/* Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-9 space-y-6"
-          >
-            {/* Bio */}
-            <div className="space-y-4">
-              <div className="relative">
-                <div className="absolute -left-4 top-0 h-full w-0.5 bg-gradient-to-b from-accent-900 to-transparent"></div>
-                <div className="space-y-4 text-primary-200 font-josefin leading-relaxed">
-                  <p className="first-letter:text-3xl first-letter:font-oldenburg first-letter:text-accent-900 first-letter:mr-1">
-                    Hi there! I'm Suman Bisunkhe, a passionate Java enthusiast currently pursuing a BSc.CSIT in my sixth semester. With a keen interest in building robust and scalable applications, I am driven by an unwavering desire to learn and innovate throughout my software development journey.
-                  </p>
-                  <p>
-                    I started my programming journey with a fascination for how software could solve real-world problems. Currently, I'm pursuing my B.Sc. CSIT at Texas International College while gaining practical experience through my Java development internship.
-                  </p>
-                  <p>
-                    I believe in writing clean, maintainable code that stands the test of time. My approach combines technical excellence with a deep understanding of business needs, resulting in solutions that deliver real value.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Education */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="pt-6 border-t border-primary-700/30"
-            >
-              <h3 className="text-2xl font-oldenburg text-white mb-4 flex items-center gap-3">
-                <AcademicCapIcon className="w-6 h-6 text-accent-900" />
-                Education
-              </h3>
-              
-              <div className="bg-gradient-to-r from-primary-800/50 to-primary-800/30 backdrop-blur-sm rounded-2xl p-5 border border-primary-700/30 hover:border-accent-900/30 transition-all duration-300 group">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                  <div className="space-y-1">
-                    <h4 className="text-xl font-josefin text-white group-hover:text-accent-900 transition-colors duration-300">BSc.CSIT</h4>
-                    <p className="text-primary-300 font-josefin flex items-center gap-2">
-                      <BookOpenIcon className="w-4 h-4" />
-                      Texas International College, Kathmandu
-                    </p>
-                  </div>
-                  <span className="px-4 py-2 rounded-full bg-accent-900/10 text-accent-900 text-sm font-josefin border border-accent-900/20">
-                    2022 - Present
-                  </span>
+                <div className="flex justify-center gap-3">
+                  <a href="https://github.com/sumanbisunkhe" target="_blank" rel="noreferrer" className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white hover:text-accent-900 transition-colors">
+                    <FaGithub className="w-5 h-5" />
+                  </a>
+                  <a href="https://www.linkedin.com/in/suman-bisunkhe-3a72032a2/" target="_blank" rel="noreferrer" className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white hover:text-accent-900 transition-colors">
+                    <FaLinkedin className="w-5 h-5" />
+                  </a>
+                  <button className="p-2 rounded-full bg-accent-900 text-primary-900 hover:bg-white transition-colors" title="Download Resume">
+                    <ArrowDownTrayIcon className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
+
+          {/* CENTER COLUMN: Bio & Tech (Span 5) */}
+          <div className="lg:col-span-5 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-primary-900/40 backdrop-blur-md border border-white/10 rounded-3xl p-6 lg:p-8"
+            >
+              <h3 className="text-2xl font-oldenburg text-white mb-4">
+                Scalable <span className="text-accent-900">Solutions</span>
+              </h3>
+              <div className="space-y-3 text-primary-200 font-josefin leading-relaxed text-[15px]">
+                <p>
+                  I'm a passionate Java enthusiast pursuing my BSc.CSIT. My journey is driven by curiosity and a desire to build robust systems.
+                </p>
+                <p>
+                  Specializing in the <span className="text-accent-900">Java Ecosystem</span>, I focus on creating secure, high-performance backend architectures. I currently bridge the gap between complex backends and modern frontends like Next.js.
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-primary-900/40 backdrop-blur-md border border-white/10 rounded-3xl p-6 overflow-hidden relative"
+            >
+              <h4 className="text-white font-oldenburg text-lg mb-6 flex items-center gap-2 relative z-10">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-900" />
+                Technical Arsenal
+              </h4>
+
+              {/* Gradient Masks */}
+              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-black/80 to-transparent z-10 pointer-events-none" />
+
+              <div className="flex overflow-hidden -mx-6">
+                <motion.div
+                  className="flex gap-4 px-6"
+                  animate={{ x: "-50%" }}
+                  transition={{
+                    ease: "linear",
+                    duration: 30,
+                    repeat: Infinity,
+                  }}
+                >
+                  {[...skills, ...skills].map((skill, index) => (
+                    <div
+                      key={index}
+                      className="flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-xl bg-white/5 border border-white/5 hover:border-accent-900/30 hover:bg-white/10 transition-colors group min-w-[140px]"
+                    >
+                      <div className="text-primary-400 group-hover:text-accent-900 transition-colors">
+                        {skill.icon}
+                      </div>
+                      <span className="text-xs font-josefin text-primary-300 font-medium whitespace-nowrap">{skill.name}</span>
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* RIGHT COLUMN: Journey & Stats (Span 4) */}
+          <div className="lg:col-span-4 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-primary-900/40 backdrop-blur-md border border-white/10 rounded-3xl p-6 lg:p-8 h-full"
+            >
+              <h4 className="text-white font-oldenburg text-lg mb-6 flex items-center gap-2">
+                <BriefcaseIcon className="w-5 h-5 text-accent-900" />
+                My Journey
+              </h4>
+
+              <div className="space-y-8 relative before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-[2px] before:bg-white/10">
+                <div className="relative pl-8">
+                  <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-accent-900 bg-black" />
+                  <span className="text-xs font-mono text-accent-900 block mb-1">Present</span>
+                  <h5 className="text-white font-bold text-sm">Bachelor's in CSIT</h5>
+                  <p className="text-primary-400 text-xs mt-1">Texas International College</p>
+                  <p className="text-primary-500 text-[10px] mt-0.5">6th Semester</p>
+                </div>
+
+                <div className="relative pl-8">
+                  <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-primary-600 bg-black" />
+                  <span className="text-xs font-mono text-primary-400 block mb-1">2022</span>
+                  <h5 className="text-white font-bold text-sm">Java Development</h5>
+                  <p className="text-primary-400 text-xs mt-1">Started Journey</p>
+                </div>
+
+                <div className="pt-4 border-t border-white/10 mt-6">
+                  <div className="flex items-center gap-3 text-primary-300">
+                    <div className="p-2 rounded-lg bg-white/5 text-accent-900">
+                      <MapPinIcon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-primary-500 uppercase tracking-widest">Based In</p>
+                      <p className="text-white text-sm font-medium">Kathmandu, Nepal</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
         </div>
       </div>
     </section>
   );
 };
 
-export default About; 
+export default About;

@@ -4,13 +4,16 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Work from './components/Work';
 import About from './components/About';
-import Resources from './components/Resources';
+import Experience from './components/Experience';
+import Resume from './components/Resume';
 import Now from './components/Now';
 import Thoughts from './components/Thoughts';
 import BlogPostView from './components/BlogPost';
 import Contact from './components/Contact';
 import AuthModal from './components/AuthModal';
 import { Toaster } from 'react-hot-toast';
+import VisitorCounter from './components/VisitorCounter';
+import VisitorLocation from './components/VisitorLocation';
 
 // ScrollToTop component to handle scroll behavior
 const ScrollToTop = () => {
@@ -105,9 +108,12 @@ function App() {
               <Hero />
               <Work />
               <About />
-              <Resources />
+              <Experience />
+              <Resume />
               <Now />
               <Contact />
+              <VisitorCounter />
+              <VisitorLocation />
             </main>
           </div>
         } />

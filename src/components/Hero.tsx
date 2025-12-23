@@ -10,23 +10,23 @@ interface StatItem {
 }
 
 const stats: StatItem[] = [
-  { 
-    value: '10+', 
+  {
+    value: '12+',
     label: 'Projects',
     description: 'Successfully Completed'
   },
-  { 
-    value: '200+', 
+  {
+    value: '300+',
     label: 'Contributions',
     description: 'On GitHub'
   },
-  { 
-    value: '13+', 
+  {
+    value: '15+',
     label: 'Skills',
     description: 'Technical Expertise'
   },
-  { 
-    value: '1+', 
+  {
+    value: '1+',
     label: 'Year',
     description: 'Professional Experience'
   }
@@ -47,14 +47,14 @@ const Hero = () => {
   };
 
   return (
-    <section 
+    <section
       id="home"
-      className="relative min-h-screen bg-black overflow-hidden pb-8 lg:pb-0"
+      className="relative min-h-screen bg-black overflow-hidden pb-8 lg:pb-0 scroll-mt-20"
       aria-label="Introduction"
     >
       {/* Background gradient */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-black" 
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-black"
         aria-hidden="true"
       />
 
@@ -90,7 +90,7 @@ const Hero = () => {
                       Suman Bisunkhe
                     </span>
                   </motion.h1>
-                  
+
                   <motion.h2
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -138,7 +138,7 @@ const Hero = () => {
               </motion.div>
 
               {/* Java Logo Animation */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8 }}
@@ -210,4 +210,3 @@ const Hero = () => {
 };
 
 export default Hero;
- 

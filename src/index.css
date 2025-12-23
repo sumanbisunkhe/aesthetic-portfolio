@@ -18,12 +18,15 @@
 
 /* Font size normalization */
 html {
-  font-size: 16px; /* Base font size */
+  font-size: 16px;
+  /* Base font size */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
@@ -36,14 +39,19 @@ html, body, #root {
     @apply scroll-smooth scroll-pt-20;
     font-family: 'Inter', system-ui, sans-serif;
   }
-  
+
   body {
     @apply bg-primary-900 text-primary-50 font-poppins;
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
-}
+  }
 
   /* Consistent heading styles */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-playfair;
     font-family: 'Merriweather Sans', sans-serif;
     letter-spacing: -0.025em;
@@ -95,7 +103,7 @@ html, body, #root {
   .font-caesar {
     font-family: 'Caesar Dressing', system-ui, sans-serif;
   }
-  
+
   .metamorphous-regular {
     font-family: "Metamorphous", serif;
     font-weight: 400;
@@ -106,19 +114,19 @@ html, body, #root {
 @layer components {
   .container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-}
-  
+  }
+
   .section {
     @apply py-16 lg:py-20;
-}
+  }
 
   .btn {
     @apply inline-flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200;
-}
+  }
 
   .btn-primary {
     @apply bg-accent-900 text-primary-900 hover:bg-accent-800 hover:shadow-gold;
-}
+  }
 
   .btn-secondary {
     @apply bg-royal-700 text-primary-50 hover:bg-royal-600 hover:shadow-glow;
@@ -134,7 +142,7 @@ html, body, #root {
 
   .hero-subheading {
     @apply font-poppins font-light tracking-wide;
-}
+  }
 
   .hero-description {
     @apply font-poppins font-light leading-relaxed;
@@ -142,7 +150,7 @@ html, body, #root {
 
   .stat-value {
     @apply font-playfair font-bold;
-}
+  }
 
   .stat-label {
     @apply font-poppins font-light uppercase tracking-widest text-sm;
@@ -153,8 +161,32 @@ html, body, #root {
   .text-shadow {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
-  
+
   .text-glow {
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-primary-800 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-accent-900/50;
+  }
+
+  .shadow-gold {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
   }
 }
